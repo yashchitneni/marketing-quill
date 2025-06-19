@@ -42,65 +42,19 @@ export function SuggestionHighlights({ text, textareaRef }: SuggestionHighlights
   }, [text])
 
   const renderHighlightedText = () => {
-    if (!text || suggestions.length === 0) {
-      return <span style={{ whiteSpace: 'pre-wrap' }}>{text}</span>
+    // The conditional rendering in EditorPane.tsx ensures suggestions.length > 0
+    // if this component is rendered. We still need to check for `!text`.
+    if (!text) {
+      return null;
     }
 
-    const elements: React.ReactElement[] = []
-    let lastIndex = 0
-
-    // Sort suggestions by startIndex
-    const sortedSuggestions = [...suggestions].sort((a, b) => a.startIndex - b.startIndex)
-
-    // Filter out suggestions that are outside the text bounds
-    const validSuggestions = sortedSuggestions.filter(
-      suggestion => suggestion.startIndex >= 0 && suggestion.endIndex <= text.length
-    )
-
-    validSuggestions.forEach((suggestion, index) => {
-      // Add text before suggestion
-      if (suggestion.startIndex > lastIndex) {
-        elements.push(
-          <span key={`text-${index}`} style={{ whiteSpace: 'pre-wrap' }}>
-            {text.slice(lastIndex, suggestion.startIndex)}
-          </span>
-        )
-      }
-
-      // Add highlighted suggestion
-      elements.push(
-        <span
-          key={`suggestion-${suggestion.id}`}
-          className={cn(
-            'relative cursor-pointer transition-all',
-            suggestion.type === 'grammar' 
-              ? 'underline decoration-red-500 decoration-wavy underline-offset-2' 
-              : 'underline decoration-blue-500 decoration-wavy underline-offset-2',
-            selectedSuggestion?.id === suggestion.id && 'bg-yellow-100'
-          )}
-          onClick={(e) => {
-            e.stopPropagation()
-            selectSuggestion(suggestion)
-          }}
-          style={{ whiteSpace: 'pre-wrap' }}
-        >
-          {text.slice(suggestion.startIndex, suggestion.endIndex)}
-        </span>
-      )
-
-      lastIndex = suggestion.endIndex
-    })
-
-    // Add remaining text
-    if (lastIndex < text.length) {
-      elements.push(
-        <span key="text-end" style={{ whiteSpace: 'pre-wrap' }}>
-          {text.slice(lastIndex)}
-        </span>
-      )
-    }
-
-    return elements
+    // Diagnostic: Render the entire text as a single transparent span,
+    // ignoring actual suggestion data for now.
+    return (
+      <span style={{ whiteSpace: 'pre-wrap', color: 'transparent' }}>
+        {text}
+      </span>
+    );
   }
 
   return (

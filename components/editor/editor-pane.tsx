@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 export function EditorPane() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { content, setContent } = useEditorStore()
-  const { analyzeText } = useSuggestionsStore()
+  const { suggestions, analyzeText } = useSuggestionsStore() // Added suggestions here
   const [localContent, setLocalContent] = useState(content)
   const analyzeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const contentTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -107,7 +107,9 @@ export function EditorPane() {
   return (
     <div className="flex-1 bg-white">
       <div className="h-full p-8 relative">
-        <SuggestionHighlights text={localContent} textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>} />
+        {suggestions.length > 0 && (
+          <SuggestionHighlights text={localContent} textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>} />
+        )}
         <textarea
           ref={textareaRef}
           value={localContent}
@@ -118,7 +120,7 @@ export function EditorPane() {
             "w-full h-full resize-none outline-none",
             "font-mono text-base leading-relaxed",
             "placeholder:text-gray-400",
-            "relative z-10 bg-transparent"
+            "relative z-10 bg-white" // Changed bg-transparent to bg-white
           )}
           style={{
             fontFamily: "'JetBrains Mono', 'Courier New', monospace"

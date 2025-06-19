@@ -22,27 +22,32 @@ const sidebarItems = [
   {
     title: 'Dashboard',
     href: '/dashboard',
-    icon: Home
+    icon: Home,
+    id: 'dashboard'
   },
   {
     title: 'All Drafts',
-    href: '/dashboard',
-    icon: FileText
+    href: '/dashboard?status=all',
+    icon: FileText,
+    id: 'all-drafts'
   },
   {
     title: 'Published',
     href: '/dashboard?status=published',
-    icon: BarChart3
+    icon: BarChart3,
+    id: 'published'
   },
   {
     title: 'Archived',
     href: '/dashboard?status=archived',
-    icon: Archive
+    icon: Archive,
+    id: 'archived'
   },
   {
     title: 'Trash',
     href: '/dashboard/trash',
-    icon: Trash2
+    icon: Trash2,
+    id: 'trash'
   }
 ]
 
@@ -50,12 +55,14 @@ const bottomItems = [
   {
     title: 'Settings',
     href: '/settings',
-    icon: Settings
+    icon: Settings,
+    id: 'settings'
   },
   {
     title: 'Help',
     href: '/help',
-    icon: HelpCircle
+    icon: HelpCircle,
+    id: 'help'
   }
 ]
 
@@ -84,7 +91,7 @@ export function Sidebar() {
           const isActive = pathname === item.href
           return (
             <Link
-              key={item.href}
+              key={item.id}
               href={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
@@ -106,7 +113,7 @@ export function Sidebar() {
       <div className="p-4 border-t space-y-1">
         {bottomItems.map((item) => (
           <Link
-            key={item.href}
+            key={item.id}
             href={item.href}
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors",
