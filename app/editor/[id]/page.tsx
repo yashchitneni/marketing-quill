@@ -15,7 +15,7 @@ export default function EditorPage({ params }: { params: Params }) {
   const router = useRouter()
   const { user, isInitialized } = useAuthStore()
   const { loadDraft, autoSave, reset, createSnapshot } = useEditorStore()
-  const autoSaveIntervalRef = useRef<NodeJS.Timeout>()
+  const autoSaveIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const resolvedParams = use(params)
 
   useEffect(() => {

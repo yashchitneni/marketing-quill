@@ -42,32 +42,23 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true })
     const supabase = createClient()
     
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
         },
-      })
-      
-      // We don't set isLoading to false here because we're redirecting to Google
-      // The loading state will be reset when the page loads again
-      
-      if (error) {
-        console.error('Google sign-in error:', error.message)
-        set({ isLoading: false })
-      }
-      
-      return { error }
-    } catch (err) {
-      console.error('Unexpected error during Google sign-in:', err)
+      },
+    })
+    
+    if (error) {
+      console.error('Google sign-in error:', error.message)
       set({ isLoading: false })
-      return { error: err instanceof Error ? err : new Error('Unknown error during Google sign-in') }
     }
+    
+    return { error }
   },
 
   signOut: async () => {
