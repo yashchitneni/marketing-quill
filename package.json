@@ -6,7 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "task:sync": "node scripts/task-sync.js",
+    "task:bug": "node scripts/task-sync.js bug",
+    "task:status": "node scripts/task-sync.js status",
+    "task:list": "npx task-master-ai list",
+    "task:current": "npx task-master-ai list --status 'in progress'",
+    "task:health": "node scripts/task-health.js",
+    "claude:start": "node scripts/claude-status.js start",
+    "claude:update": "node scripts/claude-status.js update",
+    "claude:done": "node scripts/claude-status.js complete",
+    "claude:status": "node scripts/claude-status.js status"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

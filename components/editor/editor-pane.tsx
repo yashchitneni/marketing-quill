@@ -21,7 +21,7 @@ export function EditorPane() {
       setLocalContent(content)
       isInitialRender.current = false
     }
-  }, [content])
+  }, [content, localContent])
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value

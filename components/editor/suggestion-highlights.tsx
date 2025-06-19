@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
-import { cn } from '@/lib/utils'
 
 interface SuggestionHighlightsProps {
   text: string
@@ -11,8 +10,11 @@ interface SuggestionHighlightsProps {
 
 export function SuggestionHighlights({ text, textareaRef }: SuggestionHighlightsProps) {
   const highlightContainerRef = useRef<HTMLDivElement>(null)
-  const { suggestions, selectedSuggestion, selectSuggestion } = useSuggestionsStore()
+  const { suggestions } = useSuggestionsStore()
   const lastTextRef = useRef<string>(text)
+  
+  // TODO: Use suggestions for highlighting once implementation is complete
+  console.log('Suggestions available:', suggestions.length)
 
   // Sync scroll position between textarea and highlights
   useEffect(() => {
