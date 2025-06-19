@@ -1,0 +1,73 @@
+# Task ID: 3
+# Title: Dashboard Implementation
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Create the dashboard interface showing a list of drafts with title, channel icon, optimization score, and last edited timestamp. Implement the 'New Draft' button.
+# Details:
+1. Design dashboard layout with top bar (workspace switch, New Draft button)
+2. Create collapsible icon sidebar
+3. Implement draft list component with card UI
+4. Display title, channel icon, optimization score (0-100), and last edited timestamp for each draft
+5. Add sorting and filtering options
+6. Implement 'New Draft' button functionality
+7. Create Supabase table structure for drafts
+
+Database schema:
+```sql
+CREATE TABLE drafts (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id) NOT NULL,
+  title TEXT NOT NULL,
+  content TEXT,
+  channel TEXT,
+  optimization_score INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+Component structure:
+```tsx
+// components/Dashboard.tsx
+export default function Dashboard() {
+  const [drafts, setDrafts] = useState<Draft[]>([]);
+  
+  useEffect(() => {
+    // Fetch drafts from Supabase
+    const fetchDrafts = async () => {
+      const { data, error } = await supabase
+        .from('drafts')
+        .select('*')
+        .order('updated_at', { ascending: false });
+        
+      if (data) setDrafts(data);
+    };
+    
+    fetchDrafts();
+  }, []);
+  
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold">My Drafts</h1>
+        <Button onClick={createNewDraft}>New Draft</Button>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {drafts.map(draft => (
+          <DraftCard key={draft.id} draft={draft} />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+# Test Strategy:
+1. Unit tests for draft fetching and creation
+2. Integration tests for dashboard rendering with mock data
+3. Test sorting and filtering functionality
+4. Verify optimization score display
+5. Test 'New Draft' button creates a new draft in the database
+6. Verify real-time updates when drafts are modified

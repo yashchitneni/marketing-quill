@@ -1,0 +1,139 @@
+# Task ID: 11
+# Title: Dashboard Metrics Implementation
+# Status: pending
+# Dependencies: 3, 5, 7
+# Priority: low
+# Description: Implement the optimization score calculation and display on draft cards in the dashboard. Add last-edited timestamp and other metrics to help users track content performance.
+# Details:
+1. Create optimization score calculation algorithm combining grammar, tone, and SEO scores
+2. Implement last-edited timestamp display with relative time formatting
+3. Add channel icon display based on content type
+4. Create visual indicator for optimization score (0-100)
+5. Implement streak tracking for user engagement
+
+Optimization score calculation:
+```typescript
+// lib/optimization-score.ts
+export interface ContentMetrics {
+  grammarScore: number; // 0-100
+  toneScore: number; // 0-100
+  seoScore: number; // 0-100
+  wordCount: number;
+  readingTime: number; // minutes
+}
+
+export function calculateOptimizationScore(metrics: ContentMetrics): number {
+  // Weighted average of scores
+  const weights = {
+    grammar: 0.4,
+    tone: 0.3,
+    seo: 0.3
+  };
+  
+  const weightedScore = 
+    metrics.grammarScore * weights.grammar +
+    metrics.toneScore * weights.tone +
+    metrics.seoScore * weights.seo;
+    
+  return Math.round(weightedScore);
+}
+
+export function getScoreColor(score: number): string {
+  if (score >= 90) return 'text-green-500';
+  if (score >= 70) return 'text-blue-500';
+  if (score >= 50) return 'text-yellow-500';
+  return 'text-red-500';
+}
+
+export function calculateReadingTime(wordCount: number): number {
+  // Average reading speed: 200-250 words per minute
+  const wordsPerMinute = 225;
+  return Math.ceil(wordCount / wordsPerMinute);
+}
+
+export function detectContentType(content: string): 'email' | 'blog' | 'social' | 'other' {
+  // Simple heuristics to detect content type
+  if (content.includes('Subject:') || content.includes('From:') || content.includes('To:')) {
+    return 'email';
+  }
+  
+  if (content.length > 1000 && (content.includes('<h1>') || content.includes('<h2>'))) {
+    return 'blog';
+  }
+  
+  if (content.length < 280) {
+    return 'social';
+  }
+  
+  return 'other';
+}
+```
+
+Dashboard card component:
+```tsx
+// components/DraftCard.tsx
+import { formatDistanceToNow } from 'date-fns';
+import { getScoreColor } from '@/lib/optimization-score';
+
+interface DraftCardProps {
+  draft: {
+    id: string;
+    title: string;
+    content: string;
+    optimization_score: number;
+    updated_at: string;
+    channel?: 'email' | 'blog' | 'social' | 'other';
+  };
+  onClick: () => void;
+}
+
+export function DraftCard({ draft, onClick }: DraftCardProps) {
+  const scoreColor = getScoreColor(draft.optimization_score);
+  const lastEdited = formatDistanceToNow(new Date(draft.updated_at), { addSuffix: true });
+  
+  return (
+    <div 
+      className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+      onClick={onClick}
+    >
+      <div className="flex items-start justify-between">
+        <div>
+          <h3 className="font-medium text-lg truncate">{draft.title || 'Untitled Draft'}</h3>
+          <p className="text-gray-500 text-sm">{lastEdited}</p>
+        </div>
+        <div className="flex items-center">
+          {draft.channel && (
+            <span className="mr-2">
+              {getChannelIcon(draft.channel)}
+            </span>
+          )}
+          <div className={`font-bold ${scoreColor}`}>
+            {draft.optimization_score}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function getChannelIcon(channel: 'email' | 'blog' | 'social' | 'other') {
+  switch (channel) {
+    case 'email':
+      return <MailIcon className="w-5 h-5" />;
+    case 'blog':
+      return <DocumentTextIcon className="w-5 h-5" />;
+    case 'social':
+      return <ShareIcon className="w-5 h-5" />;
+    default:
+      return <DocumentIcon className="w-5 h-5" />;
+  }
+}
+```
+
+# Test Strategy:
+1. Test optimization score calculation with various content metrics
+2. Verify score color assignment based on score ranges
+3. Test content type detection with different content samples
+4. Verify last-edited timestamp formatting
+5. Test dashboard card rendering with different draft states
+6. Verify streak tracking accuracy

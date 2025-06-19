@@ -1,0 +1,116 @@
+# Task ID: 8
+# Title: Export Functionality Implementation
+# Status: pending
+# Dependencies: 4
+# Priority: medium
+# Description: Implement export options including Copy Markdown, download HTML email, and public share link generation. Ensure exports retain proper styling and formatting.
+# Details:
+1. Create Markdown export functionality
+2. Implement HTML email export with proper styling
+3. Generate public share links with expiration options
+4. Add clipboard copy functionality
+5. Create export success notifications
+6. Implement download functionality for HTML files
+
+Export implementation:
+```typescript
+// lib/export-utils.ts
+export async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (error) {
+    console.error('Failed to copy to clipboard:', error);
+    return false;
+  }
+}
+
+export function convertToMarkdown(content: string): string {
+  // Implementation of HTML to Markdown conversion
+  // Could use a library like turndown or custom implementation
+  return content
+    .replace(/<h1>(.+?)<\/h1>/g, '# $1\n\n')
+    .replace(/<h2>(.+?)<\/h2>/g, '## $1\n\n')
+    .replace(/<h3>(.+?)<\/h3>/g, '### $1\n\n')
+    .replace(/<p>(.+?)<\/p>/g, '$1\n\n')
+    .replace(/<strong>(.+?)<\/strong>/g, '**$1**')
+    .replace(/<em>(.+?)<\/em>/g, '*$1*')
+    .replace(/<a href="(.+?)">(.+?)<\/a>/g, '[$2]($1)')
+    .replace(/<ul>([\s\S]+?)<\/ul>/g, (match, p1) => {
+      return p1.replace(/<li>(.+?)<\/li>/g, '- $1\n');
+    })
+    .replace(/<ol>([\s\S]+?)<\/ol>/g, (match, p1) => {
+      let index = 1;
+      return p1.replace(/<li>(.+?)<\/li>/g, () => `${index++}. $1\n`);
+    });
+}
+
+export function generateHTMLEmail(content: string, title: string): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${title}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 { color: #2c3e50; margin-top: 0; }
+    h2 { color: #3498db; }
+    h3 { color: #2980b9; }
+    a { color: #3498db; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .footer { margin-top: 30px; font-size: 12px; color: #7f8c8d; }
+  </style>
+</head>
+<body>
+  ${content}
+  <div class="footer">
+    <p>This email was created with MarketingQuill</p>
+  </div>
+</body>
+</html>
+  `;
+}
+
+export async function generatePublicShareLink(draftId: string, expiresInDays = 7): Promise<string> {
+  try {
+    const { data, error } = await supabase.functions.invoke('create-share-link', {
+      body: { draftId, expiresInDays }
+    });
+    
+    if (error) throw error;
+    return `${window.location.origin}/share/${data.shareId}`;
+  } catch (error) {
+    console.error('Error generating share link:', error);
+    throw error;
+  }
+}
+
+export function downloadFile(content: string, filename: string, contentType: string): void {
+  const blob = new Blob([content], { type: contentType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+```
+
+# Test Strategy:
+1. Test Markdown conversion accuracy with various HTML structures
+2. Verify HTML email export maintains proper styling
+3. Test public share link generation and expiration
+4. Verify clipboard copy functionality across browsers
+5. Test download functionality for HTML files
+6. Verify exported content matches editor content exactly

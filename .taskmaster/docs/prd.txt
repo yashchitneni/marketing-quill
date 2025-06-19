@@ -1,0 +1,101 @@
+# MarketingQuill Product Requirements Document (PRD)
+
+**Date**: June 18, 2025  
+**Project**: MarketingQuill – AI Copy Copilot for SaaS Marketing Managers  
+**Purpose**: Defines the requirements for the MarketingQuill MVP, a web-based tool to streamline copywriting with AI-driven suggestions.
+
+## 1. Project Overview
+MarketingQuill is a web-based AI copy copilot for SaaS marketing managers creating email campaigns and blog content. It integrates a distraction-free editor with real-time grammar and tone suggestions, subject-line optimization, and basic SEO hints to boost content performance.
+
+**v1 Objectives (7-day sprint)**  
+- Deliver inline grammar and tone suggestions with <2s latency.  
+- Generate subject-line variants with predicted open-rate scores.  
+- Enable one-click exports in HTML email and Markdown formats.  
+- Achieve ≥70% suggestion acceptance rate in pilot tests.
+
+## 2. MVP Scope
+
+### In-Scope
+1. **Authentication & Roles**: Magic-link and Google OAuth; Owner/Editor roles.  
+2. **Landing Page & Sign-up**: Marketing page with pricing toggle and "Start Free Trial" CTA.  
+3. **Dashboard**: List of drafts (title, channel icon, optimization score, last edited).  
+4. **Editor (Core)**:  
+   - Monospace pane, auto-save every 30s.  
+   - Inline grammar/tone suggestions (GPT-4o).  
+   - Right sidebar: Grammar | Tone | SEO tabs with suggestion cards.  
+   - Subject-Line Optimizer modal with A/B variants and open-rate gauge.  
+   - Sticky footer: word count, live SEO score.  
+5. **SEO Basics**: Local analysis for keyword density, H-tags, meta-description quality.  
+6. **Exports**: Copy Markdown, download HTML email, public share link.  
+7. **Versioning Lite**: Undo stack (50 actions), daily snapshot rollback (7-day retention).  
+8. **Accessibility**: WCAG 2.1 AA (keyboard nav, visible focus, high-contrast toggle).
+
+### Out-of-Scope (v1)
+- Built-in scheduling or ESP sending.  
+- Automated A/B testing deployment.  
+- Collaboration comments, snippet libraries, template marketplaces.  
+- Team roles beyond Owner/Editor.  
+- Multilingual support, WordPress/LinkedIn APIs.
+
+## 3. User Flow (Happy Path)
+1. Visit `marketingquill.app`, click "Start Free Trial".  
+2. Sign up via email/Google, complete onboarding (optional brand voice), land on Dashboard.  
+3. Click "New Draft" to open Editor.  
+4. Write/paste copy; inline suggestions appear.  
+5. Open Subject-Line Optimizer, select variant (e.g., 38% open rate).  
+6. Check SEO tab, fix issues (e.g., "Add H2").  
+7. Export HTML email, paste into HubSpot.  
+8. Return to Dashboard; optimization score and streak update.
+
+## 4. Core Features & Acceptance Criteria
+| # | Feature                | Acceptance Criteria                                                                    |
+|---|------------------------|----------------------------------------------------------------------------------------|
+| 1 | Grammar & Tone Coach   | Suggestions load ≤2s; Accept updates text and logs action.                             |
+| 2 | Subject-Line Optimizer | ≥2 AI variants with open-rate gauge; Insert adds to header.                            |
+| 3 | SEO Hint Panel         | Shows keyword count, headings, meta tips; score updates live.                          |
+| 4 | Export                 | HTML/Markdown outputs retain styling; clipboard copy succeeds.                         |
+| 5 | Dashboard Metrics      | Draft cards show optimization score (0-100) and last-edited timestamp.                 |
+| 6 | Version Undo           | Undo up to 50 actions; snapshot restore reverts to prior day's content.                |
+
+## 5. Design Snapshot
+- **Landing Page**: Split hero with product GIF and sign-up form; indigo `#6366F1`, glass cards.  
+- **App Shell**: Top bar (workspace switch, New Draft), collapsible icon sidebar, main canvas.  
+- **Editor**: Monospace (JetBrains Mono), neutral surface, colored underlines (grammar red, tone blue, SEO purple). Right sidebar with suggestion cards.  
+- **Modal**: Subject-Line Optimizer with two-column variant list and gauge meter.  
+
+## 6. Tech Stack
+| Layer    | Choice                                                     |
+|----------|------------------------------------------------------------|
+| Frontend | Next.js 15 (React 18, TypeScript), Tailwind CSS, shadcn/ui, Zustand |
+| Backend  | Supabase (Postgres, Realtime, Edge Functions)              |
+| Auth     | Supabase Auth (magic-link, Google OAuth)                   |
+| AI       | OpenAI GPT-4o via Edge Functions; cached in Postgres       |
+| Hosting  | Vercel (frontend), Supabase (backend)                      |
+
+## 7. Non-Functional Requirements
+- **Performance**: Suggestion latency <2s, 99.9% uptime.  
+- **Scalability**: Support 100 concurrent free-tier users.  
+- **Security**: TLS, RBAC, GDPR-compliant data export.
+
+## 8. Risks & Mitigations
+| Risk                   | Mitigation                                              |
+|------------------------|---------------------------------------------------------|
+| LLM cost overruns      | Cache suggestions; limit free-tier usage.               |
+| Prompt injection       | Sanitize inputs; strict function-call schemas.          |
+| Latency fluctuations   | Pre-warm Edge Functions; use streaming completions.     |
+
+## 9. Timeline (7-Day Sprint)
+| Day | Focus                                           |
+|-----|-------------------------------------------------|
+| 1   | Repo setup, auth, landing page                  |
+| 2   | Dashboard, New Draft flow                       |
+| 3   | Editor core, auto-save, undo stack              |
+| 4   | Grammar/tone suggestions                        |
+| 5   | Subject-Line Optimizer, SEO panel               |
+| 6   | Exports, accessibility, UI polish               |
+| 7   | Load test, demo, deploy, announce               |
+
+## 10. Validation & Iteration
+- **Pilot Testing**: Test with 5-10 marketing managers for ≥70% suggestion acceptance.  
+- **Feedback**: Bi-weekly reviews to prioritize updates.  
+- **Metrics**: Track suggestion acceptance, export frequency, SEO score improvements. 

@@ -1,0 +1,245 @@
+# Task ID: 13
+# Title: Security Implementation
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Implement security measures including TLS, Role-Based Access Control (RBAC), GDPR-compliant data export, and protection against prompt injection attacks.
+# Details:
+1. Configure TLS for all connections
+2. Implement RBAC with Supabase Row Level Security (RLS)
+3. Create GDPR-compliant data export functionality
+4. Implement input sanitization to prevent prompt injection
+5. Add strict function-call schemas for AI interactions
+6. Set up security headers
+7. Implement CSRF protection
+
+RLS policy implementation:
+```sql
+-- Enable RLS on drafts table
+ALTER TABLE drafts ENABLE ROW LEVEL SECURITY;
+
+-- Create policies
+CREATE POLICY "Users can view their own drafts"
+  ON drafts
+  FOR SELECT
+  USING (auth.uid() = user_id);
+  
+CREATE POLICY "Users can insert their own drafts"
+  ON drafts
+  FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+  
+CREATE POLICY "Users can update their own drafts"
+  ON drafts
+  FOR UPDATE
+  USING (auth.uid() = user_id);
+  
+CREATE POLICY "Users can delete their own drafts"
+  ON drafts
+  FOR DELETE
+  USING (auth.uid() = user_id);
+  
+-- Create policy for editors
+CREATE POLICY "Editors can view drafts they have access to"
+  ON drafts
+  FOR SELECT
+  USING (
+    auth.uid() IN (
+      SELECT user_id FROM draft_permissions
+      WHERE draft_id = drafts.id AND permission = 'editor'
+    )
+  );
+  
+CREATE POLICY "Editors can update drafts they have access to"
+  ON drafts
+  FOR UPDATE
+  USING (
+    auth.uid() IN (
+      SELECT user_id FROM draft_permissions
+      WHERE draft_id = drafts.id AND permission = 'editor'
+    )
+  );
+```
+
+Input sanitization implementation:
+```typescript
+// lib/sanitize.ts
+import DOMPurify from 'dompurify';
+
+export function sanitizeInput(input: string): string {
+  return DOMPurify.sanitize(input, {
+    ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'ul', 'ol', 'li', 'strong', 'em', 'a'],
+    ALLOWED_ATTR: ['href', 'target', 'rel'],
+  });
+}
+
+export function sanitizePrompt(input: string): string {
+  // Remove potential prompt injection patterns
+  return input
+    .replace(/ignore previous instructions/gi, '')
+    .replace(/ignore above instructions/gi, '')
+    .replace(/disregard previous instructions/gi, '')
+    .replace(/forget your instructions/gi, '')
+    .replace(/you are now/gi, '')
+    .replace(/you're now/gi, '')
+    .replace(/you will be/gi, '')
+    .replace(/you are a/gi, '')
+    .replace(/you're a/gi, '');
+}
+
+export function validateFunctionCallInput(input: any, schema: any): boolean {
+  // Simple schema validation
+  try {
+    if (typeof schema === 'object' && schema !== null) {
+      for (const key in schema) {
+        if (schema[key].required && (input[key] === undefined || input[key] === null)) {
+          return false;
+        }
+        
+        if (input[key] !== undefined && schema[key].type) {
+          if (schema[key].type === 'string' && typeof input[key] !== 'string') {
+            return false;
+          }
+          if (schema[key].type === 'number' && typeof input[key] !== 'number') {
+            return false;
+          }
+          if (schema[key].type === 'boolean' && typeof input[key] !== 'boolean') {
+            return false;
+          }
+          if (schema[key].type === 'array' && !Array.isArray(input[key])) {
+            return false;
+          }
+          if (schema[key].type === 'object' && (typeof input[key] !== 'object' || input[key] === null)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+}
+```
+
+GDPR data export implementation:
+```typescript
+// pages/api/gdpr-export.ts
+import { NextApiRequest, NextApiResponse } from 'next';
+import { supabase } from '@/lib/supabase-server';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  
+  // Get authenticated user
+  const supabaseServerClient = createServerSupabaseClient({ req, res });
+  const { data: { user } } = await supabaseServerClient.auth.getUser();
+  
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    // Fetch all user data
+    const [draftsResult, snapshotsResult, profileResult] = await Promise.all([
+      supabase.from('drafts').select('*').eq('user_id', user.id),
+      supabase.from('snapshots').select('*').eq('user_id', user.id),
+      supabase.from('profiles').select('*').eq('id', user.id)
+    ]);
+    
+    const userData = {
+      user: {
+        id: user.id,
+        email: user.email,
+        created_at: user.created_at
+      },
+      profile: profileResult.data?.[0] || null,
+      drafts: draftsResult.data || [],
+      snapshots: snapshotsResult.data || []
+    };
+    
+    // Generate export file
+    const exportData = JSON.stringify(userData, null, 2);
+    const filename = `marketingquill-data-export-${new Date().toISOString().split('T')[0]}.json`;
+    
+    // Set headers for file download
+    res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+    res.setHeader('Content-Type', 'application/json');
+    
+    return res.status(200).send(exportData);
+  } catch (error) {
+    console.error('GDPR export error:', error);
+    return res.status(500).json({ error: 'Failed to generate data export' });
+  }
+}
+```
+
+# Test Strategy:
+1. Verify TLS configuration with SSL testing tools
+2. Test RBAC policies with different user roles
+3. Verify GDPR data export contains all required user data
+4. Test input sanitization against common injection patterns
+5. Verify function-call schema validation
+6. Test security headers with security scanning tools
+7. Verify CSRF protection with cross-site request tests
+
+# Subtasks:
+## 1. Configure TLS and Security Headers [pending]
+### Dependencies: None
+### Description: Set up TLS certificates and implement security headers to protect against common web vulnerabilities.
+### Details:
+1. Obtain and configure TLS certificates for all domains
+2. Implement HTTP Strict Transport Security (HSTS)
+3. Configure Content Security Policy (CSP) headers
+4. Add X-Content-Type-Options, X-Frame-Options, and X-XSS-Protection headers
+5. Test security headers using tools like SecurityHeaders.com
+6. Document the security header configuration for future reference
+
+## 2. Implement Role-Based Access Control with Supabase RLS [pending]
+### Dependencies: 13.1
+### Description: Set up Row Level Security policies in Supabase to enforce proper access controls based on user roles.
+### Details:
+1. Define user roles (admin, regular user, etc.) in the database schema
+2. Create RLS policies for each table to restrict read/write operations
+3. Implement role-specific policies for sensitive data
+4. Set up default deny policies as a baseline
+5. Test access control with different user roles
+6. Document the RLS policies and role definitions
+
+## 3. Develop GDPR-compliant Data Export Functionality [pending]
+### Dependencies: 13.2
+### Description: Create functionality that allows users to export all their personal data in compliance with GDPR requirements.
+### Details:
+1. Identify all user-related data across database tables
+2. Create API endpoints for data export requests
+3. Implement data formatting in JSON or CSV format
+4. Add authentication checks to ensure users can only export their own data
+5. Include metadata about data collection purposes in the export
+6. Test the export functionality with sample user data
+
+## 4. Implement Input Sanitization for Prompt Injection Prevention [pending]
+### Dependencies: 13.1
+### Description: Add input validation and sanitization to prevent prompt injection attacks in AI-related features.
+### Details:
+1. Identify all user input fields that feed into AI prompts
+2. Implement server-side validation for all inputs
+3. Create sanitization functions to remove potentially harmful content
+4. Add rate limiting for AI-related endpoints
+5. Implement pattern matching to detect potential prompt injection attempts
+6. Test with known prompt injection techniques to verify protection
+
+## 5. Implement CSRF Protection [pending]
+### Dependencies: 13.1, 13.2
+### Description: Add Cross-Site Request Forgery protection to all forms and API endpoints to prevent unauthorized actions.
+### Details:
+1. Generate and validate CSRF tokens for all forms
+2. Implement the Same-Site cookie attribute
+3. Add CSRF middleware to API routes
+4. Update frontend code to include CSRF tokens in requests
+5. Test CSRF protection with simulated attacks
+6. Document the CSRF protection implementation for the development team
+

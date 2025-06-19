@@ -1,0 +1,117 @@
+# Task ID: 9
+# Title: Versioning Lite Implementation
+# Status: pending
+# Dependencies: 4
+# Priority: medium
+# Description: Implement the versioning system with undo stack (50 actions) and daily snapshot rollback with 7-day retention. Create UI for version history browsing and restoration.
+# Details:
+1. Extend editor store with version history functionality
+2. Implement daily snapshot creation and storage in Supabase
+3. Create version history browser UI
+4. Implement snapshot restoration functionality
+5. Add version comparison view
+6. Implement 7-day retention policy for snapshots
+
+Database schema for snapshots:
+```sql
+CREATE TABLE snapshots (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  draft_id UUID REFERENCES drafts(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  metadata JSONB DEFAULT '{}'::jsonb
+);
+
+-- Add index for faster queries
+CREATE INDEX idx_snapshots_draft_id ON snapshots(draft_id);
+```
+
+Snapshot management implementation:
+```typescript
+// lib/snapshot-manager.ts
+import { supabase } from '@/lib/supabase';
+
+export async function createDailySnapshot(draftId: string, content: string): Promise<void> {
+  try {
+    // Check if we already have a snapshot for today
+    const today = new Date().toISOString().split('T')[0];
+    const { data: existingSnapshot } = await supabase
+      .from('snapshots')
+      .select('id')
+      .eq('draft_id', draftId)
+      .gte('created_at', `${today}T00:00:00Z`)
+      .lte('created_at', `${today}T23:59:59Z`)
+      .maybeSingle();
+      
+    if (existingSnapshot) {
+      // Update existing snapshot
+      await supabase
+        .from('snapshots')
+        .update({ content })
+        .eq('id', existingSnapshot.id);
+    } else {
+      // Create new snapshot
+      await supabase
+        .from('snapshots')
+        .insert({
+          draft_id: draftId,
+          content,
+          metadata: {
+            word_count: countWords(content),
+            character_count: content.length
+          }
+        });
+    }
+    
+    // Clean up old snapshots (keep only last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    await supabase
+      .from('snapshots')
+      .delete()
+      .eq('draft_id', draftId)
+      .lt('created_at', sevenDaysAgo.toISOString());
+  } catch (error) {
+    console.error('Error managing snapshots:', error);
+  }
+}
+
+export async function getSnapshots(draftId: string): Promise<Array<{
+  id: string;
+  created_at: string;
+  metadata: any;
+}>> {
+  const { data, error } = await supabase
+    .from('snapshots')
+    .select('id, created_at, metadata')
+    .eq('draft_id', draftId)
+    .order('created_at', { ascending: false });
+    
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getSnapshotContent(snapshotId: string): Promise<string> {
+  const { data, error } = await supabase
+    .from('snapshots')
+    .select('content')
+    .eq('id', snapshotId)
+    .single();
+    
+  if (error) throw error;
+  return data.content;
+}
+
+function countWords(text: string): number {
+  return (text.match(/\b\w+\b/g) || []).length;
+}
+```
+
+# Test Strategy:
+1. Test undo/redo functionality with the 50-action limit
+2. Verify daily snapshot creation and update
+3. Test 7-day retention policy implementation
+4. Verify snapshot restoration functionality
+5. Test version history browser UI
+6. Verify version comparison view accuracy

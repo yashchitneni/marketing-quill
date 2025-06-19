@@ -1,0 +1,122 @@
+# Task ID: 4
+# Title: Editor Core Implementation
+# Status: pending
+# Dependencies: 3
+# Priority: high
+# Description: Implement the core editor functionality with monospace pane, auto-save every 30 seconds, and undo stack (50 actions). Set up the basic editor layout with right sidebar tabs.
+# Details:
+1. Create editor layout with monospace editing pane using JetBrains Mono font
+2. Implement auto-save functionality every 30 seconds
+3. Set up undo stack with 50 action history
+4. Create right sidebar with Grammar, Tone, and SEO tabs
+5. Implement daily snapshot functionality for 7-day retention
+6. Set up Zustand store for editor state management
+
+Editor state management:
+```typescript
+// store/editor-store.ts
+import { create } from 'zustand';
+
+interface EditorState {
+  content: string;
+  history: string[];
+  historyIndex: number;
+  lastSaved: Date | null;
+  isDirty: boolean;
+  setContent: (content: string) => void;
+  undo: () => void;
+  redo: () => void;
+  saveContent: () => Promise<void>;
+}
+
+export const useEditorStore = create<EditorState>((set, get) => ({
+  content: '',
+  history: [],
+  historyIndex: -1,
+  lastSaved: null,
+  isDirty: false,
+  
+  setContent: (content) => {
+    const { history, historyIndex } = get();
+    
+    // Add to history if content changed
+    if (content !== get().content) {
+      const newHistory = history.slice(0, historyIndex + 1).slice(-49);
+      newHistory.push(content);
+      
+      set({
+        content,
+        history: newHistory,
+        historyIndex: newHistory.length - 1,
+        isDirty: true
+      });
+    }
+  },
+  
+  undo: () => {
+    const { historyIndex, history } = get();
+    if (historyIndex > 0) {
+      set({
+        historyIndex: historyIndex - 1,
+        content: history[historyIndex - 1],
+        isDirty: true
+      });
+    }
+  },
+  
+  redo: () => {
+    const { historyIndex, history } = get();
+    if (historyIndex < history.length - 1) {
+      set({
+        historyIndex: historyIndex + 1,
+        content: history[historyIndex + 1],
+        isDirty: true
+      });
+    }
+  },
+  
+  saveContent: async () => {
+    // Implementation for saving to Supabase
+  }
+}));
+```
+
+# Test Strategy:
+1. Unit tests for editor state management (undo/redo)
+2. Test auto-save functionality with timing mocks
+3. Verify history stack maintains max 50 actions
+4. Test daily snapshot creation and retrieval
+5. Performance testing for editor responsiveness with large content
+6. Verify proper state persistence between page refreshes
+
+# Subtasks:
+## 1. Implement Editor Layout and Monospace Editing Pane [pending]
+### Dependencies: None
+### Description: Create the basic editor layout with a monospace text editing area that supports code and note editing.
+### Details:
+Implement a responsive layout for the editor with a monospace font editing pane. Include syntax highlighting capabilities, line numbers, and proper text rendering for code. Ensure the editor has proper keyboard handling and text selection capabilities. Use Zustand for state management of the editor content.
+
+## 2. Develop Auto-save Functionality [pending]
+### Dependencies: 4.1
+### Description: Implement an auto-save system that saves editor content every 30 seconds.
+### Details:
+Create a timer-based auto-save mechanism that persists editor content to local storage every 30 seconds. Include visual indicators for save status (saved/unsaved). Implement debouncing to prevent excessive saves during rapid editing. Add error handling for failed save attempts and recovery options.
+
+## 3. Build Undo/Redo Stack Implementation [pending]
+### Dependencies: 4.1, 4.2
+### Description: Create an undo/redo system with a 50-action history limit.
+### Details:
+Implement a command pattern for tracking editor actions. Maintain a stack of up to 50 actions for undo/redo functionality. Add keyboard shortcuts (Ctrl+Z, Ctrl+Y) for undo/redo operations. Ensure the undo/redo state is preserved during auto-saves and properly integrated with the Zustand state management.
+
+## 4. Create Right Sidebar with Tabs Structure [pending]
+### Dependencies: 4.1
+### Description: Implement a right sidebar with tabbed interface for additional editor functionality.
+### Details:
+Design and implement a collapsible right sidebar with a tabbed interface. Create the tab navigation system and content containers. Ensure responsive behavior for different screen sizes. Prepare the structure to accommodate future features like formatting controls, metadata editing, and other tools.
+
+## 5. Implement Daily Snapshot Functionality [pending]
+### Dependencies: 4.2
+### Description: Create a system for daily snapshots of editor content with 7-day retention.
+### Details:
+Develop a mechanism to create daily snapshots of editor content. Implement a 7-day retention policy that automatically removes older snapshots. Create an interface to view and restore from snapshots. Include metadata with each snapshot (date, time, content length). Ensure snapshots are efficiently stored to minimize storage usage.
+

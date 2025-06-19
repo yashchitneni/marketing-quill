@@ -1,0 +1,160 @@
+# Task ID: 5
+# Title: Grammar and Tone Suggestion Implementation
+# Status: pending
+# Dependencies: 4
+# Priority: high
+# Description: Implement inline grammar and tone suggestions using GPT-4o with less than 2-second latency. Create the suggestion cards in the right sidebar with accept/reject actions.
+# Details:
+1. Set up OpenAI GPT-4o integration via Supabase Edge Functions
+2. Implement streaming completions for faster response times
+3. Create grammar and tone analysis function with strict function-call schemas
+4. Implement suggestion caching in Postgres for cost optimization
+5. Create inline suggestion UI with colored underlines (grammar red, tone blue)
+6. Implement suggestion cards in the right sidebar
+7. Add accept/reject functionality for suggestions
+8. Track suggestion acceptance rate for analytics
+
+Edge Function implementation:
+```typescript
+// supabase/functions/analyze-text/index.ts
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { OpenAI } from 'https://esm.sh/openai@4';
+
+const openai = new OpenAI({
+  apiKey: Deno.env.get('OPENAI_API_KEY')
+});
+
+serve(async (req) => {
+  const { text } = await req.json();
+  
+  // Check cache first
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  );
+  
+  const { data: cachedResult } = await supabase
+    .from('suggestion_cache')
+    .select('result')
+    .eq('text_hash', hashText(text))
+    .single();
+    
+  if (cachedResult) {
+    return new Response(JSON.stringify(cachedResult.result), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+  
+  // Get suggestions from GPT-4o
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
+      { role: 'system', content: 'You are a professional writing assistant that provides grammar and tone suggestions.' },
+      { role: 'user', content: `Analyze this text and provide grammar and tone suggestions: ${text}` }
+    ],
+    functions: [
+      {
+        name: 'provide_suggestions',
+        parameters: {
+          type: 'object',
+          properties: {
+            grammar: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  text: { type: 'string' },
+                  suggestion: { type: 'string' },
+                  reason: { type: 'string' },
+                  startIndex: { type: 'number' },
+                  endIndex: { type: 'number' }
+                }
+              }
+            },
+            tone: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  text: { type: 'string' },
+                  suggestion: { type: 'string' },
+                  reason: { type: 'string' },
+                  startIndex: { type: 'number' },
+                  endIndex: { type: 'number' }
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    function_call: { name: 'provide_suggestions' }
+  });
+  
+  const result = JSON.parse(completion.choices[0].message.function_call.arguments);
+  
+  // Cache the result
+  await supabase
+    .from('suggestion_cache')
+    .insert({
+      text_hash: hashText(text),
+      result,
+      created_at: new Date().toISOString()
+    });
+  
+  return new Response(JSON.stringify(result), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+});
+
+function hashText(text: string): string {
+  // Implementation of text hashing
+}
+```
+
+# Test Strategy:
+1. Measure suggestion latency to ensure <2s response time
+2. Test caching mechanism for repeated text analysis
+3. Verify correct highlighting of grammar and tone issues
+4. Test suggestion acceptance and rejection functionality
+5. Verify tracking of suggestion acceptance rate
+6. Load testing with concurrent users to ensure performance
+
+# Subtasks:
+## 1. OpenAI GPT-4o Integration via Supabase Edge Functions [pending]
+### Dependencies: None
+### Description: Set up the integration between our application and OpenAI's GPT-4o model using Supabase Edge Functions for serverless processing.
+### Details:
+Create a Supabase Edge Function that securely connects to OpenAI's API. Implement proper error handling, rate limiting, and authentication. Set up environment variables for API keys. Test the connection with basic prompts to ensure the integration works correctly before proceeding to more complex implementations.
+
+## 2. Implement Streaming Completions for Faster Response Times [pending]
+### Dependencies: 5.1
+### Description: Develop the streaming completions functionality to reduce perceived latency and provide faster feedback to users.
+### Details:
+Modify the Edge Function to use OpenAI's streaming API. Implement client-side handling of streamed responses. Create a buffering mechanism to collect and process chunks of data. Ensure the UI can progressively display results as they arrive. Optimize for the target of less than 2-second latency for initial suggestions to appear.
+
+## 3. Create Grammar and Tone Analysis Function with Strict Schemas [pending]
+### Dependencies: 5.1, 5.2
+### Description: Develop a specialized function that analyzes text for grammar and tone issues using structured prompts and enforcing strict response schemas.
+### Details:
+Design a prompt engineering system that directs GPT-4o to focus on grammar and tone analysis. Implement JSON schema validation for responses. Create categorization for different types of suggestions (grammar, tone, style). Develop a scoring system to prioritize suggestions. Test with various text samples to ensure accuracy and consistency.
+
+## 4. Implement Suggestion Caching System for Cost Optimization [pending]
+### Dependencies: 5.3
+### Description: Build a caching system to store and reuse suggestions for identical or similar text segments to reduce API calls and optimize costs.
+### Details:
+Design a database schema for storing suggestions. Implement text fingerprinting to identify similar text segments. Create cache invalidation rules based on text similarity thresholds. Set up TTL (time-to-live) for cached suggestions. Develop metrics to track cache hit rates and cost savings. Ensure the caching system doesn't negatively impact response times.
+
+## 5. Develop Inline Suggestion UI with Colored Underlines [pending]
+### Dependencies: 5.3
+### Description: Create the user interface components that highlight text with colored underlines to indicate different types of suggestions.
+### Details:
+Design a color coding system for different suggestion types (e.g., red for grammar, blue for tone). Implement non-intrusive text highlighting that doesn't interfere with editing. Create hover states to preview suggestions. Ensure the highlighting system works with different text formats and lengths. Make the system accessible and compliant with WCAG standards.
+
+## 6. Build Suggestion Cards with Accept/Reject Functionality [pending]
+### Dependencies: 5.3, 5.5
+### Description: Implement interactive suggestion cards that allow users to review, accept, or reject proposed changes to their text.
+### Details:
+Design the UI for suggestion cards that appear when users interact with highlighted text. Implement accept/reject buttons with appropriate actions. Create animations for card appearance and dismissal. Develop the logic to apply accepted changes to the text. Add feedback mechanisms to improve suggestion quality over time. Ensure the cards are responsive and work well on different screen sizes.
+

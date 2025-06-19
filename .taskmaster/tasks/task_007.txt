@@ -1,0 +1,158 @@
+# Task ID: 7
+# Title: SEO Hint Panel Implementation
+# Status: pending
+# Dependencies: 4
+# Priority: medium
+# Description: Implement the SEO tab in the right sidebar with local analysis for keyword density, H-tags, and meta-description quality. Create the live SEO score display in the sticky footer.
+# Details:
+1. Create SEO analysis algorithm for local content evaluation
+2. Implement keyword density calculation
+3. Add H-tag structure analysis
+4. Create meta-description quality checker
+5. Implement live SEO score calculation (0-100)
+6. Design SEO suggestion cards with actionable tips
+7. Add purple underlines for SEO issues in the editor
+8. Create sticky footer with word count and live SEO score
+
+SEO analysis implementation:
+```typescript
+// lib/seo-analyzer.ts
+export interface SEOAnalysis {
+  score: number;
+  keywordDensity: Record<string, number>;
+  headingStructure: {
+    h1Count: number;
+    h2Count: number;
+    h3Count: number;
+    hasProperStructure: boolean;
+  };
+  metaDescription: {
+    length: number;
+    quality: 'poor' | 'average' | 'good';
+    suggestion?: string;
+  };
+  suggestions: Array<{
+    type: 'keyword' | 'heading' | 'meta' | 'content';
+    text: string;
+    priority: 'high' | 'medium' | 'low';
+  }>;
+}
+
+export function analyzeSEO(content: string, targetKeywords?: string[]): SEOAnalysis {
+  // Extract headings using regex
+  const h1Matches = content.match(/<h1>(.+?)<\/h1>/g) || [];
+  const h2Matches = content.match(/<h2>(.+?)<\/h2>/g) || [];
+  const h3Matches = content.match(/<h3>(.+?)<\/h3>/g) || [];
+  
+  // Extract meta description
+  const metaMatch = content.match(/<meta name="description" content="(.+?)"\s*\/?>/i);
+  const metaDescription = metaMatch ? metaMatch[1] : '';
+  
+  // Calculate keyword density
+  const words = content.toLowerCase().match(/\b\w+\b/g) || [];
+  const wordCount = words.length;
+  const keywordDensity: Record<string, number> = {};
+  
+  if (targetKeywords && targetKeywords.length > 0) {
+    targetKeywords.forEach(keyword => {
+      const keywordRegex = new RegExp(`\\b${keyword.toLowerCase()}\\b`, 'g');
+      const matches = content.toLowerCase().match(keywordRegex) || [];
+      keywordDensity[keyword] = (matches.length / wordCount) * 100;
+    });
+  } else {
+    // Find potential keywords based on frequency
+    const wordFrequency: Record<string, number> = {};
+    words.forEach(word => {
+      if (word.length > 3) { // Ignore short words
+        wordFrequency[word] = (wordFrequency[word] || 0) + 1;
+      }
+    });
+    
+    // Get top 5 words by frequency
+    const topKeywords = Object.entries(wordFrequency)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+      
+    topKeywords.forEach(([word, count]) => {
+      keywordDensity[word] = (count / wordCount) * 100;
+    });
+  }
+  
+  // Generate suggestions
+  const suggestions = [];
+  
+  if (h1Matches.length === 0) {
+    suggestions.push({
+      type: 'heading',
+      text: 'Add an H1 heading to improve SEO structure',
+      priority: 'high'
+    });
+  }
+  
+  if (h2Matches.length === 0) {
+    suggestions.push({
+      type: 'heading',
+      text: 'Add H2 headings to break up content and improve readability',
+      priority: 'medium'
+    });
+  }
+  
+  if (metaDescription.length === 0) {
+    suggestions.push({
+      type: 'meta',
+      text: 'Add a meta description to improve search engine visibility',
+      priority: 'high'
+    });
+  } else if (metaDescription.length < 100) {
+    suggestions.push({
+      type: 'meta',
+      text: 'Your meta description is too short. Aim for 120-160 characters',
+      priority: 'medium'
+    });
+  }
+  
+  // Calculate overall score
+  let score = 50; // Base score
+  
+  // Heading structure (up to 20 points)
+  if (h1Matches.length === 1) score += 10;
+  if (h2Matches.length >= 2) score += 5;
+  if (h3Matches.length >= 1) score += 5;
+  
+  // Meta description (up to 15 points)
+  if (metaDescription.length > 0) score += 5;
+  if (metaDescription.length >= 120 && metaDescription.length <= 160) score += 10;
+  
+  // Keyword density (up to 15 points)
+  const hasGoodKeywordDensity = Object.values(keywordDensity).some(density => 
+    density >= 1 && density <= 3
+  );
+  if (hasGoodKeywordDensity) score += 15;
+  
+  return {
+    score: Math.min(100, score),
+    keywordDensity,
+    headingStructure: {
+      h1Count: h1Matches.length,
+      h2Count: h2Matches.length,
+      h3Count: h3Matches.length,
+      hasProperStructure: h1Matches.length === 1 && h2Matches.length >= 1
+    },
+    metaDescription: {
+      length: metaDescription.length,
+      quality: metaDescription.length === 0 ? 'poor' : 
+               metaDescription.length >= 120 && metaDescription.length <= 160 ? 'good' : 'average'
+    },
+    suggestions
+  };
+}
+```
+
+# Test Strategy:
+1. Test SEO analysis with various content types
+2. Verify keyword density calculation accuracy
+3. Test heading structure analysis
+4. Verify meta description quality assessment
+5. Test SEO score calculation for different content qualities
+6. Verify real-time updates of SEO score in the UI
+7. Test suggestion card rendering and actionability

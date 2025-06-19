@@ -1,0 +1,54 @@
+# Task ID: 2
+# Title: Landing Page and Sign-up Implementation
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Create the marketing landing page with product GIF, sign-up form, pricing toggle, and 'Start Free Trial' CTA. Implement the onboarding flow after sign-up.
+# Details:
+1. Design landing page with indigo (#6366F1) color scheme and glass cards
+2. Create split hero section with product GIF on one side and sign-up form on the other
+3. Implement pricing toggle component
+4. Create 'Start Free Trial' CTA button connected to auth flow
+5. Design and implement onboarding flow for brand voice setup
+6. Create redirect to Dashboard after successful onboarding
+
+Component structure:
+```tsx
+// pages/index.tsx
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white">
+      <Navbar />
+      <HeroSection />
+      <FeaturesSection />
+      <PricingSection />
+      <TestimonialsSection />
+      <Footer />
+    </div>
+  );
+}
+
+// components/HeroSection.tsx
+function HeroSection() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-16 px-4 max-w-7xl mx-auto">
+      <div className="flex flex-col justify-center">
+        <h1 className="text-4xl font-bold">AI Copy Copilot for SaaS Marketing Managers</h1>
+        <p className="mt-4 text-lg text-gray-600">Streamline your copywriting with AI-driven suggestions</p>
+        <Button className="mt-8 bg-indigo-600 hover:bg-indigo-700">Start Free Trial</Button>
+      </div>
+      <div className="rounded-lg overflow-hidden shadow-xl bg-white/80 backdrop-blur-sm">
+        <Image src="/demo.gif" alt="Product demo" width={600} height={400} />
+      </div>
+    </div>
+  );
+}
+```
+
+# Test Strategy:
+1. Responsive design testing across devices (mobile, tablet, desktop)
+2. A/B testing for CTA button placement and color
+3. User flow testing from landing page to sign-up completion
+4. Verify form validation for sign-up fields
+5. Test onboarding flow completion and proper data storage
+6. Verify proper redirect to Dashboard after onboarding

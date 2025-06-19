@@ -1,0 +1,199 @@
+# Task ID: 12
+# Title: Performance Optimization
+# Status: pending
+# Dependencies: 5, 6, 7
+# Priority: medium
+# Description: Implement performance optimizations to ensure suggestion latency is less than 2 seconds and the application can support 100 concurrent free-tier users.
+# Details:
+1. Implement caching for AI suggestions
+2. Set up Edge Functions pre-warming
+3. Optimize database queries with proper indexing
+4. Implement streaming completions for AI responses
+5. Add request throttling for free-tier users
+6. Optimize React rendering with memoization
+7. Implement code splitting for better load times
+
+Performance optimization implementation:
+```typescript
+// lib/cache-manager.ts
+import { supabase } from '@/lib/supabase';
+import { createHash } from 'crypto';
+
+interface CacheOptions {
+  ttl?: number; // Time to live in seconds
+  namespace?: string;
+}
+
+export class CacheManager {
+  private namespace: string;
+  private ttl: number;
+  
+  constructor(options: CacheOptions = {}) {
+    this.namespace = options.namespace || 'default';
+    this.ttl = options.ttl || 3600; // Default: 1 hour
+  }
+  
+  private generateKey(key: string): string {
+    return createHash('md5').update(`${this.namespace}:${key}`).digest('hex');
+  }
+  
+  async get<T>(key: string): Promise<T | null> {
+    const cacheKey = this.generateKey(key);
+    
+    const { data, error } = await supabase
+      .from('cache')
+      .select('value, created_at')
+      .eq('key', cacheKey)
+      .single();
+      
+    if (error || !data) return null;
+    
+    // Check if cache is expired
+    const createdAt = new Date(data.created_at).getTime();
+    const now = Date.now();
+    const age = (now - createdAt) / 1000; // in seconds
+    
+    if (age > this.ttl) {
+      // Cache expired, delete it
+      await this.delete(key);
+      return null;
+    }
+    
+    try {
+      return JSON.parse(data.value) as T;
+    } catch (e) {
+      return null;
+    }
+  }
+  
+  async set<T>(key: string, value: T): Promise<void> {
+    const cacheKey = this.generateKey(key);
+    const stringValue = JSON.stringify(value);
+    
+    const { error } = await supabase
+      .from('cache')
+      .upsert({
+        key: cacheKey,
+        value: stringValue,
+        created_at: new Date().toISOString()
+      });
+      
+    if (error) console.error('Cache set error:', error);
+  }
+  
+  async delete(key: string): Promise<void> {
+    const cacheKey = this.generateKey(key);
+    
+    await supabase
+      .from('cache')
+      .delete()
+      .eq('key', cacheKey);
+  }
+  
+  async clear(): Promise<void> {
+    // Delete all cache entries for this namespace
+    const allKeys = await supabase
+      .from('cache')
+      .select('key')
+      .like('key', `${this.namespace}:%`);
+      
+    if (allKeys.data && allKeys.data.length > 0) {
+      const keys = allKeys.data.map(item => item.key);
+      
+      await supabase
+        .from('cache')
+        .delete()
+        .in('key', keys);
+    }
+  }
+}
+
+// Create specialized cache instances
+export const suggestionCache = new CacheManager({ 
+  namespace: 'suggestions', 
+  ttl: 86400 // 24 hours
+});
+
+export const seoCache = new CacheManager({ 
+  namespace: 'seo', 
+  ttl: 3600 // 1 hour
+});
+```
+
+Request throttling implementation:
+```typescript
+// middleware.ts
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { supabase } from '@/lib/supabase-server';
+
+// Rate limit configuration
+const RATE_LIMIT_WINDOW = 60; // 1 minute in seconds
+const FREE_TIER_LIMIT = 10; // 10 requests per minute
+const PAID_TIER_LIMIT = 60; // 60 requests per minute
+
+export async function middleware(request: NextRequest) {
+  // Only apply rate limiting to API routes
+  if (!request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
+  
+  // Get user from session
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id;
+  
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+  
+  // Get user subscription tier
+  const { data: subscription } = await supabase
+    .from('subscriptions')
+    .select('tier')
+    .eq('user_id', userId)
+    .single();
+    
+  const tier = subscription?.tier || 'free';
+  const rateLimit = tier === 'free' ? FREE_TIER_LIMIT : PAID_TIER_LIMIT;
+  
+  // Check rate limit
+  const now = Math.floor(Date.now() / 1000);
+  const windowStart = now - RATE_LIMIT_WINDOW;
+  
+  const { count } = await supabase
+    .from('api_requests')
+    .select('id', { count: 'exact' })
+    .eq('user_id', userId)
+    .gte('timestamp', new Date(windowStart * 1000).toISOString());
+    
+  if (count >= rateLimit) {
+    return NextResponse.json(
+      { error: 'Rate limit exceeded' },
+      { status: 429 }
+    );
+  }
+  
+  // Record this request
+  await supabase
+    .from('api_requests')
+    .insert({
+      user_id: userId,
+      path: request.nextUrl.pathname,
+      timestamp: new Date().toISOString()
+    });
+  
+  return NextResponse.next();
+}
+```
+
+# Test Strategy:
+1. Measure suggestion latency under various load conditions
+2. Test caching effectiveness with repeated requests
+3. Perform load testing with simulated concurrent users
+4. Verify rate limiting functionality for free-tier users
+5. Measure memory usage and optimize if needed
+6. Test database query performance with large datasets
+7. Verify Edge Function pre-warming effectiveness

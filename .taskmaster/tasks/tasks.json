@@ -1,0 +1,438 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Project Setup and Authentication Implementation",
+        "description": "Set up the Next.js 15 project with TypeScript, Tailwind CSS, and shadcn/ui. Implement authentication using Supabase Auth with magic-link and Google OAuth support.",
+        "details": "1. Initialize Next.js 15 project with TypeScript\n2. Configure Tailwind CSS and shadcn/ui components\n3. Set up Supabase client\n4. Implement magic-link authentication flow\n5. Implement Google OAuth authentication\n6. Create Owner/Editor role definitions in Supabase\n7. Set up authentication context provider with Zustand\n8. Implement protected routes\n9. Create sign-out functionality\n\nCode structure:\n```typescript\n// auth-provider.ts\nimport { create } from 'zustand';\nimport { supabase } from '@/lib/supabase';\n\ninterface AuthState {\n  user: User | null;\n  role: 'owner' | 'editor' | null;\n  isLoading: boolean;\n  signIn: (email: string) => Promise<void>;\n  signInWithGoogle: () => Promise<void>;\n  signOut: () => Promise<void>;\n}\n\nexport const useAuthStore = create<AuthState>((set) => ({\n  // Implementation details\n}));\n```",
+        "testStrategy": "1. Unit tests for auth store functions\n2. Integration tests for authentication flows\n3. E2E test for sign-up, login, and role verification\n4. Test magic-link functionality with test email accounts\n5. Test Google OAuth with test accounts\n6. Verify proper role assignment and permissions",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize Next.js Project with TypeScript and UI Libraries",
+            "description": "Set up a new Next.js 15 project with TypeScript configuration and install necessary UI libraries.",
+            "dependencies": [],
+            "details": "Create a new Next.js project using 'create-next-app' with TypeScript template. Configure tsconfig.json for strict type checking. Install and set up UI libraries (Tailwind CSS, shadcn/ui). Set up project folder structure following best practices. Initialize Git repository and create initial commit.",
+            "status": "done"
+          },
+          {
+            "id": 2,
+            "title": "Configure Supabase Client and Environment",
+            "description": "Set up Supabase client configuration and environment variables for the project.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a Supabase project in the dashboard. Set up environment variables (.env.local) for Supabase URL and API keys. Create a utils/supabase.ts file to initialize the Supabase client. Configure types for Supabase database schema using generated types. Test the connection to ensure proper configuration.",
+            "status": "done"
+          },
+          {
+            "id": 3,
+            "title": "Implement Authentication Flows",
+            "description": "Develop authentication flows for magic-link email login and Google OAuth.",
+            "dependencies": [
+              2
+            ],
+            "details": "Create authentication API routes for sign-in and sign-up. Implement magic-link email authentication flow with email templates. Set up Google OAuth provider in Supabase dashboard and implement the OAuth flow in the application. Create sign-in, sign-up, and sign-out UI components. Add form validation for authentication inputs.",
+            "status": "done"
+          },
+          {
+            "id": 4,
+            "title": "Implement Role Management and Protected Routes",
+            "description": "Set up role-based access control and protected routes in the application.",
+            "dependencies": [
+              3
+            ],
+            "details": "Define user roles in Supabase (admin, user, etc.). Create middleware for route protection based on authentication status and user roles. Implement higher-order components or hooks for role-based UI rendering. Set up redirect logic for unauthenticated or unauthorized access attempts. Test different user roles and access patterns.",
+            "status": "done"
+          },
+          {
+            "id": 5,
+            "title": "Create Authentication State Management with Zustand",
+            "description": "Implement global authentication state management using Zustand.",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "Create a Zustand store for authentication state. Implement actions for login, logout, and session management. Add persistence for auth state across page refreshes. Connect authentication state to protected routes and UI components. Implement loading states and error handling for authentication processes.",
+            "status": "done"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Landing Page and Sign-up Implementation",
+        "description": "Create the marketing landing page with product GIF, sign-up form, pricing toggle, and 'Start Free Trial' CTA. Implement the onboarding flow after sign-up.",
+        "details": "1. Design landing page with indigo (#6366F1) color scheme and glass cards\n2. Create split hero section with product GIF on one side and sign-up form on the other\n3. Implement pricing toggle component\n4. Create 'Start Free Trial' CTA button connected to auth flow\n5. Design and implement onboarding flow for brand voice setup\n6. Create redirect to Dashboard after successful onboarding\n\nComponent structure:\n```tsx\n// pages/index.tsx\nexport default function LandingPage() {\n  return (\n    <div className=\"min-h-screen bg-gradient-to-br from-indigo-50 to-white\">\n      <Navbar />\n      <HeroSection />\n      <FeaturesSection />\n      <PricingSection />\n      <TestimonialsSection />\n      <Footer />\n    </div>\n  );\n}\n\n// components/HeroSection.tsx\nfunction HeroSection() {\n  return (\n    <div className=\"grid grid-cols-1 md:grid-cols-2 gap-8 py-16 px-4 max-w-7xl mx-auto\">\n      <div className=\"flex flex-col justify-center\">\n        <h1 className=\"text-4xl font-bold\">AI Copy Copilot for SaaS Marketing Managers</h1>\n        <p className=\"mt-4 text-lg text-gray-600\">Streamline your copywriting with AI-driven suggestions</p>\n        <Button className=\"mt-8 bg-indigo-600 hover:bg-indigo-700\">Start Free Trial</Button>\n      </div>\n      <div className=\"rounded-lg overflow-hidden shadow-xl bg-white/80 backdrop-blur-sm\">\n        <Image src=\"/demo.gif\" alt=\"Product demo\" width={600} height={400} />\n      </div>\n    </div>\n  );\n}\n```",
+        "testStrategy": "1. Responsive design testing across devices (mobile, tablet, desktop)\n2. A/B testing for CTA button placement and color\n3. User flow testing from landing page to sign-up completion\n4. Verify form validation for sign-up fields\n5. Test onboarding flow completion and proper data storage\n6. Verify proper redirect to Dashboard after onboarding",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Dashboard Implementation",
+        "description": "Create the dashboard interface showing a list of drafts with title, channel icon, optimization score, and last edited timestamp. Implement the 'New Draft' button.",
+        "details": "1. Design dashboard layout with top bar (workspace switch, New Draft button)\n2. Create collapsible icon sidebar\n3. Implement draft list component with card UI\n4. Display title, channel icon, optimization score (0-100), and last edited timestamp for each draft\n5. Add sorting and filtering options\n6. Implement 'New Draft' button functionality\n7. Create Supabase table structure for drafts\n\nDatabase schema:\n```sql\nCREATE TABLE drafts (\n  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),\n  user_id UUID REFERENCES auth.users(id) NOT NULL,\n  title TEXT NOT NULL,\n  content TEXT,\n  channel TEXT,\n  optimization_score INTEGER DEFAULT 0,\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n);\n```\n\nComponent structure:\n```tsx\n// components/Dashboard.tsx\nexport default function Dashboard() {\n  const [drafts, setDrafts] = useState<Draft[]>([]);\n  \n  useEffect(() => {\n    // Fetch drafts from Supabase\n    const fetchDrafts = async () => {\n      const { data, error } = await supabase\n        .from('drafts')\n        .select('*')\n        .order('updated_at', { ascending: false });\n        \n      if (data) setDrafts(data);\n    };\n    \n    fetchDrafts();\n  }, []);\n  \n  return (\n    <div className=\"p-6\">\n      <div className=\"flex justify-between items-center mb-8\">\n        <h1 className=\"text-2xl font-bold\">My Drafts</h1>\n        <Button onClick={createNewDraft}>New Draft</Button>\n      </div>\n      \n      <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\">\n        {drafts.map(draft => (\n          <DraftCard key={draft.id} draft={draft} />\n        ))}\n      </div>\n    </div>\n  );\n}\n```",
+        "testStrategy": "1. Unit tests for draft fetching and creation\n2. Integration tests for dashboard rendering with mock data\n3. Test sorting and filtering functionality\n4. Verify optimization score display\n5. Test 'New Draft' button creates a new draft in the database\n6. Verify real-time updates when drafts are modified",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Editor Core Implementation",
+        "description": "Implement the core editor functionality with monospace pane, auto-save every 30 seconds, and undo stack (50 actions). Set up the basic editor layout with right sidebar tabs.",
+        "details": "1. Create editor layout with monospace editing pane using JetBrains Mono font\n2. Implement auto-save functionality every 30 seconds\n3. Set up undo stack with 50 action history\n4. Create right sidebar with Grammar, Tone, and SEO tabs\n5. Implement daily snapshot functionality for 7-day retention\n6. Set up Zustand store for editor state management\n\nEditor state management:\n```typescript\n// store/editor-store.ts\nimport { create } from 'zustand';\n\ninterface EditorState {\n  content: string;\n  history: string[];\n  historyIndex: number;\n  lastSaved: Date | null;\n  isDirty: boolean;\n  setContent: (content: string) => void;\n  undo: () => void;\n  redo: () => void;\n  saveContent: () => Promise<void>;\n}\n\nexport const useEditorStore = create<EditorState>((set, get) => ({\n  content: '',\n  history: [],\n  historyIndex: -1,\n  lastSaved: null,\n  isDirty: false,\n  \n  setContent: (content) => {\n    const { history, historyIndex } = get();\n    \n    // Add to history if content changed\n    if (content !== get().content) {\n      const newHistory = history.slice(0, historyIndex + 1).slice(-49);\n      newHistory.push(content);\n      \n      set({\n        content,\n        history: newHistory,\n        historyIndex: newHistory.length - 1,\n        isDirty: true\n      });\n    }\n  },\n  \n  undo: () => {\n    const { historyIndex, history } = get();\n    if (historyIndex > 0) {\n      set({\n        historyIndex: historyIndex - 1,\n        content: history[historyIndex - 1],\n        isDirty: true\n      });\n    }\n  },\n  \n  redo: () => {\n    const { historyIndex, history } = get();\n    if (historyIndex < history.length - 1) {\n      set({\n        historyIndex: historyIndex + 1,\n        content: history[historyIndex + 1],\n        isDirty: true\n      });\n    }\n  },\n  \n  saveContent: async () => {\n    // Implementation for saving to Supabase\n  }\n}));\n```",
+        "testStrategy": "1. Unit tests for editor state management (undo/redo)\n2. Test auto-save functionality with timing mocks\n3. Verify history stack maintains max 50 actions\n4. Test daily snapshot creation and retrieval\n5. Performance testing for editor responsiveness with large content\n6. Verify proper state persistence between page refreshes",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Editor Layout and Monospace Editing Pane",
+            "description": "Create the basic editor layout with a monospace text editing area that supports code and note editing.",
+            "dependencies": [],
+            "details": "Implement a responsive layout for the editor with a monospace font editing pane. Include syntax highlighting capabilities, line numbers, and proper text rendering for code. Ensure the editor has proper keyboard handling and text selection capabilities. Use Zustand for state management of the editor content.",
+            "status": "done"
+          },
+          {
+            "id": 2,
+            "title": "Develop Auto-save Functionality",
+            "description": "Implement an auto-save system that saves editor content every 30 seconds.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a timer-based auto-save mechanism that persists editor content to local storage every 30 seconds. Include visual indicators for save status (saved/unsaved). Implement debouncing to prevent excessive saves during rapid editing. Add error handling for failed save attempts and recovery options.",
+            "status": "done"
+          },
+          {
+            "id": 3,
+            "title": "Build Undo/Redo Stack Implementation",
+            "description": "Create an undo/redo system with a 50-action history limit.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Implement a command pattern for tracking editor actions. Maintain a stack of up to 50 actions for undo/redo functionality. Add keyboard shortcuts (Ctrl+Z, Ctrl+Y) for undo/redo operations. Ensure the undo/redo state is preserved during auto-saves and properly integrated with the Zustand state management.",
+            "status": "done"
+          },
+          {
+            "id": 4,
+            "title": "Create Right Sidebar with Tabs Structure",
+            "description": "Implement a right sidebar with tabbed interface for additional editor functionality.",
+            "dependencies": [
+              1
+            ],
+            "details": "Design and implement a collapsible right sidebar with a tabbed interface. Create the tab navigation system and content containers. Ensure responsive behavior for different screen sizes. Prepare the structure to accommodate future features like formatting controls, metadata editing, and other tools.",
+            "status": "done"
+          },
+          {
+            "id": 5,
+            "title": "Implement Daily Snapshot Functionality",
+            "description": "Create a system for daily snapshots of editor content with 7-day retention.",
+            "dependencies": [
+              2
+            ],
+            "details": "Develop a mechanism to create daily snapshots of editor content. Implement a 7-day retention policy that automatically removes older snapshots. Create an interface to view and restore from snapshots. Include metadata with each snapshot (date, time, content length). Ensure snapshots are efficiently stored to minimize storage usage.",
+            "status": "done"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Grammar and Tone Suggestion Implementation",
+        "description": "Implement inline grammar and tone suggestions using GPT-4o with less than 2-second latency. Create the suggestion cards in the right sidebar with accept/reject actions.",
+        "details": "1. Set up OpenAI GPT-4o integration via Supabase Edge Functions\n2. Implement streaming completions for faster response times\n3. Create grammar and tone analysis function with strict function-call schemas\n4. Implement suggestion caching in Postgres for cost optimization\n5. Create inline suggestion UI with colored underlines (grammar red, tone blue)\n6. Implement suggestion cards in the right sidebar\n7. Add accept/reject functionality for suggestions\n8. Track suggestion acceptance rate for analytics\n\nEdge Function implementation:\n```typescript\n// supabase/functions/analyze-text/index.ts\nimport { serve } from 'https://deno.land/std@0.168.0/http/server.ts';\nimport { createClient } from 'https://esm.sh/@supabase/supabase-js@2';\nimport { OpenAI } from 'https://esm.sh/openai@4';\n\nconst openai = new OpenAI({\n  apiKey: Deno.env.get('OPENAI_API_KEY')\n});\n\nserve(async (req) => {\n  const { text } = await req.json();\n  \n  // Check cache first\n  const supabase = createClient(\n    Deno.env.get('SUPABASE_URL') ?? '',\n    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''\n  );\n  \n  const { data: cachedResult } = await supabase\n    .from('suggestion_cache')\n    .select('result')\n    .eq('text_hash', hashText(text))\n    .single();\n    \n  if (cachedResult) {\n    return new Response(JSON.stringify(cachedResult.result), {\n      headers: { 'Content-Type': 'application/json' }\n    });\n  }\n  \n  // Get suggestions from GPT-4o\n  const completion = await openai.chat.completions.create({\n    model: 'gpt-4o',\n    messages: [\n      { role: 'system', content: 'You are a professional writing assistant that provides grammar and tone suggestions.' },\n      { role: 'user', content: `Analyze this text and provide grammar and tone suggestions: ${text}` }\n    ],\n    functions: [\n      {\n        name: 'provide_suggestions',\n        parameters: {\n          type: 'object',\n          properties: {\n            grammar: {\n              type: 'array',\n              items: {\n                type: 'object',\n                properties: {\n                  text: { type: 'string' },\n                  suggestion: { type: 'string' },\n                  reason: { type: 'string' },\n                  startIndex: { type: 'number' },\n                  endIndex: { type: 'number' }\n                }\n              }\n            },\n            tone: {\n              type: 'array',\n              items: {\n                type: 'object',\n                properties: {\n                  text: { type: 'string' },\n                  suggestion: { type: 'string' },\n                  reason: { type: 'string' },\n                  startIndex: { type: 'number' },\n                  endIndex: { type: 'number' }\n                }\n              }\n            }\n          }\n        }\n      }\n    ],\n    function_call: { name: 'provide_suggestions' }\n  });\n  \n  const result = JSON.parse(completion.choices[0].message.function_call.arguments);\n  \n  // Cache the result\n  await supabase\n    .from('suggestion_cache')\n    .insert({\n      text_hash: hashText(text),\n      result,\n      created_at: new Date().toISOString()\n    });\n  \n  return new Response(JSON.stringify(result), {\n    headers: { 'Content-Type': 'application/json' }\n  });\n});\n\nfunction hashText(text: string): string {\n  // Implementation of text hashing\n}\n```",
+        "testStrategy": "1. Measure suggestion latency to ensure <2s response time\n2. Test caching mechanism for repeated text analysis\n3. Verify correct highlighting of grammar and tone issues\n4. Test suggestion acceptance and rejection functionality\n5. Verify tracking of suggestion acceptance rate\n6. Load testing with concurrent users to ensure performance",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "OpenAI GPT-4o Integration via Supabase Edge Functions",
+            "description": "Set up the integration between our application and OpenAI's GPT-4o model using Supabase Edge Functions for serverless processing.",
+            "dependencies": [],
+            "details": "Create a Supabase Edge Function that securely connects to OpenAI's API. Implement proper error handling, rate limiting, and authentication. Set up environment variables for API keys. Test the connection with basic prompts to ensure the integration works correctly before proceeding to more complex implementations.",
+            "status": "done"
+          },
+          {
+            "id": 2,
+            "title": "Implement Streaming Completions for Faster Response Times",
+            "description": "Develop the streaming completions functionality to reduce perceived latency and provide faster feedback to users.",
+            "dependencies": [
+              1
+            ],
+            "details": "Modify the Edge Function to use OpenAI's streaming API. Implement client-side handling of streamed responses. Create a buffering mechanism to collect and process chunks of data. Ensure the UI can progressively display results as they arrive. Optimize for the target of less than 2-second latency for initial suggestions to appear.",
+            "status": "done"
+          },
+          {
+            "id": 3,
+            "title": "Create Grammar and Tone Analysis Function with Strict Schemas",
+            "description": "Develop a specialized function that analyzes text for grammar and tone issues using structured prompts and enforcing strict response schemas.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Design a prompt engineering system that directs GPT-4o to focus on grammar and tone analysis. Implement JSON schema validation for responses. Create categorization for different types of suggestions (grammar, tone, style). Develop a scoring system to prioritize suggestions. Test with various text samples to ensure accuracy and consistency.",
+            "status": "done"
+          },
+          {
+            "id": 4,
+            "title": "Implement Suggestion Caching System for Cost Optimization",
+            "description": "Build a caching system to store and reuse suggestions for identical or similar text segments to reduce API calls and optimize costs.",
+            "dependencies": [
+              3
+            ],
+            "details": "Design a database schema for storing suggestions. Implement text fingerprinting to identify similar text segments. Create cache invalidation rules based on text similarity thresholds. Set up TTL (time-to-live) for cached suggestions. Develop metrics to track cache hit rates and cost savings. Ensure the caching system doesn't negatively impact response times.",
+            "status": "done"
+          },
+          {
+            "id": 5,
+            "title": "Develop Inline Suggestion UI with Colored Underlines",
+            "description": "Create the user interface components that highlight text with colored underlines to indicate different types of suggestions.",
+            "dependencies": [
+              3
+            ],
+            "details": "Design a color coding system for different suggestion types (e.g., red for grammar, blue for tone). Implement non-intrusive text highlighting that doesn't interfere with editing. Create hover states to preview suggestions. Ensure the highlighting system works with different text formats and lengths. Make the system accessible and compliant with WCAG standards.",
+            "status": "done"
+          },
+          {
+            "id": 6,
+            "title": "Build Suggestion Cards with Accept/Reject Functionality",
+            "description": "Implement interactive suggestion cards that allow users to review, accept, or reject proposed changes to their text.",
+            "dependencies": [
+              3,
+              5
+            ],
+            "details": "Design the UI for suggestion cards that appear when users interact with highlighted text. Implement accept/reject buttons with appropriate actions. Create animations for card appearance and dismissal. Develop the logic to apply accepted changes to the text. Add feedback mechanisms to improve suggestion quality over time. Ensure the cards are responsive and work well on different screen sizes.",
+            "status": "done"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Subject-Line Optimizer Implementation",
+        "description": "Create the Subject-Line Optimizer modal with A/B variants and open-rate gauge. Implement functionality to generate subject line alternatives with predicted open-rate scores.",
+        "details": "1. Design Subject-Line Optimizer modal with two-column variant list\n2. Implement open-rate gauge meter visualization\n3. Create GPT-4o prompt for generating subject line variants\n4. Implement prediction model for open-rate scoring\n5. Add functionality to insert selected subject line into the editor\n6. Track subject line selection for analytics\n\nSubject line generation function:\n```typescript\n// lib/subject-line-optimizer.ts\nimport { supabase } from '@/lib/supabase';\n\nexport async function generateSubjectLines(content: string, industry?: string): Promise<Array<{text: string, score: number}>> {\n  try {\n    const { data, error } = await supabase.functions.invoke('generate-subject-lines', {\n      body: { content, industry }\n    });\n    \n    if (error) throw error;\n    return data;\n  } catch (error) {\n    console.error('Error generating subject lines:', error);\n    return [];\n  }\n}\n\n// components/SubjectLineModal.tsx\nexport function SubjectLineModal({ content, isOpen, onClose, onSelect }) {\n  const [variants, setVariants] = useState<Array<{text: string, score: number}>>([]);\n  const [isLoading, setIsLoading] = useState(false);\n  \n  useEffect(() => {\n    if (isOpen) {\n      setIsLoading(true);\n      generateSubjectLines(content)\n        .then(results => {\n          setVariants(results);\n          setIsLoading(false);\n        });\n    }\n  }, [isOpen, content]);\n  \n  return (\n    <Dialog open={isOpen} onOpenChange={onClose}>\n      <DialogContent className=\"sm:max-w-[600px]\">\n        <DialogHeader>\n          <DialogTitle>Subject Line Optimizer</DialogTitle>\n          <DialogDescription>\n            Choose a subject line variant with the highest predicted open rate.\n          </DialogDescription>\n        </DialogHeader>\n        \n        {isLoading ? (\n          <div className=\"flex justify-center py-8\">\n            <Spinner />\n          </div>\n        ) : (\n          <div className=\"grid grid-cols-1 md:grid-cols-2 gap-4 py-4\">\n            {variants.map((variant, index) => (\n              <SubjectLineCard\n                key={index}\n                text={variant.text}\n                score={variant.score}\n                onSelect={() => onSelect(variant.text)}\n              />\n            ))}\n          </div>\n        )}\n      </DialogContent>\n    </Dialog>\n  );\n}\n```",
+        "testStrategy": "1. Test subject line generation with various content types\n2. Verify open-rate prediction model accuracy\n3. Test modal UI responsiveness and accessibility\n4. Verify insertion of selected subject line into editor\n5. Test caching of generated subject lines\n6. Measure generation time to ensure acceptable performance",
+        "priority": "medium",
+        "dependencies": [
+          4,
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "SEO Hint Panel Implementation",
+        "description": "Implement the SEO tab in the right sidebar with local analysis for keyword density, H-tags, and meta-description quality. Create the live SEO score display in the sticky footer.",
+        "details": "1. Create SEO analysis algorithm for local content evaluation\n2. Implement keyword density calculation\n3. Add H-tag structure analysis\n4. Create meta-description quality checker\n5. Implement live SEO score calculation (0-100)\n6. Design SEO suggestion cards with actionable tips\n7. Add purple underlines for SEO issues in the editor\n8. Create sticky footer with word count and live SEO score\n\nSEO analysis implementation:\n```typescript\n// lib/seo-analyzer.ts\nexport interface SEOAnalysis {\n  score: number;\n  keywordDensity: Record<string, number>;\n  headingStructure: {\n    h1Count: number;\n    h2Count: number;\n    h3Count: number;\n    hasProperStructure: boolean;\n  };\n  metaDescription: {\n    length: number;\n    quality: 'poor' | 'average' | 'good';\n    suggestion?: string;\n  };\n  suggestions: Array<{\n    type: 'keyword' | 'heading' | 'meta' | 'content';\n    text: string;\n    priority: 'high' | 'medium' | 'low';\n  }>;\n}\n\nexport function analyzeSEO(content: string, targetKeywords?: string[]): SEOAnalysis {\n  // Extract headings using regex\n  const h1Matches = content.match(/<h1>(.+?)<\\/h1>/g) || [];\n  const h2Matches = content.match(/<h2>(.+?)<\\/h2>/g) || [];\n  const h3Matches = content.match(/<h3>(.+?)<\\/h3>/g) || [];\n  \n  // Extract meta description\n  const metaMatch = content.match(/<meta name=\"description\" content=\"(.+?)\"\\s*\\/?>/i);\n  const metaDescription = metaMatch ? metaMatch[1] : '';\n  \n  // Calculate keyword density\n  const words = content.toLowerCase().match(/\\b\\w+\\b/g) || [];\n  const wordCount = words.length;\n  const keywordDensity: Record<string, number> = {};\n  \n  if (targetKeywords && targetKeywords.length > 0) {\n    targetKeywords.forEach(keyword => {\n      const keywordRegex = new RegExp(`\\\\b${keyword.toLowerCase()}\\\\b`, 'g');\n      const matches = content.toLowerCase().match(keywordRegex) || [];\n      keywordDensity[keyword] = (matches.length / wordCount) * 100;\n    });\n  } else {\n    // Find potential keywords based on frequency\n    const wordFrequency: Record<string, number> = {};\n    words.forEach(word => {\n      if (word.length > 3) { // Ignore short words\n        wordFrequency[word] = (wordFrequency[word] || 0) + 1;\n      }\n    });\n    \n    // Get top 5 words by frequency\n    const topKeywords = Object.entries(wordFrequency)\n      .sort((a, b) => b[1] - a[1])\n      .slice(0, 5);\n      \n    topKeywords.forEach(([word, count]) => {\n      keywordDensity[word] = (count / wordCount) * 100;\n    });\n  }\n  \n  // Generate suggestions\n  const suggestions = [];\n  \n  if (h1Matches.length === 0) {\n    suggestions.push({\n      type: 'heading',\n      text: 'Add an H1 heading to improve SEO structure',\n      priority: 'high'\n    });\n  }\n  \n  if (h2Matches.length === 0) {\n    suggestions.push({\n      type: 'heading',\n      text: 'Add H2 headings to break up content and improve readability',\n      priority: 'medium'\n    });\n  }\n  \n  if (metaDescription.length === 0) {\n    suggestions.push({\n      type: 'meta',\n      text: 'Add a meta description to improve search engine visibility',\n      priority: 'high'\n    });\n  } else if (metaDescription.length < 100) {\n    suggestions.push({\n      type: 'meta',\n      text: 'Your meta description is too short. Aim for 120-160 characters',\n      priority: 'medium'\n    });\n  }\n  \n  // Calculate overall score\n  let score = 50; // Base score\n  \n  // Heading structure (up to 20 points)\n  if (h1Matches.length === 1) score += 10;\n  if (h2Matches.length >= 2) score += 5;\n  if (h3Matches.length >= 1) score += 5;\n  \n  // Meta description (up to 15 points)\n  if (metaDescription.length > 0) score += 5;\n  if (metaDescription.length >= 120 && metaDescription.length <= 160) score += 10;\n  \n  // Keyword density (up to 15 points)\n  const hasGoodKeywordDensity = Object.values(keywordDensity).some(density => \n    density >= 1 && density <= 3\n  );\n  if (hasGoodKeywordDensity) score += 15;\n  \n  return {\n    score: Math.min(100, score),\n    keywordDensity,\n    headingStructure: {\n      h1Count: h1Matches.length,\n      h2Count: h2Matches.length,\n      h3Count: h3Matches.length,\n      hasProperStructure: h1Matches.length === 1 && h2Matches.length >= 1\n    },\n    metaDescription: {\n      length: metaDescription.length,\n      quality: metaDescription.length === 0 ? 'poor' : \n               metaDescription.length >= 120 && metaDescription.length <= 160 ? 'good' : 'average'\n    },\n    suggestions\n  };\n}\n```",
+        "testStrategy": "1. Test SEO analysis with various content types\n2. Verify keyword density calculation accuracy\n3. Test heading structure analysis\n4. Verify meta description quality assessment\n5. Test SEO score calculation for different content qualities\n6. Verify real-time updates of SEO score in the UI\n7. Test suggestion card rendering and actionability",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Export Functionality Implementation",
+        "description": "Implement export options including Copy Markdown, download HTML email, and public share link generation. Ensure exports retain proper styling and formatting.",
+        "details": "1. Create Markdown export functionality\n2. Implement HTML email export with proper styling\n3. Generate public share links with expiration options\n4. Add clipboard copy functionality\n5. Create export success notifications\n6. Implement download functionality for HTML files\n\nExport implementation:\n```typescript\n// lib/export-utils.ts\nexport async function copyToClipboard(text: string): Promise<boolean> {\n  try {\n    await navigator.clipboard.writeText(text);\n    return true;\n  } catch (error) {\n    console.error('Failed to copy to clipboard:', error);\n    return false;\n  }\n}\n\nexport function convertToMarkdown(content: string): string {\n  // Implementation of HTML to Markdown conversion\n  // Could use a library like turndown or custom implementation\n  return content\n    .replace(/<h1>(.+?)<\\/h1>/g, '# $1\\n\\n')\n    .replace(/<h2>(.+?)<\\/h2>/g, '## $1\\n\\n')\n    .replace(/<h3>(.+?)<\\/h3>/g, '### $1\\n\\n')\n    .replace(/<p>(.+?)<\\/p>/g, '$1\\n\\n')\n    .replace(/<strong>(.+?)<\\/strong>/g, '**$1**')\n    .replace(/<em>(.+?)<\\/em>/g, '*$1*')\n    .replace(/<a href=\"(.+?)\">(.+?)<\\/a>/g, '[$2]($1)')\n    .replace(/<ul>([\\s\\S]+?)<\\/ul>/g, (match, p1) => {\n      return p1.replace(/<li>(.+?)<\\/li>/g, '- $1\\n');\n    })\n    .replace(/<ol>([\\s\\S]+?)<\\/ol>/g, (match, p1) => {\n      let index = 1;\n      return p1.replace(/<li>(.+?)<\\/li>/g, () => `${index++}. $1\\n`);\n    });\n}\n\nexport function generateHTMLEmail(content: string, title: string): string {\n  return `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>${title}</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      line-height: 1.6;\n      color: #333;\n      max-width: 600px;\n      margin: 0 auto;\n      padding: 20px;\n    }\n    h1 { color: #2c3e50; margin-top: 0; }\n    h2 { color: #3498db; }\n    h3 { color: #2980b9; }\n    a { color: #3498db; text-decoration: none; }\n    a:hover { text-decoration: underline; }\n    .footer { margin-top: 30px; font-size: 12px; color: #7f8c8d; }\n  </style>\n</head>\n<body>\n  ${content}\n  <div class=\"footer\">\n    <p>This email was created with MarketingQuill</p>\n  </div>\n</body>\n</html>\n  `;\n}\n\nexport async function generatePublicShareLink(draftId: string, expiresInDays = 7): Promise<string> {\n  try {\n    const { data, error } = await supabase.functions.invoke('create-share-link', {\n      body: { draftId, expiresInDays }\n    });\n    \n    if (error) throw error;\n    return `${window.location.origin}/share/${data.shareId}`;\n  } catch (error) {\n    console.error('Error generating share link:', error);\n    throw error;\n  }\n}\n\nexport function downloadFile(content: string, filename: string, contentType: string): void {\n  const blob = new Blob([content], { type: contentType });\n  const url = URL.createObjectURL(blob);\n  const a = document.createElement('a');\n  a.href = url;\n  a.download = filename;\n  document.body.appendChild(a);\n  a.click();\n  document.body.removeChild(a);\n  URL.revokeObjectURL(url);\n}\n```",
+        "testStrategy": "1. Test Markdown conversion accuracy with various HTML structures\n2. Verify HTML email export maintains proper styling\n3. Test public share link generation and expiration\n4. Verify clipboard copy functionality across browsers\n5. Test download functionality for HTML files\n6. Verify exported content matches editor content exactly",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Versioning Lite Implementation",
+        "description": "Implement the versioning system with undo stack (50 actions) and daily snapshot rollback with 7-day retention. Create UI for version history browsing and restoration.",
+        "details": "1. Extend editor store with version history functionality\n2. Implement daily snapshot creation and storage in Supabase\n3. Create version history browser UI\n4. Implement snapshot restoration functionality\n5. Add version comparison view\n6. Implement 7-day retention policy for snapshots\n\nDatabase schema for snapshots:\n```sql\nCREATE TABLE snapshots (\n  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),\n  draft_id UUID REFERENCES drafts(id) ON DELETE CASCADE,\n  content TEXT NOT NULL,\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n  metadata JSONB DEFAULT '{}'::jsonb\n);\n\n-- Add index for faster queries\nCREATE INDEX idx_snapshots_draft_id ON snapshots(draft_id);\n```\n\nSnapshot management implementation:\n```typescript\n// lib/snapshot-manager.ts\nimport { supabase } from '@/lib/supabase';\n\nexport async function createDailySnapshot(draftId: string, content: string): Promise<void> {\n  try {\n    // Check if we already have a snapshot for today\n    const today = new Date().toISOString().split('T')[0];\n    const { data: existingSnapshot } = await supabase\n      .from('snapshots')\n      .select('id')\n      .eq('draft_id', draftId)\n      .gte('created_at', `${today}T00:00:00Z`)\n      .lte('created_at', `${today}T23:59:59Z`)\n      .maybeSingle();\n      \n    if (existingSnapshot) {\n      // Update existing snapshot\n      await supabase\n        .from('snapshots')\n        .update({ content })\n        .eq('id', existingSnapshot.id);\n    } else {\n      // Create new snapshot\n      await supabase\n        .from('snapshots')\n        .insert({\n          draft_id: draftId,\n          content,\n          metadata: {\n            word_count: countWords(content),\n            character_count: content.length\n          }\n        });\n    }\n    \n    // Clean up old snapshots (keep only last 7 days)\n    const sevenDaysAgo = new Date();\n    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);\n    \n    await supabase\n      .from('snapshots')\n      .delete()\n      .eq('draft_id', draftId)\n      .lt('created_at', sevenDaysAgo.toISOString());\n  } catch (error) {\n    console.error('Error managing snapshots:', error);\n  }\n}\n\nexport async function getSnapshots(draftId: string): Promise<Array<{\n  id: string;\n  created_at: string;\n  metadata: any;\n}>> {\n  const { data, error } = await supabase\n    .from('snapshots')\n    .select('id, created_at, metadata')\n    .eq('draft_id', draftId)\n    .order('created_at', { ascending: false });\n    \n  if (error) throw error;\n  return data || [];\n}\n\nexport async function getSnapshotContent(snapshotId: string): Promise<string> {\n  const { data, error } = await supabase\n    .from('snapshots')\n    .select('content')\n    .eq('id', snapshotId)\n    .single();\n    \n  if (error) throw error;\n  return data.content;\n}\n\nfunction countWords(text: string): number {\n  return (text.match(/\\b\\w+\\b/g) || []).length;\n}\n```",
+        "testStrategy": "1. Test undo/redo functionality with the 50-action limit\n2. Verify daily snapshot creation and update\n3. Test 7-day retention policy implementation\n4. Verify snapshot restoration functionality\n5. Test version history browser UI\n6. Verify version comparison view accuracy",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Accessibility Implementation",
+        "description": "Implement WCAG 2.1 AA compliance features including keyboard navigation, visible focus indicators, and high-contrast toggle. Ensure the application is accessible to users with disabilities.",
+        "details": "1. Implement keyboard navigation throughout the application\n2. Create visible focus indicators for all interactive elements\n3. Add high-contrast toggle in the UI\n4. Ensure proper ARIA attributes for all components\n5. Implement screen reader support\n6. Add skip-to-content links\n7. Ensure proper color contrast ratios\n\nAccessibility implementation:\n```typescript\n// components/AccessibilityProvider.tsx\nimport { createContext, useContext, useState, useEffect } from 'react';\n\ninterface AccessibilityContextType {\n  highContrast: boolean;\n  toggleHighContrast: () => void;\n  fontSize: 'normal' | 'large' | 'x-large';\n  setFontSize: (size: 'normal' | 'large' | 'x-large') => void;\n}\n\nconst AccessibilityContext = createContext<AccessibilityContextType>({\n  highContrast: false,\n  toggleHighContrast: () => {},\n  fontSize: 'normal',\n  setFontSize: () => {}\n});\n\nexport function AccessibilityProvider({ children }) {\n  const [highContrast, setHighContrast] = useState(false);\n  const [fontSize, setFontSize] = useState<'normal' | 'large' | 'x-large'>('normal');\n  \n  const toggleHighContrast = () => {\n    const newValue = !highContrast;\n    setHighContrast(newValue);\n    localStorage.setItem('highContrast', newValue.toString());\n    \n    if (newValue) {\n      document.documentElement.classList.add('high-contrast');\n    } else {\n      document.documentElement.classList.remove('high-contrast');\n    }\n  };\n  \n  const handleFontSize = (size: 'normal' | 'large' | 'x-large') => {\n    setFontSize(size);\n    localStorage.setItem('fontSize', size);\n    \n    document.documentElement.classList.remove('text-normal', 'text-large', 'text-x-large');\n    document.documentElement.classList.add(`text-${size}`);\n  };\n  \n  useEffect(() => {\n    // Load saved preferences\n    const savedContrast = localStorage.getItem('highContrast');\n    if (savedContrast === 'true') {\n      setHighContrast(true);\n      document.documentElement.classList.add('high-contrast');\n    }\n    \n    const savedFontSize = localStorage.getItem('fontSize') as 'normal' | 'large' | 'x-large' | null;\n    if (savedFontSize) {\n      setFontSize(savedFontSize);\n      document.documentElement.classList.add(`text-${savedFontSize}`);\n    }\n    \n    // Add skip link\n    const skipLink = document.createElement('a');\n    skipLink.href = '#main-content';\n    skipLink.className = 'skip-link';\n    skipLink.textContent = 'Skip to main content';\n    document.body.prepend(skipLink);\n    \n    return () => {\n      if (skipLink && skipLink.parentNode) {\n        skipLink.parentNode.removeChild(skipLink);\n      }\n    };\n  }, []);\n  \n  return (\n    <AccessibilityContext.Provider value={{ \n      highContrast, \n      toggleHighContrast,\n      fontSize,\n      setFontSize: handleFontSize\n    }}>\n      {children}\n    </AccessibilityContext.Provider>\n  );\n}\n\nexport const useAccessibility = () => useContext(AccessibilityContext);\n```\n\nCSS for high contrast mode:\n```css\n/* styles/accessibility.css */\n.high-contrast {\n  --background: #000000;\n  --foreground: #ffffff;\n  --primary: #ffff00;\n  --secondary: #00ffff;\n  --accent: #ff00ff;\n  --error: #ff0000;\n  --success: #00ff00;\n  --focus-ring: 3px solid var(--primary);\n}\n\n.high-contrast a,\n.high-contrast button,\n.high-contrast input,\n.high-contrast select,\n.high-contrast textarea {\n  color: var(--primary);\n}\n\n.high-contrast a:hover,\n.high-contrast button:hover {\n  background-color: var(--foreground);\n  color: var(--background);\n  text-decoration: underline;\n}\n\n.high-contrast *:focus {\n  outline: var(--focus-ring);\n  outline-offset: 2px;\n}\n\n.skip-link {\n  position: absolute;\n  top: -40px;\n  left: 0;\n  background: var(--primary);\n  color: var(--background);\n  padding: 8px;\n  z-index: 100;\n  transition: top 0.2s;\n}\n\n.skip-link:focus {\n  top: 0;\n}\n\n.text-large {\n  font-size: 1.2rem;\n}\n\n.text-x-large {\n  font-size: 1.4rem;\n}\n```",
+        "testStrategy": "1. Test keyboard navigation through all interactive elements\n2. Verify focus indicators are visible in all states\n3. Test high-contrast mode appearance and functionality\n4. Run automated accessibility tests (Axe, Lighthouse)\n5. Test with screen readers (NVDA, VoiceOver)\n6. Verify proper ARIA attributes with accessibility inspector\n7. Test color contrast ratios meet WCAG 2.1 AA standards",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Dashboard Metrics Implementation",
+        "description": "Implement the optimization score calculation and display on draft cards in the dashboard. Add last-edited timestamp and other metrics to help users track content performance.",
+        "details": "1. Create optimization score calculation algorithm combining grammar, tone, and SEO scores\n2. Implement last-edited timestamp display with relative time formatting\n3. Add channel icon display based on content type\n4. Create visual indicator for optimization score (0-100)\n5. Implement streak tracking for user engagement\n\nOptimization score calculation:\n```typescript\n// lib/optimization-score.ts\nexport interface ContentMetrics {\n  grammarScore: number; // 0-100\n  toneScore: number; // 0-100\n  seoScore: number; // 0-100\n  wordCount: number;\n  readingTime: number; // minutes\n}\n\nexport function calculateOptimizationScore(metrics: ContentMetrics): number {\n  // Weighted average of scores\n  const weights = {\n    grammar: 0.4,\n    tone: 0.3,\n    seo: 0.3\n  };\n  \n  const weightedScore = \n    metrics.grammarScore * weights.grammar +\n    metrics.toneScore * weights.tone +\n    metrics.seoScore * weights.seo;\n    \n  return Math.round(weightedScore);\n}\n\nexport function getScoreColor(score: number): string {\n  if (score >= 90) return 'text-green-500';\n  if (score >= 70) return 'text-blue-500';\n  if (score >= 50) return 'text-yellow-500';\n  return 'text-red-500';\n}\n\nexport function calculateReadingTime(wordCount: number): number {\n  // Average reading speed: 200-250 words per minute\n  const wordsPerMinute = 225;\n  return Math.ceil(wordCount / wordsPerMinute);\n}\n\nexport function detectContentType(content: string): 'email' | 'blog' | 'social' | 'other' {\n  // Simple heuristics to detect content type\n  if (content.includes('Subject:') || content.includes('From:') || content.includes('To:')) {\n    return 'email';\n  }\n  \n  if (content.length > 1000 && (content.includes('<h1>') || content.includes('<h2>'))) {\n    return 'blog';\n  }\n  \n  if (content.length < 280) {\n    return 'social';\n  }\n  \n  return 'other';\n}\n```\n\nDashboard card component:\n```tsx\n// components/DraftCard.tsx\nimport { formatDistanceToNow } from 'date-fns';\nimport { getScoreColor } from '@/lib/optimization-score';\n\ninterface DraftCardProps {\n  draft: {\n    id: string;\n    title: string;\n    content: string;\n    optimization_score: number;\n    updated_at: string;\n    channel?: 'email' | 'blog' | 'social' | 'other';\n  };\n  onClick: () => void;\n}\n\nexport function DraftCard({ draft, onClick }: DraftCardProps) {\n  const scoreColor = getScoreColor(draft.optimization_score);\n  const lastEdited = formatDistanceToNow(new Date(draft.updated_at), { addSuffix: true });\n  \n  return (\n    <div \n      className=\"p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer\"\n      onClick={onClick}\n    >\n      <div className=\"flex items-start justify-between\">\n        <div>\n          <h3 className=\"font-medium text-lg truncate\">{draft.title || 'Untitled Draft'}</h3>\n          <p className=\"text-gray-500 text-sm\">{lastEdited}</p>\n        </div>\n        <div className=\"flex items-center\">\n          {draft.channel && (\n            <span className=\"mr-2\">\n              {getChannelIcon(draft.channel)}\n            </span>\n          )}\n          <div className={`font-bold ${scoreColor}`}>\n            {draft.optimization_score}\n          </div>\n        </div>\n      </div>\n    </div>\n  );\n}\n\nfunction getChannelIcon(channel: 'email' | 'blog' | 'social' | 'other') {\n  switch (channel) {\n    case 'email':\n      return <MailIcon className=\"w-5 h-5\" />;\n    case 'blog':\n      return <DocumentTextIcon className=\"w-5 h-5\" />;\n    case 'social':\n      return <ShareIcon className=\"w-5 h-5\" />;\n    default:\n      return <DocumentIcon className=\"w-5 h-5\" />;\n  }\n}\n```",
+        "testStrategy": "1. Test optimization score calculation with various content metrics\n2. Verify score color assignment based on score ranges\n3. Test content type detection with different content samples\n4. Verify last-edited timestamp formatting\n5. Test dashboard card rendering with different draft states\n6. Verify streak tracking accuracy",
+        "priority": "low",
+        "dependencies": [
+          3,
+          5,
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Performance Optimization",
+        "description": "Implement performance optimizations to ensure suggestion latency is less than 2 seconds and the application can support 100 concurrent free-tier users.",
+        "details": "1. Implement caching for AI suggestions\n2. Set up Edge Functions pre-warming\n3. Optimize database queries with proper indexing\n4. Implement streaming completions for AI responses\n5. Add request throttling for free-tier users\n6. Optimize React rendering with memoization\n7. Implement code splitting for better load times\n\nPerformance optimization implementation:\n```typescript\n// lib/cache-manager.ts\nimport { supabase } from '@/lib/supabase';\nimport { createHash } from 'crypto';\n\ninterface CacheOptions {\n  ttl?: number; // Time to live in seconds\n  namespace?: string;\n}\n\nexport class CacheManager {\n  private namespace: string;\n  private ttl: number;\n  \n  constructor(options: CacheOptions = {}) {\n    this.namespace = options.namespace || 'default';\n    this.ttl = options.ttl || 3600; // Default: 1 hour\n  }\n  \n  private generateKey(key: string): string {\n    return createHash('md5').update(`${this.namespace}:${key}`).digest('hex');\n  }\n  \n  async get<T>(key: string): Promise<T | null> {\n    const cacheKey = this.generateKey(key);\n    \n    const { data, error } = await supabase\n      .from('cache')\n      .select('value, created_at')\n      .eq('key', cacheKey)\n      .single();\n      \n    if (error || !data) return null;\n    \n    // Check if cache is expired\n    const createdAt = new Date(data.created_at).getTime();\n    const now = Date.now();\n    const age = (now - createdAt) / 1000; // in seconds\n    \n    if (age > this.ttl) {\n      // Cache expired, delete it\n      await this.delete(key);\n      return null;\n    }\n    \n    try {\n      return JSON.parse(data.value) as T;\n    } catch (e) {\n      return null;\n    }\n  }\n  \n  async set<T>(key: string, value: T): Promise<void> {\n    const cacheKey = this.generateKey(key);\n    const stringValue = JSON.stringify(value);\n    \n    const { error } = await supabase\n      .from('cache')\n      .upsert({\n        key: cacheKey,\n        value: stringValue,\n        created_at: new Date().toISOString()\n      });\n      \n    if (error) console.error('Cache set error:', error);\n  }\n  \n  async delete(key: string): Promise<void> {\n    const cacheKey = this.generateKey(key);\n    \n    await supabase\n      .from('cache')\n      .delete()\n      .eq('key', cacheKey);\n  }\n  \n  async clear(): Promise<void> {\n    // Delete all cache entries for this namespace\n    const allKeys = await supabase\n      .from('cache')\n      .select('key')\n      .like('key', `${this.namespace}:%`);\n      \n    if (allKeys.data && allKeys.data.length > 0) {\n      const keys = allKeys.data.map(item => item.key);\n      \n      await supabase\n        .from('cache')\n        .delete()\n        .in('key', keys);\n    }\n  }\n}\n\n// Create specialized cache instances\nexport const suggestionCache = new CacheManager({ \n  namespace: 'suggestions', \n  ttl: 86400 // 24 hours\n});\n\nexport const seoCache = new CacheManager({ \n  namespace: 'seo', \n  ttl: 3600 // 1 hour\n});\n```\n\nRequest throttling implementation:\n```typescript\n// middleware.ts\nimport { NextResponse } from 'next/server';\nimport type { NextRequest } from 'next/server';\nimport { supabase } from '@/lib/supabase-server';\n\n// Rate limit configuration\nconst RATE_LIMIT_WINDOW = 60; // 1 minute in seconds\nconst FREE_TIER_LIMIT = 10; // 10 requests per minute\nconst PAID_TIER_LIMIT = 60; // 60 requests per minute\n\nexport async function middleware(request: NextRequest) {\n  // Only apply rate limiting to API routes\n  if (!request.nextUrl.pathname.startsWith('/api/')) {\n    return NextResponse.next();\n  }\n  \n  // Get user from session\n  const { data: { session } } = await supabase.auth.getSession();\n  const userId = session?.user?.id;\n  \n  if (!userId) {\n    return NextResponse.json(\n      { error: 'Unauthorized' },\n      { status: 401 }\n    );\n  }\n  \n  // Get user subscription tier\n  const { data: subscription } = await supabase\n    .from('subscriptions')\n    .select('tier')\n    .eq('user_id', userId)\n    .single();\n    \n  const tier = subscription?.tier || 'free';\n  const rateLimit = tier === 'free' ? FREE_TIER_LIMIT : PAID_TIER_LIMIT;\n  \n  // Check rate limit\n  const now = Math.floor(Date.now() / 1000);\n  const windowStart = now - RATE_LIMIT_WINDOW;\n  \n  const { count } = await supabase\n    .from('api_requests')\n    .select('id', { count: 'exact' })\n    .eq('user_id', userId)\n    .gte('timestamp', new Date(windowStart * 1000).toISOString());\n    \n  if (count >= rateLimit) {\n    return NextResponse.json(\n      { error: 'Rate limit exceeded' },\n      { status: 429 }\n    );\n  }\n  \n  // Record this request\n  await supabase\n    .from('api_requests')\n    .insert({\n      user_id: userId,\n      path: request.nextUrl.pathname,\n      timestamp: new Date().toISOString()\n    });\n  \n  return NextResponse.next();\n}\n```",
+        "testStrategy": "1. Measure suggestion latency under various load conditions\n2. Test caching effectiveness with repeated requests\n3. Perform load testing with simulated concurrent users\n4. Verify rate limiting functionality for free-tier users\n5. Measure memory usage and optimize if needed\n6. Test database query performance with large datasets\n7. Verify Edge Function pre-warming effectiveness",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          6,
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Security Implementation",
+        "description": "Implement security measures including TLS, Role-Based Access Control (RBAC), GDPR-compliant data export, and protection against prompt injection attacks.",
+        "details": "1. Configure TLS for all connections\n2. Implement RBAC with Supabase Row Level Security (RLS)\n3. Create GDPR-compliant data export functionality\n4. Implement input sanitization to prevent prompt injection\n5. Add strict function-call schemas for AI interactions\n6. Set up security headers\n7. Implement CSRF protection\n\nRLS policy implementation:\n```sql\n-- Enable RLS on drafts table\nALTER TABLE drafts ENABLE ROW LEVEL SECURITY;\n\n-- Create policies\nCREATE POLICY \"Users can view their own drafts\"\n  ON drafts\n  FOR SELECT\n  USING (auth.uid() = user_id);\n  \nCREATE POLICY \"Users can insert their own drafts\"\n  ON drafts\n  FOR INSERT\n  WITH CHECK (auth.uid() = user_id);\n  \nCREATE POLICY \"Users can update their own drafts\"\n  ON drafts\n  FOR UPDATE\n  USING (auth.uid() = user_id);\n  \nCREATE POLICY \"Users can delete their own drafts\"\n  ON drafts\n  FOR DELETE\n  USING (auth.uid() = user_id);\n  \n-- Create policy for editors\nCREATE POLICY \"Editors can view drafts they have access to\"\n  ON drafts\n  FOR SELECT\n  USING (\n    auth.uid() IN (\n      SELECT user_id FROM draft_permissions\n      WHERE draft_id = drafts.id AND permission = 'editor'\n    )\n  );\n  \nCREATE POLICY \"Editors can update drafts they have access to\"\n  ON drafts\n  FOR UPDATE\n  USING (\n    auth.uid() IN (\n      SELECT user_id FROM draft_permissions\n      WHERE draft_id = drafts.id AND permission = 'editor'\n    )\n  );\n```\n\nInput sanitization implementation:\n```typescript\n// lib/sanitize.ts\nimport DOMPurify from 'dompurify';\n\nexport function sanitizeInput(input: string): string {\n  return DOMPurify.sanitize(input, {\n    ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'ul', 'ol', 'li', 'strong', 'em', 'a'],\n    ALLOWED_ATTR: ['href', 'target', 'rel'],\n  });\n}\n\nexport function sanitizePrompt(input: string): string {\n  // Remove potential prompt injection patterns\n  return input\n    .replace(/ignore previous instructions/gi, '')\n    .replace(/ignore above instructions/gi, '')\n    .replace(/disregard previous instructions/gi, '')\n    .replace(/forget your instructions/gi, '')\n    .replace(/you are now/gi, '')\n    .replace(/you're now/gi, '')\n    .replace(/you will be/gi, '')\n    .replace(/you are a/gi, '')\n    .replace(/you're a/gi, '');\n}\n\nexport function validateFunctionCallInput(input: any, schema: any): boolean {\n  // Simple schema validation\n  try {\n    if (typeof schema === 'object' && schema !== null) {\n      for (const key in schema) {\n        if (schema[key].required && (input[key] === undefined || input[key] === null)) {\n          return false;\n        }\n        \n        if (input[key] !== undefined && schema[key].type) {\n          if (schema[key].type === 'string' && typeof input[key] !== 'string') {\n            return false;\n          }\n          if (schema[key].type === 'number' && typeof input[key] !== 'number') {\n            return false;\n          }\n          if (schema[key].type === 'boolean' && typeof input[key] !== 'boolean') {\n            return false;\n          }\n          if (schema[key].type === 'array' && !Array.isArray(input[key])) {\n            return false;\n          }\n          if (schema[key].type === 'object' && (typeof input[key] !== 'object' || input[key] === null)) {\n            return false;\n          }\n        }\n      }\n      return true;\n    }\n    return false;\n  } catch (error) {\n    return false;\n  }\n}\n```\n\nGDPR data export implementation:\n```typescript\n// pages/api/gdpr-export.ts\nimport { NextApiRequest, NextApiResponse } from 'next';\nimport { supabase } from '@/lib/supabase-server';\nimport { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';\n\nexport default async function handler(req: NextApiRequest, res: NextApiResponse) {\n  if (req.method !== 'GET') {\n    return res.status(405).json({ error: 'Method not allowed' });\n  }\n  \n  // Get authenticated user\n  const supabaseServerClient = createServerSupabaseClient({ req, res });\n  const { data: { user } } = await supabaseServerClient.auth.getUser();\n  \n  if (!user) {\n    return res.status(401).json({ error: 'Unauthorized' });\n  }\n  \n  try {\n    // Fetch all user data\n    const [draftsResult, snapshotsResult, profileResult] = await Promise.all([\n      supabase.from('drafts').select('*').eq('user_id', user.id),\n      supabase.from('snapshots').select('*').eq('user_id', user.id),\n      supabase.from('profiles').select('*').eq('id', user.id)\n    ]);\n    \n    const userData = {\n      user: {\n        id: user.id,\n        email: user.email,\n        created_at: user.created_at\n      },\n      profile: profileResult.data?.[0] || null,\n      drafts: draftsResult.data || [],\n      snapshots: snapshotsResult.data || []\n    };\n    \n    // Generate export file\n    const exportData = JSON.stringify(userData, null, 2);\n    const filename = `marketingquill-data-export-${new Date().toISOString().split('T')[0]}.json`;\n    \n    // Set headers for file download\n    res.setHeader('Content-Disposition', `attachment; filename=${filename}`);\n    res.setHeader('Content-Type', 'application/json');\n    \n    return res.status(200).send(exportData);\n  } catch (error) {\n    console.error('GDPR export error:', error);\n    return res.status(500).json({ error: 'Failed to generate data export' });\n  }\n}\n```",
+        "testStrategy": "1. Verify TLS configuration with SSL testing tools\n2. Test RBAC policies with different user roles\n3. Verify GDPR data export contains all required user data\n4. Test input sanitization against common injection patterns\n5. Verify function-call schema validation\n6. Test security headers with security scanning tools\n7. Verify CSRF protection with cross-site request tests",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Configure TLS and Security Headers",
+            "description": "Set up TLS certificates and implement security headers to protect against common web vulnerabilities.",
+            "dependencies": [],
+            "details": "1. Obtain and configure TLS certificates for all domains\n2. Implement HTTP Strict Transport Security (HSTS)\n3. Configure Content Security Policy (CSP) headers\n4. Add X-Content-Type-Options, X-Frame-Options, and X-XSS-Protection headers\n5. Test security headers using tools like SecurityHeaders.com\n6. Document the security header configuration for future reference",
+            "status": "pending"
+          },
+          {
+            "id": 2,
+            "title": "Implement Role-Based Access Control with Supabase RLS",
+            "description": "Set up Row Level Security policies in Supabase to enforce proper access controls based on user roles.",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Define user roles (admin, regular user, etc.) in the database schema\n2. Create RLS policies for each table to restrict read/write operations\n3. Implement role-specific policies for sensitive data\n4. Set up default deny policies as a baseline\n5. Test access control with different user roles\n6. Document the RLS policies and role definitions",
+            "status": "pending"
+          },
+          {
+            "id": 3,
+            "title": "Develop GDPR-compliant Data Export Functionality",
+            "description": "Create functionality that allows users to export all their personal data in compliance with GDPR requirements.",
+            "dependencies": [
+              2
+            ],
+            "details": "1. Identify all user-related data across database tables\n2. Create API endpoints for data export requests\n3. Implement data formatting in JSON or CSV format\n4. Add authentication checks to ensure users can only export their own data\n5. Include metadata about data collection purposes in the export\n6. Test the export functionality with sample user data",
+            "status": "pending"
+          },
+          {
+            "id": 4,
+            "title": "Implement Input Sanitization for Prompt Injection Prevention",
+            "description": "Add input validation and sanitization to prevent prompt injection attacks in AI-related features.",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Identify all user input fields that feed into AI prompts\n2. Implement server-side validation for all inputs\n3. Create sanitization functions to remove potentially harmful content\n4. Add rate limiting for AI-related endpoints\n5. Implement pattern matching to detect potential prompt injection attempts\n6. Test with known prompt injection techniques to verify protection",
+            "status": "pending"
+          },
+          {
+            "id": 5,
+            "title": "Implement CSRF Protection",
+            "description": "Add Cross-Site Request Forgery protection to all forms and API endpoints to prevent unauthorized actions.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "1. Generate and validate CSRF tokens for all forms\n2. Implement the Same-Site cookie attribute\n3. Add CSRF middleware to API routes\n4. Update frontend code to include CSRF tokens in requests\n5. Test CSRF protection with simulated attacks\n6. Document the CSRF protection implementation for the development team",
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Analytics and Validation Implementation",
+        "description": "Implement analytics tracking for suggestion acceptance, export frequency, and SEO score improvements. Set up pilot testing infrastructure for 5-10 marketing managers.",
+        "details": "1. Create analytics tracking for suggestion acceptance rate\n2. Implement export frequency tracking\n3. Track SEO score improvements over time\n4. Set up pilot testing user group\n5. Create feedback collection mechanism\n6. Implement analytics dashboard for internal use\n\nAnalytics implementation:\n```typescript\n// lib/analytics.ts\nimport { supabase } from '@/lib/supabase';\n\nexport enum EventType {\n  SUGGESTION_SHOWN = 'suggestion_shown',\n  SUGGESTION_ACCEPTED = 'suggestion_accepted',\n  SUGGESTION_REJECTED = 'suggestion_rejected',\n  EXPORT_MARKDOWN = 'export_markdown',\n  EXPORT_HTML = 'export_html',\n  SHARE_LINK_CREATED = 'share_link_created',\n  SEO_SCORE_IMPROVED = 'seo_score_improved'\n}\n\ninterface EventProperties {\n  [key: string]: string | number | boolean;\n}\n\nexport async function trackEvent(eventType: EventType, properties: EventProperties = {}): Promise<void> {\n  try {\n    const { data: { user } } = await supabase.auth.getUser();\n    \n    if (!user) return;\n    \n    await supabase.from('analytics_events').insert({\n      user_id: user.id,\n      event_type: eventType,\n      properties,\n      timestamp: new Date().toISOString()\n    });\n  } catch (error) {\n    console.error('Analytics error:', error);\n  }\n}\n\nexport async function calculateSuggestionAcceptanceRate(userId: string): Promise<number> {\n  try {\n    const { data: shown } = await supabase\n      .from('analytics_events')\n      .select('id', { count: 'exact' })\n      .eq('user_id', userId)\n      .eq('event_type', EventType.SUGGESTION_SHOWN);\n      \n    const { data: accepted } = await supabase\n      .from('analytics_events')\n      .select('id', { count: 'exact' })\n      .eq('user_id', userId)\n      .eq('event_type', EventType.SUGGESTION_ACCEPTED);\n      \n    if (!shown?.count || shown.count === 0) return 0;\n    \n    return (accepted?.count || 0) / shown.count;\n  } catch (error) {\n    console.error('Analytics calculation error:', error);\n    return 0;\n  }\n}\n\nexport async function trackSEOScoreImprovement(draftId: string, oldScore: number, newScore: number): Promise<void> {\n  if (newScore <= oldScore) return;\n  \n  await trackEvent(EventType.SEO_SCORE_IMPROVED, {\n    draft_id: draftId,\n    old_score: oldScore,\n    new_score: newScore,\n    improvement: newScore - oldScore\n  });\n}\n```\n\nFeedback collection implementation:\n```typescript\n// components/FeedbackWidget.tsx\nimport { useState } from 'react';\nimport { supabase } from '@/lib/supabase';\n\nexport function FeedbackWidget() {\n  const [isOpen, setIsOpen] = useState(false);\n  const [feedback, setFeedback] = useState('');\n  const [rating, setRating] = useState<number | null>(null);\n  const [isSubmitting, setIsSubmitting] = useState(false);\n  const [isSubmitted, setIsSubmitted] = useState(false);\n  \n  const handleSubmit = async () => {\n    if (!feedback || rating === null) return;\n    \n    setIsSubmitting(true);\n    \n    try {\n      const { data: { user } } = await supabase.auth.getUser();\n      \n      await supabase.from('feedback').insert({\n        user_id: user?.id,\n        feedback,\n        rating,\n        created_at: new Date().toISOString()\n      });\n      \n      setIsSubmitted(true);\n      setTimeout(() => {\n        setIsOpen(false);\n        setIsSubmitted(false);\n        setFeedback('');\n        setRating(null);\n      }, 3000);\n    } catch (error) {\n      console.error('Feedback submission error:', error);\n    } finally {\n      setIsSubmitting(false);\n    }\n  };\n  \n  return (\n    <div className=\"fixed bottom-4 right-4 z-50\">\n      {!isOpen ? (\n        <button\n          className=\"bg-indigo-600 text-white rounded-full p-3 shadow-lg hover:bg-indigo-700 transition-colors\"\n          onClick={() => setIsOpen(true)}\n          aria-label=\"Open feedback form\"\n        >\n          <FeedbackIcon className=\"w-6 h-6\" />\n        </button>\n      ) : (\n        <div className=\"bg-white rounded-lg shadow-xl p-4 w-80\">\n          <div className=\"flex justify-between items-center mb-4\">\n            <h3 className=\"font-medium\">Share your feedback</h3>\n            <button \n              onClick={() => setIsOpen(false)}\n              aria-label=\"Close feedback form\"\n            >\n              <XIcon className=\"w-5 h-5\" />\n            </button>\n          </div>\n          \n          {isSubmitted ? (\n            <div className=\"text-center py-4\">\n              <CheckCircleIcon className=\"w-12 h-12 text-green-500 mx-auto mb-2\" />\n              <p>Thank you for your feedback!</p>\n            </div>\n          ) : (\n            <>\n              <div className=\"mb-4\">\n                <label className=\"block text-sm font-medium mb-1\">How would you rate your experience?</label>\n                <div className=\"flex justify-between\">\n                  {[1, 2, 3, 4, 5].map((value) => (\n                    <button\n                      key={value}\n                      className={`w-10 h-10 rounded-full ${rating === value ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`}\n                      onClick={() => setRating(value)}\n                    >\n                      {value}\n                    </button>\n                  ))}\n                </div>\n              </div>\n              \n              <div className=\"mb-4\">\n                <label className=\"block text-sm font-medium mb-1\">Your feedback</label>\n                <textarea\n                  className=\"w-full border rounded-md p-2\"\n                  rows={3}\n                  value={feedback}\n                  onChange={(e) => setFeedback(e.target.value)}\n                  placeholder=\"Tell us what you think...\"\n                />\n              </div>\n              \n              <button\n                className=\"w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition-colors disabled:bg-gray-300\"\n                onClick={handleSubmit}\n                disabled={!feedback || rating === null || isSubmitting}\n              >\n                {isSubmitting ? 'Submitting...' : 'Submit Feedback'}\n              </button>\n            </>\n          )}\n        </div>\n      )}\n    </div>\n  );\n}\n```",
+        "testStrategy": "1. Verify analytics events are properly tracked\n2. Test suggestion acceptance rate calculation\n3. Verify SEO score improvement tracking\n4. Test feedback collection mechanism\n5. Verify pilot testing group access and permissions\n6. Test analytics dashboard data accuracy\n7. Verify data retention policies for analytics data",
+        "priority": "low",
+        "dependencies": [
+          5,
+          6,
+          7,
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Deployment and CI/CD Pipeline",
+        "description": "Set up the deployment pipeline for Vercel (frontend) and Supabase (backend). Implement CI/CD for automated testing and deployment.",
+        "details": "1. Configure Vercel project settings\n2. Set up Supabase environments (development, staging, production)\n3. Create GitHub Actions workflow for CI/CD\n4. Implement automated testing in the pipeline\n5. Configure environment variables\n6. Set up monitoring and alerting\n7. Create deployment documentation\n\nGitHub Actions workflow:\n```yaml\n# .github/workflows/ci-cd.yml\nname: CI/CD Pipeline\n\non:\n  push:\n    branches: [main, staging]\n  pull_request:\n    branches: [main, staging]\n\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      \n      - name: Setup Node.js\n        uses: actions/setup-node@v3\n        with:\n          node-version: '18'\n          cache: 'npm'\n          \n      - name: Install dependencies\n        run: npm ci\n        \n      - name: Lint\n        run: npm run lint\n        \n      - name: Type check\n        run: npm run type-check\n        \n      - name: Run tests\n        run: npm test\n        \n  deploy:\n    needs: test\n    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      \n      - name: Deploy to Vercel\n        uses: amondnet/vercel-action@v20\n        with:\n          vercel-token: ${{ secrets.VERCEL_TOKEN }}\n          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}\n          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}\n          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}\n          \n      - name: Deploy Supabase Edge Functions\n        uses: supabase/setup-cli@v1\n        with:\n          version: latest\n      - run: |\n          supabase login --token ${{ secrets.SUPABASE_ACCESS_TOKEN }}\n          supabase link --project-ref ${{ github.ref == 'refs/heads/main' && secrets.SUPABASE_PROJECT_ID_PROD || secrets.SUPABASE_PROJECT_ID_STAGING }}\n          supabase functions deploy --project-ref ${{ github.ref == 'refs/heads/main' && secrets.SUPABASE_PROJECT_ID_PROD || secrets.SUPABASE_PROJECT_ID_STAGING }}\n```\n\nVercel configuration:\n```json\n// vercel.json\n{\n  \"framework\": \"nextjs\",\n  \"buildCommand\": \"npm run build\",\n  \"devCommand\": \"npm run dev\",\n  \"installCommand\": \"npm install\",\n  \"outputDirectory\": \".next\",\n  \"regions\": [\"iad1\"],\n  \"headers\": [\n    {\n      \"source\": \"/(.*)\",\n      \"headers\": [\n        {\n          \"key\": \"X-Content-Type-Options\",\n          \"value\": \"nosniff\"\n        },\n        {\n          \"key\": \"X-Frame-Options\",\n          \"value\": \"DENY\"\n        },\n        {\n          \"key\": \"X-XSS-Protection\",\n          \"value\": \"1; mode=block\"\n        },\n        {\n          \"key\": \"Referrer-Policy\",\n          \"value\": \"strict-origin-when-cross-origin\"\n        },\n        {\n          \"key\": \"Content-Security-Policy\",\n          \"value\": \"default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com; connect-src 'self' https://*.supabase.co https://api.openai.com; font-src 'self'; frame-src 'self'; object-src 'none'\"\n        }\n      ]\n    }\n  ],\n  \"env\": {\n    \"NEXT_PUBLIC_SUPABASE_URL\": \"@supabase_url\",\n    \"NEXT_PUBLIC_SUPABASE_ANON_KEY\": \"@supabase_anon_key\"\n  }\n}\n```",
+        "testStrategy": "1. Test CI/CD pipeline with sample commits\n2. Verify automated testing runs correctly\n3. Test deployment to staging environment\n4. Verify production deployment process\n5. Test rollback procedures\n6. Verify environment variables are properly set\n7. Test monitoring and alerting systems",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-06-18T20:07:13.913Z",
+      "updated": "2025-06-18T22:33:46.230Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
