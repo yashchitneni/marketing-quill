@@ -31,15 +31,38 @@ export function SuggestionCards({ filterType }: SuggestionCardsProps = {}) {
   const handleAccept = async (suggestion: typeof suggestions[0]) => {
     if (!draftId) return
 
+    // Get the current cursor position from the textarea
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement
+    const cursorPos = textarea?.selectionStart || 0
+    
     // Apply the suggestion to the content
     const newContent = 
       content.slice(0, suggestion.startIndex) + 
       suggestion.suggestion + 
       content.slice(suggestion.endIndex)
     
+    // Calculate new cursor position
+    let newCursorPos = cursorPos
+    if (cursorPos >= suggestion.startIndex && cursorPos <= suggestion.endIndex) {
+      // Cursor was within the replaced text, move to end of replacement
+      newCursorPos = suggestion.startIndex + suggestion.suggestion.length
+    } else if (cursorPos > suggestion.endIndex) {
+      // Cursor was after the replaced text, adjust by the length difference
+      const lengthDiff = suggestion.suggestion.length - (suggestion.endIndex - suggestion.startIndex)
+      newCursorPos = cursorPos + lengthDiff
+    }
+    
     setContent(newContent, false) // Don't add to history for suggestion accepts
     acceptSuggestion(suggestion.id)
     await trackSuggestion(suggestion, true, draftId)
+    
+    // Restore cursor position after React re-render
+    setTimeout(() => {
+      if (textarea) {
+        textarea.setSelectionRange(newCursorPos, newCursorPos)
+        textarea.focus()
+      }
+    }, 0)
   }
 
   const handleReject = async (suggestion: typeof suggestions[0]) => {

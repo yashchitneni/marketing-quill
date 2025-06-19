@@ -5,7 +5,7 @@ import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
 
 interface SuggestionHighlightsProps {
   text: string
-  textareaRef: React.RefObject<HTMLTextAreaElement>
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>
 }
 
 export function SuggestionHighlights({ text, textareaRef }: SuggestionHighlightsProps) {
