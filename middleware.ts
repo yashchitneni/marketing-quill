@@ -3,8 +3,9 @@ import { updateSession } from '@/lib/supabase/middleware'
 import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
-  // Update session
-  const response = await updateSession(request)
+  try {
+    // Update session
+    const response = await updateSession(request)
   
   // Protected routes that require authentication
   const protectedPaths = ['/dashboard', '/editor', '/admin']
@@ -50,6 +51,11 @@ export async function middleware(request: NextRequest) {
   }
   
   return response
+  } catch (error) {
+    console.error('Middleware error:', error)
+    // Return a basic response on error
+    return NextResponse.next()
+  }
 }
 
 export const config = {
