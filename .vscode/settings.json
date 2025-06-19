@@ -1,0 +1,15 @@
+{
+  // 1. Tell VS Code to use the project's version of TypeScript
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  // 2. Disable the Deno extension for this workspace to prevent conflicts
+  "deno.enable": false,
+  "deno.lint": false,
+  "deno.unstable": false,
+
+  // 3. Associate TSX files with typescriptreact for proper JSX handling
+  "files.associations": {
+    "*.tsx": "typescriptreact"
+  }
+} 

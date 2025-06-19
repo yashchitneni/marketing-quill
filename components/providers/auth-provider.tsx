@@ -74,8 +74,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Show nothing while initializing auth to prevent flash of unauthenticated content
   if (!isInitialized && isLoading) {
+    console.log('Auth is initializing, blocking content render')
     return null
   }
 
+  console.log('Auth initialized, rendering children')
   return <>{children}</>
 }
