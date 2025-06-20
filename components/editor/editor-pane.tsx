@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 export function EditorPane() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const editorStore = useEditorStore()
-  const { analyzeText } = useSuggestionsStore()
+  const { analyzeText, cancelAnalysis } = useSuggestionsStore()
   const [localContent, setLocalContent] = useState(editorStore.content)
   const analyzeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -50,19 +50,22 @@ export function EditorPane() {
       clearTimeout(analyzeTimeoutRef.current)
     }
     
+    // Cancel any in-flight analysis requests
+    cancelAnalysis()
+    
     // Debounce saving to store
     saveTimeoutRef.current = setTimeout(() => {
       editorStore.setContent(newContent)
       saveTimeoutRef.current = null
     }, 500) // Increased debounce for less frequent updates
     
-    // Debounce text analysis
+    // Debounce text analysis - reduced from 1500ms to 800ms
     analyzeTimeoutRef.current = setTimeout(() => {
       if (newContent.length >= 10) {
         analyzeText(newContent)
       }
-    }, 1500) // Analyze after 1.5 seconds of no typing
-  }, [editorStore, analyzeText])
+    }, 800) // Analyze after 0.8 seconds of no typing
+  }, [editorStore, analyzeText, cancelAnalysis])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     // Undo/Redo shortcuts

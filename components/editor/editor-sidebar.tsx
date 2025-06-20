@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import { useEditorStore } from '@/lib/stores/editor-store'
-// import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
+import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
 import { SuggestionCards } from './suggestion-cards'
 import { 
   ChevronRight, 
@@ -12,7 +14,9 @@ import {
   Wand2,
   MessageSquare,
   Search,
-  Clock
+  Clock,
+  Zap,
+  Sparkles
 } from 'lucide-react'
 
 export function EditorSidebar() {
@@ -90,7 +94,43 @@ export function EditorSidebar() {
 }
 
 function GrammarSuggestions() {
-  return <SuggestionCards filterType="grammar" />
+  const { useFastModel, setUseFastModel, isAnalyzing } = useSuggestionsStore()
+  
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+        <div className="flex items-center gap-2">
+          <Label htmlFor="speed-mode" className="text-sm font-medium cursor-pointer">
+            {useFastModel ? (
+              <>
+                <Zap className="h-4 w-4 inline mr-1 text-yellow-600" />
+                Fast Mode
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4 inline mr-1 text-blue-600" />
+                Accurate Mode
+              </>
+            )}
+          </Label>
+        </div>
+        <Switch
+          id="speed-mode"
+          checked={useFastModel}
+          onCheckedChange={setUseFastModel}
+          disabled={isAnalyzing}
+        />
+      </div>
+      
+      <div className="text-xs text-gray-500 -mt-2 px-1">
+        {useFastModel 
+          ? "Faster responses with basic suggestions" 
+          : "More thorough analysis with advanced suggestions"}
+      </div>
+      
+      <SuggestionCards filterType="grammar" />
+    </div>
+  )
 }
 
 function ToneSuggestions() {

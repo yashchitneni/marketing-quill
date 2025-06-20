@@ -10,6 +10,8 @@ const corsHeaders = {
 interface AnalyzeRequest {
   text: string
   mode?: 'full' | 'streaming'
+  model?: 'gpt-3.5-turbo' | 'gpt-4o'
+  maxTokens?: number
 }
 
 interface Suggestion {
@@ -34,7 +36,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, mode = 'full' } = await req.json() as AnalyzeRequest
+    const { text, mode = 'full', model = 'gpt-4o', maxTokens = 2000 } = await req.json() as AnalyzeRequest
 
     // Validate input
     if (!text || text.length < 10) {
@@ -78,8 +80,10 @@ serve(async (req) => {
       )
     }
 
-    // Prepare the system prompt
-    const systemPrompt = `You are a professional writing assistant specialized in marketing copy. 
+    // Prepare the system prompt - shorter for fast model
+    const systemPrompt = model === 'gpt-3.5-turbo' 
+      ? `You are a writing assistant. Analyze the text for grammar issues and basic style improvements. Focus on clear, actionable suggestions.`
+      : `You are a professional writing assistant specialized in marketing copy. 
     Analyze the text for:
     1. Grammar issues (spelling, punctuation, syntax)
     2. Tone and style improvements (clarity, engagement, persuasiveness)
@@ -93,9 +97,55 @@ serve(async (req) => {
     
     Provide specific, actionable suggestions with exact text positions.`
 
-    // Get suggestions from GPT-4o
+    // Configure streaming based on mode
+    if (mode === 'streaming') {
+      // For streaming, we'll use a simpler approach with direct JSON response
+      const completion = await openai.chat.completions.create({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt + '\n\nRespond with a JSON object containing grammar array, tone array, and overallScore number. Prioritize finding grammar issues first.' },
+          { role: 'user', content: `Analyze this text and provide suggestions in JSON format:\n\n${text}` }
+        ],
+        temperature: 0.3,
+        max_tokens: maxTokens,
+        response_format: { type: 'json_object' }
+      })
+      
+      const result = JSON.parse(completion.choices[0].message.content || '{}') as SuggestionResponse
+      
+      // Validate and clean the result
+      const cleanedResult = {
+        grammar: (result.grammar || []).filter(s => 
+          s.startIndex >= 0 && 
+          s.endIndex <= text.length && 
+          s.startIndex < s.endIndex
+        ),
+        tone: (result.tone || []).filter(s => 
+          s.startIndex >= 0 && 
+          s.endIndex <= text.length && 
+          s.startIndex < s.endIndex
+        ),
+        overallScore: Math.max(0, Math.min(100, result.overallScore || 50))
+      }
+      
+      // Cache the result
+      await supabase
+        .from('suggestion_cache')
+        .insert({
+          text_hash: textHash,
+          text_length: text.length,
+          suggestions: cleanedResult
+        })
+      
+      return new Response(
+        JSON.stringify(cleanedResult),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    
+    // Original function-based approach for non-streaming
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: `Analyze this marketing copy and provide suggestions:\n\n${text}` }
@@ -148,7 +198,7 @@ serve(async (req) => {
       ],
       function_call: { name: 'provide_suggestions' },
       temperature: 0.3,
-      max_tokens: 2000
+      max_tokens: maxTokens
     })
 
     const result = JSON.parse(
