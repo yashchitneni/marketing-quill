@@ -28,6 +28,7 @@ interface Draft {
   id: string
   title: string
   content?: string
+  content_preview?: string
   channel?: string
   optimization_score: number
   status: string
@@ -134,9 +135,9 @@ export function DraftCard({ draft, onDelete, onArchive, onDuplicate }: DraftCard
               </span>
             </div>
           </div>
-          {draft.content && (
+          {(draft.content_preview || draft.content) && (
             <p className="mt-3 text-sm text-gray-600 line-clamp-2">
-              {draft.content}
+              {draft.content_preview || draft.content}
             </p>
           )}
         </CardContent>

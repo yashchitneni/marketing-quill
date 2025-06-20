@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { createClient } from '@/lib/supabase/client'
@@ -8,7 +8,8 @@ import { DashboardLayout } from '@/components/dashboard/dashboard-layout'
 import { DraftCard } from '@/components/dashboard/draft-card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Loader2, Plus, Search, Filter } from 'lucide-react'
+import { Loader2, Plus, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useDebounce } from '@/hooks/use-debounce'
 import {
   Select,
   SelectContent,
@@ -26,28 +27,49 @@ interface Draft {
   status: string
   updated_at: string
   created_at: string
+  content_preview?: string
 }
 
-export default function DashboardContent() {
+const ITEMS_PER_PAGE = 20
+
+interface DashboardContentProps {
+  initialDrafts?: Draft[]
+  initialTotalCount?: number
+}
+
+export default function DashboardContent({ 
+  initialDrafts = [], 
+  initialTotalCount = 0 
+}: DashboardContentProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, isInitialized } = useAuthStore()
-  const [drafts, setDrafts] = useState<Draft[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [drafts, setDrafts] = useState<Draft[]>(initialDrafts)
+  const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [sortBy, setSortBy] = useState('updated_at')
-  const [filterChannel, setFilterChannel] = useState('all')
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'updated_at')
+  const [filterChannel, setFilterChannel] = useState(searchParams.get('channel') || 'all')
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'))
+  const [totalCount, setTotalCount] = useState(initialTotalCount)
   
   const status = searchParams.get('status') || 'all'
+  const debouncedSearchQuery = useDebounce(searchQuery, 300)
 
-  const fetchDrafts = useCallback(async () => {
+  const fetchDrafts = useCallback(async (page: number) => {
+    if (!user?.id) return
+    
     setIsLoading(true)
     const supabase = createClient()
     
+    // Calculate range for pagination
+    const from = (page - 1) * ITEMS_PER_PAGE
+    const to = from + ITEMS_PER_PAGE - 1
+    
+    // Build the query with optimized field selection
     let query = supabase
       .from('drafts')
-      .select('*')
-      .eq('user_id', user?.id)
+      .select('id, title, channel, optimization_score, status, updated_at, created_at', { count: 'exact' })
+      .eq('user_id', user.id)
     
     // Apply status filter
     if (status !== 'all') {
@@ -70,10 +92,30 @@ export default function DashboardContent() {
       query = query.order('optimization_score', { ascending: false })
     }
     
-    const { data, error } = await query
+    // Apply pagination
+    query = query.range(from, to)
+    
+    const { data, error, count } = await query
     
     if (!error && data) {
-      setDrafts(data)
+      // Fetch content preview for each draft
+      const draftsWithPreview = await Promise.all(
+        data.map(async (draft) => {
+          const { data: fullDraft } = await supabase
+            .from('drafts')
+            .select('content')
+            .eq('id', draft.id)
+            .single()
+          
+          return {
+            ...draft,
+            content_preview: fullDraft?.content ? fullDraft.content.substring(0, 150) : ''
+          }
+        })
+      )
+      
+      setDrafts(draftsWithPreview)
+      setTotalCount(count || 0)
     }
     setIsLoading(false)
   }, [user?.id, status, filterChannel, sortBy])
@@ -86,9 +128,16 @@ export default function DashboardContent() {
 
   useEffect(() => {
     if (user) {
-      fetchDrafts()
+      setCurrentPage(1)
+      fetchDrafts(1)
     }
   }, [user, status, sortBy, filterChannel, fetchDrafts])
+
+  useEffect(() => {
+    if (user && currentPage > 1) {
+      fetchDrafts(currentPage)
+    }
+  }, [user, currentPage, fetchDrafts])
 
   const createNewDraft = async () => {
     const supabase = createClient()
@@ -111,7 +160,7 @@ export default function DashboardContent() {
   const handleDelete = async (id: string) => {
     const supabase = createClient()
     await supabase.from('drafts').delete().eq('id', id)
-    fetchDrafts()
+    fetchDrafts(currentPage)
   }
 
   const handleArchive = async (id: string) => {
@@ -120,7 +169,7 @@ export default function DashboardContent() {
       .from('drafts')
       .update({ status: 'archived' })
       .eq('id', id)
-    fetchDrafts()
+    fetchDrafts(currentPage)
   }
 
   const handleDuplicate = async (id: string) => {
@@ -128,25 +177,41 @@ export default function DashboardContent() {
     const draft = drafts.find(d => d.id === id)
     if (!draft) return
     
+    // Fetch full content for duplication
+    const { data: fullDraft } = await supabase
+      .from('drafts')
+      .select('content')
+      .eq('id', id)
+      .single()
+    
     const { error } = await supabase
       .from('drafts')
       .insert({
         user_id: user?.id,
         title: `${draft.title} (Copy)`,
-        content: draft.content,
+        content: fullDraft?.content || '',
         channel: draft.channel,
         optimization_score: 0
       })
     
     if (!error) {
-      fetchDrafts()
+      fetchDrafts(currentPage)
     }
   }
 
-  const filteredDrafts = drafts.filter(draft => 
-    draft.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    draft.content?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  // Memoize filtered drafts to prevent unnecessary recalculations
+  const filteredDrafts = useMemo(() => {
+    if (!debouncedSearchQuery) return drafts
+    
+    return drafts.filter(draft => 
+      draft.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      draft.content_preview?.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+    )
+  }, [drafts, debouncedSearchQuery])
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
+  const canGoBack = currentPage > 1
+  const canGoForward = currentPage < totalPages
 
   if (!isInitialized || !user) {
     return (
@@ -184,7 +249,15 @@ export default function DashboardContent() {
               />
             </div>
             
-            <Select value={filterChannel} onValueChange={setFilterChannel}>
+            <Select 
+              value={filterChannel} 
+              onValueChange={(value) => {
+                setFilterChannel(value)
+                const params = new URLSearchParams(searchParams)
+                params.set('channel', value)
+                router.push(`/dashboard?${params.toString()}`)
+              }}
+            >
               <SelectTrigger className="w-[180px]">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="All channels" />
@@ -199,7 +272,15 @@ export default function DashboardContent() {
               </SelectContent>
             </Select>
             
-            <Select value={sortBy} onValueChange={setSortBy}>
+            <Select 
+              value={sortBy} 
+              onValueChange={(value) => {
+                setSortBy(value)
+                const params = new URLSearchParams(searchParams)
+                params.set('sort', value)
+                router.push(`/dashboard?${params.toString()}`)
+              }}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
@@ -231,17 +312,63 @@ export default function DashboardContent() {
             )}
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredDrafts.map((draft) => (
-              <DraftCard
-                key={draft.id}
-                draft={draft}
-                onDelete={handleDelete}
-                onArchive={handleArchive}
-                onDuplicate={handleDuplicate}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {filteredDrafts.map((draft) => (
+                <DraftCard
+                  key={draft.id}
+                  draft={draft}
+                  onDelete={handleDelete}
+                  onArchive={handleArchive}
+                  onDuplicate={handleDuplicate}
+                />
+              ))}
+            </div>
+            
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-between">
+                <div className="text-sm text-gray-600">
+                  Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} drafts
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const newPage = currentPage - 1
+                      setCurrentPage(newPage)
+                      const params = new URLSearchParams(searchParams)
+                      params.set('page', newPage.toString())
+                      router.push(`/dashboard?${params.toString()}`)
+                    }}
+                    disabled={!canGoBack}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </Button>
+                  <div className="text-sm px-4">
+                    Page {currentPage} of {totalPages}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const newPage = currentPage + 1
+                      setCurrentPage(newPage)
+                      const params = new URLSearchParams(searchParams)
+                      params.set('page', newPage.toString())
+                      router.push(`/dashboard?${params.toString()}`)
+                    }}
+                    disabled={!canGoForward}
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </DashboardLayout>

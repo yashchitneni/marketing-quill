@@ -146,8 +146,8 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
         cache: newCache,
         abortController: null
       })
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
         console.log('Analysis request was cancelled')
       } else {
         console.error('Error analyzing text:', error)
