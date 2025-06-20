@@ -40,8 +40,8 @@ export function EditorHeader() {
     channel, 
     setChannel, 
     save, 
-    isSaving, 
-    isAutoSaving,
+    isSaving,
+    saveStatus,
     isDirty,
     lastSaved 
   } = useEditorStore()
@@ -51,11 +51,25 @@ export function EditorHeader() {
   }
 
   const getSaveStatus = () => {
-    if (isSaving || isAutoSaving) {
+    if (saveStatus === 'saving') {
       return {
         icon: Cloud,
         text: 'Saving...',
-        className: 'text-blue-600'
+        className: 'text-blue-600 animate-pulse'
+      }
+    }
+    if (saveStatus === 'saved') {
+      return {
+        icon: Cloud,
+        text: 'Saved',
+        className: 'text-green-600'
+      }
+    }
+    if (saveStatus === 'error') {
+      return {
+        icon: CloudOff,
+        text: 'Save failed',
+        className: 'text-red-600'
       }
     }
     if (isDirty) {
@@ -68,8 +82,8 @@ export function EditorHeader() {
     if (lastSaved) {
       return {
         icon: Cloud,
-        text: 'Saved',
-        className: 'text-green-600'
+        text: 'All changes saved',
+        className: 'text-gray-500'
       }
     }
     return {
@@ -79,8 +93,8 @@ export function EditorHeader() {
     }
   }
 
-  const saveStatus = getSaveStatus()
-  const SaveIcon = saveStatus.icon
+  const statusDisplay = getSaveStatus()
+  const SaveIcon = statusDisplay.icon
 
   return (
     <div className="border-b bg-white">
@@ -119,9 +133,9 @@ export function EditorHeader() {
         </div>
         
         <div className="flex items-center gap-4">
-          <div className={cn("flex items-center gap-2 text-sm", saveStatus.className)}>
+          <div className={cn("flex items-center gap-2 text-sm", statusDisplay.className)}>
             <SaveIcon className="h-4 w-4" />
-            <span>{saveStatus.text}</span>
+            <span>{statusDisplay.text}</span>
           </div>
           
           <Button 

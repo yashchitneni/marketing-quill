@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, use } from 'react'
+import { useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { useEditorStore } from '@/lib/stores/editor-store'
@@ -14,8 +14,7 @@ type Params = Promise<{ id: string }>
 export default function EditorPage({ params }: { params: Params }) {
   const router = useRouter()
   const { user, isInitialized } = useAuthStore()
-  const { loadDraft, autoSave, reset, createSnapshot } = useEditorStore()
-  const autoSaveIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const { loadDraft, reset, createSnapshot } = useEditorStore()
   const resolvedParams = use(params)
 
   useEffect(() => {
@@ -36,18 +35,8 @@ export default function EditorPage({ params }: { params: Params }) {
     }
   }, [resolvedParams.id, user, loadDraft, reset, createSnapshot])
 
-  // Set up auto-save interval
-  useEffect(() => {
-    autoSaveIntervalRef.current = setInterval(() => {
-      autoSave()
-    }, 30000) // 30 seconds
-
-    return () => {
-      if (autoSaveIntervalRef.current) {
-        clearInterval(autoSaveIntervalRef.current)
-      }
-    }
-  }, [autoSave])
+  // Real-time auto-save is now handled in the editor store
+  // No need for interval-based saving
 
   // Save on unmount or before unload
   useEffect(() => {
