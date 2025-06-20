@@ -82,18 +82,27 @@ serve(async (req) => {
 
     // Prepare the system prompt - shorter for fast model
     const systemPrompt = model === 'gpt-3.5-turbo' 
-      ? `You are a writing assistant. Analyze the text for grammar issues and basic style improvements. Focus on clear, actionable suggestions.`
+      ? `You are a writing assistant. Analyze the text for grammar issues and basic style improvements. Always find at least 2-3 suggestions to help improve the text, even if minor. Focus on clear, actionable suggestions.`
       : `You are a professional writing assistant specialized in marketing copy. 
     Analyze the text for:
-    1. Grammar issues (spelling, punctuation, syntax)
+    1. Grammar issues (spelling, punctuation, syntax, typos like "Myba" instead of "Maybe")
     2. Tone and style improvements (clarity, engagement, persuasiveness)
+    3. Content structure and flow
+    4. Word choice and phrasing
     
     For marketing copy, focus on:
     - Clear and compelling language
-    - Active voice
-    - Concise sentences
+    - Active voice over passive voice
+    - Concise, impactful sentences
     - Strong calls to action
     - Professional yet engaging tone
+    - Specific over vague language
+    
+    IMPORTANT: Always provide at least 3-5 suggestions, even for good text. Look for:
+    - Ways to make the message more compelling
+    - Opportunities to strengthen the language
+    - Places to add specificity or clarity
+    - Grammar/spelling issues (like "Myba" which should be "Maybe")
     
     Provide specific, actionable suggestions with exact text positions.`
 
@@ -103,8 +112,8 @@ serve(async (req) => {
       const completion = await openai.chat.completions.create({
         model,
         messages: [
-          { role: 'system', content: systemPrompt + '\n\nRespond with a JSON object containing grammar array, tone array, and overallScore number. Prioritize finding grammar issues first.' },
-          { role: 'user', content: `Analyze this text and provide suggestions in JSON format:\n\n${text}` }
+          { role: 'system', content: systemPrompt + '\n\nRespond with a JSON object containing grammar array, tone array, and overallScore number. Always find issues to improve - no text is perfect. Look especially for typos, unclear phrasing, and opportunities to make the content more engaging.' },
+          { role: 'user', content: `Analyze this text and provide at least 3 suggestions in JSON format. Note: "Myba" appears to be a typo for "Maybe". Find this and other improvements:\n\n${text}` }
         ],
         temperature: 0.3,
         max_tokens: maxTokens,
@@ -148,7 +157,7 @@ serve(async (req) => {
       model,
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Analyze this marketing copy and provide suggestions:\n\n${text}` }
+        { role: 'user', content: `Analyze this text and provide at least 3-5 specific suggestions for improvement. Look for typos (like "Myba" instead of "Maybe"), unclear phrases, and opportunities to strengthen the message:\n\n${text}` }
       ],
       functions: [
         {

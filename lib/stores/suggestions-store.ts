@@ -28,6 +28,7 @@ interface SuggestionsState {
   cache: Map<string, CacheEntry>
   abortController: AbortController | null
   useFastModel: boolean
+  error: string | null
   
   // Actions
   analyzeText: (text: string) => Promise<void>
@@ -38,6 +39,7 @@ interface SuggestionsState {
   trackSuggestion: (suggestion: Suggestion, accepted: boolean, draftId: string) => Promise<void>
   cancelAnalysis: () => void
   setUseFastModel: (useFast: boolean) => void
+  clearError: () => void
 }
 
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes cache TTL
@@ -104,6 +106,13 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
       })
       
       if (response.error) {
+        console.error('Edge function error:', response.error)
+        // Provide helpful error message
+        if (response.error.message?.includes('FunctionsFetchError')) {
+          throw new Error('Unable to connect to suggestion service. Please check your internet connection.')
+        } else if (response.error.message?.includes('OpenAI')) {
+          throw new Error('AI service temporarily unavailable. Please try again in a moment.')
+        }
         throw response.error
       }
       

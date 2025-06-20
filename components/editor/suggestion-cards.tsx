@@ -108,8 +108,15 @@ export function SuggestionCards({ filterType }: SuggestionCardsProps = {}) {
         <div className="text-center py-8">
           <Lightbulb className="h-12 w-12 mx-auto mb-3 text-gray-300" />
           <p className="text-sm text-gray-500">
-            No suggestions yet. Start typing to get real-time feedback.
+            {allSuggestions.length === 0 
+              ? "No suggestions yet. Start typing to get real-time feedback."
+              : `No ${filterType} suggestions found. Try the other tabs for more feedback.`}
           </p>
+          {allSuggestions.length === 0 && (
+            <p className="text-xs text-gray-400 mt-2">
+              Our AI analyzes for grammar, style, and clarity improvements.
+            </p>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
