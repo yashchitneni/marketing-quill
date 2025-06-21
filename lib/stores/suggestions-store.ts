@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { createClient } from '@/lib/supabase/client'
+import { performLocalGrammarCheck, calculateLocalScore } from '@/lib/utils/local-grammar-check'
 
 export interface Suggestion {
   id: string
@@ -40,6 +41,7 @@ interface SuggestionsState {
   cancelAnalysis: () => void
   setUseFastModel: (useFast: boolean) => void
   clearError: () => void
+  setError: (error: string | null) => void
 }
 
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes cache TTL
@@ -54,6 +56,7 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
   cache: new Map<string, CacheEntry>(),
   abortController: null,
   useFastModel: true, // Default to fast model
+  error: null,
   
   analyzeText: async (text: string) => {
     // Don't re-analyze the same text
@@ -83,7 +86,7 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
     
     // Create new abort controller
     const abortController = new AbortController()
-    set({ isAnalyzing: true, lastAnalyzedText: text, abortController })
+    set({ isAnalyzing: true, lastAnalyzedText: text, abortController, error: null })
     
     try {
       const supabase = createClient()
@@ -98,10 +101,7 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
           text, 
           mode: 'streaming',
           model: get().useFastModel ? 'gpt-3.5-turbo' : 'gpt-4o',
-          maxTokens: get().useFastModel ? 1000 : 2000
-        },
-        headers: {
-          'X-Abort-Signal': 'true'
+          maxTokens: get().useFastModel ? 500 : 1000 // Reduced for faster responses
         }
       })
       
@@ -153,15 +153,45 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
         overallScore,
         isAnalyzing: false,
         cache: newCache,
-        abortController: null
+        abortController: null,
+        error: null
       })
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         console.log('Analysis request was cancelled')
+        set({ isAnalyzing: false, abortController: null })
       } else {
         console.error('Error analyzing text:', error)
+        
+        // Use local grammar checking as fallback
+        const localSuggestions = performLocalGrammarCheck(text)
+        const localScore = calculateLocalScore(text, localSuggestions)
+        
+        // Format local suggestions to match our structure
+        const formattedLocalSuggestions: Suggestion[] = localSuggestions.map((s, index) => ({
+          id: `local-${s.type}-${index}`,
+          ...s
+        }))
+        
+        // Update cache with local results
+        const newCache = new Map(get().cache)
+        const cacheKey = `${text}_${get().useFastModel}`
+        newCache.set(cacheKey, {
+          text,
+          suggestions: formattedLocalSuggestions,
+          overallScore: localScore,
+          timestamp: Date.now()
+        })
+        
+        set({ 
+          isAnalyzing: false, 
+          abortController: null,
+          suggestions: formattedLocalSuggestions,
+          overallScore: localScore,
+          cache: newCache,
+          error: error instanceof Error ? error.message : 'An error occurred'
+        })
       }
-      set({ isAnalyzing: false, abortController: null })
     }
   },
   
@@ -230,5 +260,13 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
     set({ useFastModel: useFast })
     // Clear cache when switching models to force re-analysis
     get().cache.clear()
+  },
+  
+  clearError: () => {
+    set({ error: null })
+  },
+  
+  setError: (error: string | null) => {
+    set({ error })
   }
 }))

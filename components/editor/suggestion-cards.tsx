@@ -5,7 +5,7 @@ import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Check, X, Lightbulb, AlertCircle, Loader2 } from 'lucide-react'
+import { Check, X, Lightbulb, AlertCircle, Loader2, WifiOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SuggestionCardsProps {
@@ -21,7 +21,8 @@ export function SuggestionCards({ filterType }: SuggestionCardsProps = {}) {
     overallScore,
     acceptSuggestion, 
     rejectSuggestion,
-    trackSuggestion 
+    trackSuggestion,
+    error 
   } = useSuggestionsStore()
   
   const suggestions = filterType 
@@ -95,6 +96,19 @@ export function SuggestionCards({ filterType }: SuggestionCardsProps = {}) {
 
   return (
     <div className="space-y-4">
+      {/* Error/Offline Notice */}
+      {error && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-2">
+          <WifiOff className="h-4 w-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm text-yellow-800">{error}</p>
+            <p className="text-xs text-yellow-600 mt-1">
+              Basic grammar checking is active. Some advanced suggestions may not be available.
+            </p>
+          </div>
+        </div>
+      )}
+      
       {/* Overall Score */}
       <div className="flex items-center justify-between mb-4">
         <h4 className="font-medium">Content Score</h4>

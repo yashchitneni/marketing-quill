@@ -35,6 +35,16 @@ export function EditorPane() {
     })
     return unsubscribe
   }, [])
+  
+  // Analyze content on mount if it exists
+  useEffect(() => {
+    if (editorStore.content && editorStore.content.length >= 10) {
+      // Analyze after a short delay to let the UI settle
+      setTimeout(() => {
+        analyzeText(editorStore.content)
+      }, 500)
+    }
+  }, []) // Only run on mount
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value
@@ -59,12 +69,12 @@ export function EditorPane() {
       saveTimeoutRef.current = null
     }, 500) // Increased debounce for less frequent updates
     
-    // Debounce text analysis - reduced from 1500ms to 800ms
+    // Debounce text analysis - reduced to 400ms for faster feedback
     analyzeTimeoutRef.current = setTimeout(() => {
       if (newContent.length >= 10) {
         analyzeText(newContent)
       }
-    }, 800) // Analyze after 0.8 seconds of no typing
+    }, 400) // Analyze after 0.4 seconds of no typing
   }, [editorStore, analyzeText, cancelAnalysis])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {

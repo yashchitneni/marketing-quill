@@ -54,38 +54,43 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey)
     const openai = new OpenAI({ apiKey: openaiKey })
 
-    // Create text hash for caching
-    const textHash = await hashText(text)
+    // Skip server-side caching for now to debug the issue
+    // const textHash = await hashText(text)
 
-    // Check cache first
-    const { data: cachedResult } = await supabase
-      .from('suggestion_cache')
-      .select('suggestions')
-      .eq('text_hash', textHash)
-      .single()
+    // // Check cache first
+    // const { data: cachedResult } = await supabase
+    //   .from('suggestion_cache')
+    //   .select('suggestions')
+    //   .eq('text_hash', textHash)
+    //   .single()
 
-    if (cachedResult) {
-      // Update access timestamp and count
-      await supabase
-        .from('suggestion_cache')
-        .update({
-          accessed_at: new Date().toISOString(),
-          access_count: supabase.rpc('increment', { row_id: cachedResult.id })
-        })
-        .eq('text_hash', textHash)
+    // if (cachedResult) {
+    //   // Update access timestamp and count
+    //   await supabase
+    //     .from('suggestion_cache')
+    //     .update({
+    //       accessed_at: new Date().toISOString(),
+    //       access_count: supabase.rpc('increment', { row_id: cachedResult.id })
+    //     })
+    //     .eq('text_hash', textHash)
 
-      return new Response(
-        JSON.stringify(cachedResult.suggestions),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
+    //   return new Response(
+    //     JSON.stringify(cachedResult.suggestions),
+    //     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    //   )
+    // }
 
     // Prepare the system prompt - shorter for fast model
     const systemPrompt = model === 'gpt-3.5-turbo' 
-      ? `You are a writing assistant. Analyze the text for grammar issues and basic style improvements. Always find at least 2-3 suggestions to help improve the text, even if minor. Focus on clear, actionable suggestions.`
+      ? `You are a writing assistant. Analyze the text for grammar issues and basic style improvements. 
+      IMPORTANT RULES:
+      1. If you give a low score (below 70), you MUST provide at least 3 suggestions explaining why
+      2. Look for typos like "Myba" (should be "Maybe"), "isue" (should be "issue")
+      3. Check for grammar errors, clarity issues, and style improvements
+      4. Be specific about what needs improvement`
       : `You are a professional writing assistant specialized in marketing copy. 
     Analyze the text for:
-    1. Grammar issues (spelling, punctuation, syntax, typos like "Myba" instead of "Maybe")
+    1. Grammar issues (spelling, punctuation, syntax, typos like "Myba" instead of "Maybe", "isue" instead of "issue")
     2. Tone and style improvements (clarity, engagement, persuasiveness)
     3. Content structure and flow
     4. Word choice and phrasing
@@ -98,11 +103,11 @@ serve(async (req) => {
     - Professional yet engaging tone
     - Specific over vague language
     
-    IMPORTANT: Always provide at least 3-5 suggestions, even for good text. Look for:
-    - Ways to make the message more compelling
-    - Opportunities to strengthen the language
-    - Places to add specificity or clarity
-    - Grammar/spelling issues (like "Myba" which should be "Maybe")
+    IMPORTANT RULES:
+    1. If your overallScore is below 70, you MUST provide at least 3-5 suggestions
+    2. Always check for common typos: "Myba"→"Maybe", "isue"→"issue", etc.
+    3. If the text has obvious errors, catch them
+    4. Never give a low score without explaining why through suggestions
     
     Provide specific, actionable suggestions with exact text positions.`
 
@@ -112,8 +117,8 @@ serve(async (req) => {
       const completion = await openai.chat.completions.create({
         model,
         messages: [
-          { role: 'system', content: systemPrompt + '\n\nRespond with a JSON object containing grammar array, tone array, and overallScore number. Always find issues to improve - no text is perfect. Look especially for typos, unclear phrasing, and opportunities to make the content more engaging.' },
-          { role: 'user', content: `Analyze this text and provide at least 3 suggestions in JSON format. Note: "Myba" appears to be a typo for "Maybe". Find this and other improvements:\n\n${text}` }
+          { role: 'system', content: systemPrompt + '\n\nRespond with a JSON object containing grammar array, tone array, and overallScore number (0-100). Each suggestion must have: text, suggestion, reason, startIndex, endIndex, confidence.' },
+          { role: 'user', content: `Analyze this text and find ALL errors including typos like "Myba" (should be "Maybe") and "isue" (should be "issue"). Text to analyze:\n\n"${text}"\n\nProvide the exact character positions (startIndex/endIndex) for each error.` }
         ],
         temperature: 0.3,
         max_tokens: maxTokens,
@@ -137,14 +142,14 @@ serve(async (req) => {
         overallScore: Math.max(0, Math.min(100, result.overallScore || 50))
       }
       
-      // Cache the result
-      await supabase
-        .from('suggestion_cache')
-        .insert({
-          text_hash: textHash,
-          text_length: text.length,
-          suggestions: cleanedResult
-        })
+      // Skip caching for now
+      // await supabase
+      //   .from('suggestion_cache')
+      //   .insert({
+      //     text_hash: textHash,
+      //     text_length: text.length,
+      //     suggestions: cleanedResult
+      //   })
       
       return new Response(
         JSON.stringify(cleanedResult),
@@ -157,7 +162,7 @@ serve(async (req) => {
       model,
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Analyze this text and provide at least 3-5 specific suggestions for improvement. Look for typos (like "Myba" instead of "Maybe"), unclear phrases, and opportunities to strengthen the message:\n\n${text}` }
+        { role: 'user', content: `Analyze this text and find ALL errors including typos. The text contains "Myba" (should be "Maybe") and "isue" (should be "issue"). Text: "${text}"` }
       ],
       functions: [
         {
@@ -229,14 +234,14 @@ serve(async (req) => {
       overallScore: Math.max(0, Math.min(100, result.overallScore || 50))
     }
 
-    // Cache the result
-    await supabase
-      .from('suggestion_cache')
-      .insert({
-        text_hash: textHash,
-        text_length: text.length,
-        suggestions: cleanedResult
-      })
+    // Skip caching for now
+    // await supabase
+    //   .from('suggestion_cache')
+    //   .insert({
+    //     text_hash: textHash,
+    //     text_length: text.length,
+    //     suggestions: cleanedResult
+    //   })
 
     return new Response(
       JSON.stringify(cleanedResult),
