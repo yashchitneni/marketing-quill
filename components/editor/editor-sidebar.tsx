@@ -1,13 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
 import { useEditorStore } from '@/lib/stores/editor-store'
 import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
+import { useSpellCheckStore } from '@/lib/stores/spell-check-store'
 import { SuggestionCards } from './suggestion-cards'
+import { SpellCheckPanel } from './spell-check-panel'
 import { 
   ChevronRight, 
   ChevronLeft,
@@ -16,12 +19,48 @@ import {
   Search,
   Clock,
   Zap,
-  Sparkles
+  Sparkles,
+  SpellCheck
 } from 'lucide-react'
 
 export function EditorSidebar() {
   const [collapsed, setCollapsed] = useState(false)
-  const [activeTab, setActiveTab] = useState('grammar')
+  const [activeTab, setActiveTab] = useState('spell')
+  const [userHasInteracted, setUserHasInteracted] = useState(false)
+  
+  // Get counts for badges
+  const { suggestions } = useSuggestionsStore()
+  const { errors: spellErrors } = useSpellCheckStore()
+  
+  const counts = useMemo(() => {
+    const grammarSuggestions = suggestions.filter(s => s.type === 'grammar')
+    const toneSuggestions = suggestions.filter(s => s.type === 'tone')
+    
+    return {
+      spell: spellErrors.length,
+      grammar: grammarSuggestions.length,
+      tone: toneSuggestions.length,
+      total: spellErrors.length + suggestions.length
+    }
+  }, [suggestions, spellErrors])
+  
+  // Auto-switch to tab with new content (but only if user hasn't manually switched)
+  useEffect(() => {
+    if (!userHasInteracted) {
+      if (counts.spell > 0) {
+        setActiveTab('spell')
+      } else if (counts.grammar > 0) {
+        setActiveTab('grammar')
+      } else if (counts.tone > 0) {
+        setActiveTab('tone')
+      }
+    }
+  }, [counts, userHasInteracted])
+  
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    setUserHasInteracted(true) // User has manually switched tabs
+  }
 
   if (collapsed) {
     return (
@@ -29,10 +68,18 @@ export function EditorSidebar() {
         <Button
           variant="ghost"
           size="icon"
-          className="w-full h-12 rounded-none"
+          className="w-full h-12 rounded-none relative"
           onClick={() => setCollapsed(false)}
         >
           <ChevronLeft className="h-4 w-4" />
+          {counts.total > 0 && (
+            <Badge 
+              className="absolute top-1 right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-red-500 hover:bg-red-500"
+              variant="destructive"
+            >
+              {counts.total}
+            </Badge>
+          )}
         </Button>
       </div>
     )
@@ -51,23 +98,52 @@ export function EditorSidebar() {
         </Button>
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-        <TabsList className="grid w-full grid-cols-4 rounded-none border-b h-12">
-          <TabsTrigger value="grammar" className="rounded-none">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="flex-1 flex flex-col">
+        <TabsList className="grid w-full grid-cols-5 rounded-none border-b h-12">
+          <TabsTrigger value="spell" className="rounded-none relative" title="Spell Check">
+            <SpellCheck className="h-4 w-4" />
+            {counts.spell > 0 && (
+              <Badge 
+                className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-red-500 hover:bg-red-500"
+                variant="destructive"
+              >
+                {counts.spell}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="grammar" className="rounded-none relative" title="Grammar">
             <Wand2 className="h-4 w-4" />
+            {counts.grammar > 0 && (
+              <Badge 
+                className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-orange-500 hover:bg-orange-500"
+              >
+                {counts.grammar}
+              </Badge>
+            )}
           </TabsTrigger>
-          <TabsTrigger value="tone" className="rounded-none">
+          <TabsTrigger value="tone" className="rounded-none relative" title="Tone">
             <MessageSquare className="h-4 w-4" />
+            {counts.tone > 0 && (
+              <Badge 
+                className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-blue-500 hover:bg-blue-500"
+              >
+                {counts.tone}
+              </Badge>
+            )}
           </TabsTrigger>
-          <TabsTrigger value="seo" className="rounded-none">
+          <TabsTrigger value="seo" className="rounded-none relative" title="SEO">
             <Search className="h-4 w-4" />
           </TabsTrigger>
-          <TabsTrigger value="history" className="rounded-none">
+          <TabsTrigger value="history" className="rounded-none relative" title="History">
             <Clock className="h-4 w-4" />
           </TabsTrigger>
         </TabsList>
         
         <div className="flex-1 overflow-y-auto">
+          <TabsContent value="spell" className="p-4 space-y-4">
+            <SpellCheckPanel />
+          </TabsContent>
+          
           <TabsContent value="grammar" className="p-4 space-y-4">
             <GrammarSuggestions />
           </TabsContent>

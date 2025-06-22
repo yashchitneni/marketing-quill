@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { createClient } from '@/lib/supabase/client'
-import { DashboardLayout } from '@/components/dashboard/dashboard-layout'
 import { DraftCard } from '@/components/dashboard/draft-card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -46,6 +45,7 @@ export default function DashboardContent({
   const { user, isInitialized } = useAuthStore()
   const [drafts, setDrafts] = useState<Draft[]>(initialDrafts)
   const [isLoading, setIsLoading] = useState(false)
+  const [isInitialLoad, setIsInitialLoad] = useState(initialDrafts.length === 0)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'updated_at')
   const [filterChannel, setFilterChannel] = useState(searchParams.get('channel') || 'all')
@@ -65,10 +65,10 @@ export default function DashboardContent({
     const from = (page - 1) * ITEMS_PER_PAGE
     const to = from + ITEMS_PER_PAGE - 1
     
-    // Build the query with optimized field selection
+    // Build the query - include content in the initial query
     let query = supabase
       .from('drafts')
-      .select('id, title, channel, optimization_score, status, updated_at, created_at', { count: 'exact' })
+      .select('id, title, channel, optimization_score, status, updated_at, created_at, content', { count: 'exact' })
       .eq('user_id', user.id)
     
     // Apply status filter
@@ -98,24 +98,16 @@ export default function DashboardContent({
     const { data, error, count } = await query
     
     if (!error && data) {
-      // Fetch content preview for each draft
-      const draftsWithPreview = await Promise.all(
-        data.map(async (draft) => {
-          const { data: fullDraft } = await supabase
-            .from('drafts')
-            .select('content')
-            .eq('id', draft.id)
-            .single()
-          
-          return {
-            ...draft,
-            content_preview: fullDraft?.content ? fullDraft.content.substring(0, 150) : ''
-          }
-        })
-      )
+      // Process content previews in memory (no additional queries!)
+      const draftsWithPreview = data.map(draft => ({
+        ...draft,
+        content_preview: draft.content ? draft.content.substring(0, 150) : '',
+        content: undefined // Remove full content to save memory
+      }))
       
       setDrafts(draftsWithPreview)
       setTotalCount(count || 0)
+      setIsInitialLoad(false)
     }
     setIsLoading(false)
   }, [user?.id, status, filterChannel, sortBy])
@@ -174,23 +166,23 @@ export default function DashboardContent({
 
   const handleDuplicate = async (id: string) => {
     const supabase = createClient()
-    const draft = drafts.find(d => d.id === id)
-    if (!draft) return
     
-    // Fetch full content for duplication
-    const { data: fullDraft } = await supabase
+    // Fetch the full draft in one query
+    const { data: fullDraft, error: fetchError } = await supabase
       .from('drafts')
-      .select('content')
+      .select('*')
       .eq('id', id)
       .single()
+    
+    if (fetchError || !fullDraft) return
     
     const { error } = await supabase
       .from('drafts')
       .insert({
         user_id: user?.id,
-        title: `${draft.title} (Copy)`,
-        content: fullDraft?.content || '',
-        channel: draft.channel,
+        title: `${fullDraft.title} (Copy)`,
+        content: fullDraft.content || '',
+        channel: fullDraft.channel,
         optimization_score: 0
       })
     
@@ -222,8 +214,7 @@ export default function DashboardContent({
   }
 
   return (
-    <DashboardLayout>
-      <div className="p-8">
+    <div className="p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -295,7 +286,7 @@ export default function DashboardContent({
         </div>
 
         {/* Content */}
-        {isLoading ? (
+        {(isLoading && isInitialLoad) ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
@@ -312,7 +303,7 @@ export default function DashboardContent({
             )}
           </div>
         ) : (
-          <>
+          <div className="relative">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredDrafts.map((draft) => (
                 <DraftCard
@@ -324,6 +315,13 @@ export default function DashboardContent({
                 />
               ))}
             </div>
+            
+            {/* Loading overlay for subsequent loads */}
+            {isLoading && !isInitialLoad && (
+              <div className="absolute inset-0 bg-white/50 flex items-center justify-center rounded-lg">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            )}
             
             {/* Pagination Controls */}
             {totalPages > 1 && (
@@ -368,9 +366,8 @@ export default function DashboardContent({
                 </div>
               </div>
             )}
-          </>
+          </div>
         )}
-      </div>
-    </DashboardLayout>
+    </div>
   )
 }

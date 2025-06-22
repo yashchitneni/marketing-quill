@@ -164,33 +164,44 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
         console.error('Error analyzing text:', error)
         
         // Use local grammar checking as fallback
-        const localSuggestions = performLocalGrammarCheck(text)
-        const localScore = calculateLocalScore(text, localSuggestions)
-        
-        // Format local suggestions to match our structure
-        const formattedLocalSuggestions: Suggestion[] = localSuggestions.map((s, index) => ({
-          id: `local-${s.type}-${index}`,
-          ...s
-        }))
-        
-        // Update cache with local results
-        const newCache = new Map(get().cache)
-        const cacheKey = `${text}_${get().useFastModel}`
-        newCache.set(cacheKey, {
-          text,
-          suggestions: formattedLocalSuggestions,
-          overallScore: localScore,
-          timestamp: Date.now()
-        })
-        
-        set({ 
-          isAnalyzing: false, 
-          abortController: null,
-          suggestions: formattedLocalSuggestions,
-          overallScore: localScore,
-          cache: newCache,
-          error: error instanceof Error ? error.message : 'An error occurred'
-        })
+        try {
+          const localSuggestions = await performLocalGrammarCheck(text)
+          const localScore = calculateLocalScore(text, localSuggestions)
+          
+          // Format local suggestions to match our structure
+          const formattedLocalSuggestions: Suggestion[] = localSuggestions.map((s, index) => ({
+            id: `local-${s.type}-${index}`,
+            ...s
+          }))
+          
+          // Update cache with local results
+          const newCache = new Map(get().cache)
+          const cacheKey = `${text}_${get().useFastModel}`
+          newCache.set(cacheKey, {
+            text,
+            suggestions: formattedLocalSuggestions,
+            overallScore: localScore,
+            timestamp: Date.now()
+          })
+          
+          set({ 
+            isAnalyzing: false, 
+            abortController: null,
+            suggestions: formattedLocalSuggestions,
+            overallScore: localScore,
+            cache: newCache,
+            error: 'Using offline spell checking. Advanced suggestions unavailable.'
+          })
+        } catch (fallbackError) {
+          console.error('Local grammar check also failed:', fallbackError)
+          set({ 
+            isAnalyzing: false, 
+            abortController: null,
+            suggestions: [],
+            overallScore: 100,
+            error: error instanceof Error ? error.message : 'An error occurred'
+          })
+        }
       }
     }
   },

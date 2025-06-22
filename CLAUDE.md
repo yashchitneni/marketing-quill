@@ -1,4 +1,4 @@
-# Claude AI Assistant Instructions
+# Claude AI Assistant Instructions - LinkedIn Writing Assistant
 
 ## Task Management Protocol
 
@@ -36,24 +36,26 @@ Priority order:
 5. Medium priority tasks
 6. Low priority tasks
 
-## Current Project Status
+## Current Project Status - LinkedIn Writing Assistant
 
 ### Completed Tasks:
 - ✅ Task 1: Authentication
-- ✅ Task 2: Landing Page
+- ✅ Task 2: Landing Page (needs LinkedIn messaging update)
 - ✅ Task 3: Dashboard
 - ✅ Task 4: Editor Core
-- ✅ Task 5: Grammar/Tone Suggestions
+- ✅ Task 5: LinkedIn Writing Optimization (formerly Grammar/Tone)
 
 ### High Priority Pending:
-- Task 13: Security Implementation
-- Task 15: Deployment Pipeline
+- Task 6: LinkedIn Hook Optimizer (formerly Subject-Line)
+- Task 7: LinkedIn Optimization Panel (formerly SEO)
+- Task 19: Real-time document saving
 
 ### Ready to Start (dependencies met):
-- Task 6: Subject-Line Optimizer
-- Task 7: SEO Hint Panel
-- Task 8: Export Functionality
+- Task 6: LinkedIn Hook Optimizer
+- Task 7: LinkedIn Optimization Panel
+- Task 8: LinkedIn Export Functionality
 - Task 10: Accessibility
+- Task 23: Auto-draft hook generation
 
 ## Quick Commands
 
@@ -76,16 +78,19 @@ npm run lint             # Run linter
 
 ## Important Context
 
-1. **Supabase Edge Functions**: Need OpenAI API key set as secret
-2. **Database**: Migrations in `/supabase/migrations/`
-3. **Authentication**: Using Supabase Auth with magic links + Google OAuth
-4. **State Management**: Zustand stores in `/lib/stores/`
-5. **UI Components**: shadcn/ui in `/components/ui/`
+1. **LinkedIn Focus**: All features should be optimized for LinkedIn content creation
+2. **Supabase Edge Functions**: Need OpenAI API key set as secret
+3. **Database**: Migrations in `/supabase/migrations/`
+4. **Authentication**: Using Supabase Auth with magic links + Google OAuth
+5. **State Management**: Zustand stores in `/lib/stores/`
+6. **UI Components**: shadcn/ui in `/components/ui/`
+7. **Character Limits**: LinkedIn posts have 3000 char limit, optimal is ~1300
 
 ## Known Issues
-- Grammar suggestions need OpenAI API key in Supabase
-- SEO analysis not yet implemented (Task 7)
-- No export functionality yet (Task 8)
+- LinkedIn optimization suggestions need OpenAI API key in Supabase
+- LinkedIn Optimization Panel not yet implemented (Task 7)
+- No LinkedIn export functionality yet (Task 8)
+- Hook optimizer not implemented (Task 6)
 
 ## Testing Checklist
 Before marking a task as done:

@@ -29,6 +29,16 @@ interface SuggestionResponse {
   overallScore: number
 }
 
+// Create a hash of the text for caching
+async function hashText(text: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(text)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashHex
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -54,62 +64,69 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey)
     const openai = new OpenAI({ apiKey: openaiKey })
 
-    // Skip server-side caching for now to debug the issue
-    // const textHash = await hashText(text)
+    // Generate hash for caching
+    const textHash = await hashText(text)
 
-    // // Check cache first
-    // const { data: cachedResult } = await supabase
-    //   .from('suggestion_cache')
-    //   .select('suggestions')
-    //   .eq('text_hash', textHash)
-    //   .single()
+    // Check cache first
+    const { data: cachedResult } = await supabase
+      .from('suggestion_cache')
+      .select('*')
+      .eq('text_hash', textHash)
+      .single()
 
-    // if (cachedResult) {
-    //   // Update access timestamp and count
-    //   await supabase
-    //     .from('suggestion_cache')
-    //     .update({
-    //       accessed_at: new Date().toISOString(),
-    //       access_count: supabase.rpc('increment', { row_id: cachedResult.id })
-    //     })
-    //     .eq('text_hash', textHash)
+    if (cachedResult && cachedResult.suggestions) {
+      // Update access timestamp
+      await supabase
+        .from('suggestion_cache')
+        .update({
+          accessed_at: new Date().toISOString(),
+          access_count: (cachedResult.access_count || 0) + 1
+        })
+        .eq('text_hash', textHash)
 
-    //   return new Response(
-    //     JSON.stringify(cachedResult.suggestions),
-    //     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    //   )
-    // }
+      return new Response(
+        JSON.stringify(cachedResult.suggestions),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
-    // Prepare the system prompt - shorter for fast model
+    // Prepare the system prompt - focus on advanced writing improvements
     const systemPrompt = model === 'gpt-3.5-turbo' 
-      ? `You are a writing assistant. Analyze the text for grammar issues and basic style improvements. 
-      IMPORTANT RULES:
-      1. If you give a low score (below 70), you MUST provide at least 3 suggestions explaining why
-      2. Look for typos like "Myba" (should be "Maybe"), "isue" (should be "issue")
-      3. Check for grammar errors, clarity issues, and style improvements
-      4. Be specific about what needs improvement`
-      : `You are a professional writing assistant specialized in marketing copy. 
-    Analyze the text for:
-    1. Grammar issues (spelling, punctuation, syntax, typos like "Myba" instead of "Maybe", "isue" instead of "issue")
-    2. Tone and style improvements (clarity, engagement, persuasiveness)
-    3. Content structure and flow
-    4. Word choice and phrasing
+      ? `You are a writing improvement assistant. Focus on clarity and engagement.
+      
+      IMPORTANT: Basic spelling is handled separately. Focus ONLY on:
+      - Grammar and sentence structure
+      - Clarity and conciseness
+      - Basic tone improvements
+      - Removing redundancy
+      
+      Do NOT flag spelling errors unless they create grammar issues.
+      Provide 2-3 actionable improvements for better writing.`
+      : `You are an expert marketing copy optimizer for SaaS companies.
     
-    For marketing copy, focus on:
-    - Clear and compelling language
-    - Active voice over passive voice
-    - Concise, impactful sentences
-    - Strong calls to action
-    - Professional yet engaging tone
-    - Specific over vague language
+    IMPORTANT: Basic spelling is handled separately. Focus on HIGH-VALUE improvements:
     
-    IMPORTANT RULES:
-    1. If your overallScore is below 70, you MUST provide at least 3-5 suggestions
-    2. Always check for common typos: "Myba"→"Maybe", "isue"→"issue", etc.
-    3. If the text has obvious errors, catch them
-    4. Never give a low score without explaining why through suggestions
+    MARKETING COPY OPTIMIZATION:
+    1. Persuasiveness and emotional appeal
+    2. Strong calls-to-action (CTAs)
+    3. Benefits over features
+    4. Social proof and urgency
+    5. Scannable formatting suggestions
     
-    Provide specific, actionable suggestions with exact text positions.`
+    TONE & VOICE:
+    - Professional yet conversational
+    - Active voice preferred
+    - Power words for impact
+    - Avoid jargon unless necessary
+    
+    ENGAGEMENT METRICS:
+    - Subject line effectiveness (for emails)
+    - Hook strength (first 2 sentences)
+    - Value proposition clarity
+    - Reader action guidance
+    
+    Target: B2B SaaS marketing managers writing emails, blogs, and landing pages.
+    Score based on marketing effectiveness, not just grammar.`
 
     // Configure streaming based on mode
     if (mode === 'streaming') {
@@ -118,7 +135,7 @@ serve(async (req) => {
         model,
         messages: [
           { role: 'system', content: systemPrompt + '\n\nRespond with a JSON object containing grammar array, tone array, and overallScore number (0-100). Each suggestion must have: text, suggestion, reason, startIndex, endIndex, confidence.' },
-          { role: 'user', content: `Analyze this text and find ALL errors including typos like "Myba" (should be "Maybe") and "isue" (should be "issue"). Text to analyze:\n\n"${text}"\n\nProvide the exact character positions (startIndex/endIndex) for each error.` }
+          { role: 'user', content: `Analyze this marketing copy for improvements. Focus on tone, persuasiveness, and clarity.\n\nText to analyze:\n"${text}"\n\nProvide specific suggestions with exact positions (startIndex/endIndex). Focus on marketing effectiveness.` }
         ],
         temperature: 0.3,
         max_tokens: maxTokens,
@@ -142,14 +159,18 @@ serve(async (req) => {
         overallScore: Math.max(0, Math.min(100, result.overallScore || 50))
       }
       
-      // Skip caching for now
-      // await supabase
-      //   .from('suggestion_cache')
-      //   .insert({
-      //     text_hash: textHash,
-      //     text_length: text.length,
-      //     suggestions: cleanedResult
-      //   })
+      // Cache the result
+      await supabase
+        .from('suggestion_cache')
+        .insert({
+          text_hash: textHash,
+          text_length: text.length,
+          suggestions: cleanedResult,
+          created_at: new Date().toISOString(),
+          accessed_at: new Date().toISOString(),
+          access_count: 1
+        })
+        .onConflict('text_hash')
       
       return new Response(
         JSON.stringify(cleanedResult),
@@ -162,7 +183,7 @@ serve(async (req) => {
       model,
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Analyze this text and find ALL errors including typos. The text contains "Myba" (should be "Maybe") and "isue" (should be "issue"). Text: "${text}"` }
+        { role: 'user', content: `Analyze this content for marketing effectiveness and writing quality. Text: "${text}"` }
       ],
       functions: [
         {
@@ -234,14 +255,18 @@ serve(async (req) => {
       overallScore: Math.max(0, Math.min(100, result.overallScore || 50))
     }
 
-    // Skip caching for now
-    // await supabase
-    //   .from('suggestion_cache')
-    //   .insert({
-    //     text_hash: textHash,
-    //     text_length: text.length,
-    //     suggestions: cleanedResult
-    //   })
+    // Cache the result
+    await supabase
+      .from('suggestion_cache')
+      .insert({
+        text_hash: textHash,
+        text_length: text.length,
+        suggestions: cleanedResult,
+        created_at: new Date().toISOString(),
+        accessed_at: new Date().toISOString(),
+        access_count: 1
+      })
+      .onConflict('text_hash')
 
     return new Response(
       JSON.stringify(cleanedResult),

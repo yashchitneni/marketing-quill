@@ -1,6 +1,6 @@
-# MarketingQuill - AI Copy Copilot for SaaS Marketing Managers
+# LinkedIn Writing Assistant - AI-Powered Content Optimizer for LinkedIn Creators
 
-MarketingQuill is an AI-powered copy editing tool designed specifically for SaaS marketing managers. It provides real-time grammar checking, tone suggestions, and brand voice consistency to help create compelling marketing copy.
+LinkedIn Writing Assistant is an AI-powered tool designed specifically for LinkedIn content creators, consultants, and professionals. It provides LinkedIn-optimized writing suggestions, hook optimization, and engagement predictions to help create compelling LinkedIn posts that drive meaningful professional connections.
 
 ## Features Implemented
 
@@ -27,13 +27,13 @@ MarketingQuill is an AI-powered copy editing tool designed specifically for SaaS
 - Daily snapshots
 - Collapsible right sidebar with tabs
 
-### ✅ Task 5: Grammar and Tone Suggestions
+### ✅ Task 5: LinkedIn Writing Optimization
 - GPT-4o integration via Supabase Edge Functions
-- Real-time text analysis with 1-second debounce
-- Inline highlighting with colored underlines (red for grammar, blue for tone)
-- Suggestion cards with accept/reject functionality
-- Suggestion analytics tracking
-- Overall content score
+- Real-time LinkedIn-specific content analysis
+- Inline highlighting for LinkedIn best practices
+- Hook effectiveness scoring
+- Hashtag and mention suggestions
+- LinkedIn engagement score
 
 ## Getting Started
 

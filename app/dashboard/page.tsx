@@ -32,9 +32,10 @@ async function getInitialDrafts(userId: string, searchParams: Awaited<DashboardP
   const from = (page - 1) * ITEMS_PER_PAGE
   const to = from + ITEMS_PER_PAGE - 1
   
+  // Fetch all data including content in ONE query
   let query = supabase
     .from('drafts')
-    .select('id, title, channel, optimization_score, status, updated_at, created_at', { count: 'exact' })
+    .select('id, title, channel, optimization_score, status, updated_at, created_at, content', { count: 'exact' })
     .eq('user_id', userId)
   
   // Apply filters
@@ -61,29 +62,21 @@ async function getInitialDrafts(userId: string, searchParams: Awaited<DashboardP
   // Apply pagination
   query = query.range(from, to)
   
-  const { data, count } = await query
+  const { data, count, error } = await query
   
-  // Fetch content previews
-  if (data && data.length > 0) {
-    const draftsWithPreview = await Promise.all(
-      data.map(async (draft) => {
-        const { data: fullDraft } = await supabase
-          .from('drafts')
-          .select('content')
-          .eq('id', draft.id)
-          .single()
-        
-        return {
-          ...draft,
-          content_preview: fullDraft?.content ? fullDraft.content.substring(0, 150) : ''
-        }
-      })
-    )
-    
-    return { drafts: draftsWithPreview, totalCount: count || 0 }
+  if (error) {
+    console.error('Error fetching drafts:', error)
+    return { drafts: [], totalCount: 0 }
   }
   
-  return { drafts: [], totalCount: 0 }
+  // Process content previews in memory (much faster than N+1 queries)
+  const draftsWithPreview = data?.map(draft => ({
+    ...draft,
+    content_preview: draft.content ? draft.content.substring(0, 150) : '',
+    content: undefined // Remove full content from response to save memory
+  })) || []
+  
+  return { drafts: draftsWithPreview, totalCount: count || 0 }
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useEditorStore } from '@/lib/stores/editor-store'
 import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
+import { useSpellCheckStore } from '@/lib/stores/spell-check-store'
 import { SuggestionHighlights } from './suggestion-highlights'
 import { cn } from '@/lib/utils'
 
@@ -10,9 +11,11 @@ export function EditorPane() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const editorStore = useEditorStore()
   const { analyzeText, cancelAnalysis } = useSuggestionsStore()
+  const { checkText: checkSpelling } = useSpellCheckStore()
   const [localContent, setLocalContent] = useState(editorStore.content)
   const analyzeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const spellCheckTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Ref to hold the latest localContent for use in subscription callback
   const localContentRef = useRef(localContent)
@@ -36,9 +39,12 @@ export function EditorPane() {
     return unsubscribe
   }, [])
   
-  // Analyze content on mount if it exists
+  // Analyze and spell check content on mount if it exists
   useEffect(() => {
     if (editorStore.content && editorStore.content.length >= 10) {
+      // Spell check immediately
+      checkSpelling(editorStore.content)
+      
       // Analyze after a short delay to let the UI settle
       setTimeout(() => {
         analyzeText(editorStore.content)
@@ -59,9 +65,17 @@ export function EditorPane() {
     if (analyzeTimeoutRef.current) {
       clearTimeout(analyzeTimeoutRef.current)
     }
+    if (spellCheckTimeoutRef.current) {
+      clearTimeout(spellCheckTimeoutRef.current)
+    }
     
     // Cancel any in-flight analysis requests
     cancelAnalysis()
+    
+    // Run spell check with minimal delay (100ms)
+    spellCheckTimeoutRef.current = setTimeout(() => {
+      checkSpelling(newContent)
+    }, 100)
     
     // Debounce saving to store
     saveTimeoutRef.current = setTimeout(() => {
@@ -69,12 +83,12 @@ export function EditorPane() {
       saveTimeoutRef.current = null
     }, 500) // Increased debounce for less frequent updates
     
-    // Debounce text analysis - reduced to 400ms for faster feedback
+    // Debounce text analysis - 1.5 seconds to reduce API calls
     analyzeTimeoutRef.current = setTimeout(() => {
       if (newContent.length >= 10) {
         analyzeText(newContent)
       }
-    }, 400) // Analyze after 0.4 seconds of no typing
+    }, 1500) // Analyze after 1.5 seconds of no typing
   }, [editorStore, analyzeText, cancelAnalysis])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -130,15 +144,19 @@ export function EditorPane() {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current)
       }
+      if (spellCheckTimeoutRef.current) {
+        clearTimeout(spellCheckTimeoutRef.current)
+      }
     }
   }, [])
 
   const { suggestions } = useSuggestionsStore()
+  const { errors: spellErrors } = useSpellCheckStore()
 
   return (
     <div className="flex-1 relative bg-background">
       {/* Highlights layer */}
-      {suggestions.length > 0 && (
+      {(suggestions.length > 0 || spellErrors.length > 0) && (
         <SuggestionHighlights text={localContent} textareaRef={textareaRef} />
       )}
       

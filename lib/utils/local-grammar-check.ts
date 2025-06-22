@@ -1,5 +1,7 @@
 // Local grammar and spell checking utilities
-// Provides basic grammar checking when Edge Functions are unavailable
+// Provides spell checking and basic grammar checking
+
+import { checkSpelling, SpellError } from './spell-checker'
 
 interface LocalSuggestion {
   text: string
@@ -57,7 +59,10 @@ const commonTypos: Record<string, string> = {
   'refered': 'referred',
   'submited': 'submitted',
   'isue': 'issue',
-  'isues': 'issues'
+  'isues': 'issues',
+  'orr': 'or',
+  'worther': 'worth',
+  'wether': 'whether'
 }
 
 // Grammar pattern checks
@@ -140,34 +145,59 @@ const stylePatterns = [
   }
 ]
 
-export function performLocalGrammarCheck(text: string): LocalSuggestion[] {
+export async function performLocalGrammarCheck(text: string): Promise<LocalSuggestion[]> {
   const suggestions: LocalSuggestion[] = []
   
-  // Check for common typos
-  const words = text.match(/\b\w+\b/g) || []
-  words.forEach(word => {
-    const lowerWord = word.toLowerCase()
-    if (commonTypos[lowerWord]) {
-      const index = text.lastIndexOf(word)
-      if (index !== -1) {
-        // Preserve the original case
-        const correction = commonTypos[lowerWord]
-        const correctedWord = word[0] === word[0].toUpperCase() 
-          ? correction[0].toUpperCase() + correction.slice(1)
-          : correction
+  // First, use the dictionary-based spell checker
+  try {
+    const spellErrors = await checkSpelling(text)
+    
+    for (const error of spellErrors) {
+      // Check if we have a common typo correction first
+      const commonCorrection = commonTypos[error.word.toLowerCase()]
+      
+      if (commonCorrection) {
+        // Use the common typo correction
+        const correctedWord = error.word[0] === error.word[0].toUpperCase() 
+          ? commonCorrection[0].toUpperCase() + commonCorrection.slice(1)
+          : commonCorrection
           
         suggestions.push({
-          text: word,
+          text: error.word,
           suggestion: correctedWord,
           reason: 'Common misspelling',
-          startIndex: index,
-          endIndex: index + word.length,
+          startIndex: error.startIndex,
+          endIndex: error.endIndex,
           confidence: 0.95,
+          type: 'grammar'
+        })
+      } else if (error.suggestions.length > 0) {
+        // Use spell checker suggestions
+        suggestions.push({
+          text: error.word,
+          suggestion: error.suggestions[0], // Use the first suggestion
+          reason: 'Misspelled word',
+          startIndex: error.startIndex,
+          endIndex: error.endIndex,
+          confidence: 0.9,
+          type: 'grammar'
+        })
+      } else {
+        // No suggestions available
+        suggestions.push({
+          text: error.word,
+          suggestion: error.word, // Keep the same word
+          reason: 'Unknown word - please check spelling',
+          startIndex: error.startIndex,
+          endIndex: error.endIndex,
+          confidence: 0.7,
           type: 'grammar'
         })
       }
     }
-  })
+  } catch (error) {
+    console.warn('Spell checker not available, falling back to basic checks', error)
+  }
   
   // Check grammar patterns
   grammarPatterns.forEach(({ pattern, suggestion, reason }) => {

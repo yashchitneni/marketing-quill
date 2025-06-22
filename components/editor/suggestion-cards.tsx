@@ -5,8 +5,14 @@ import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Check, X, Lightbulb, AlertCircle, Loader2, WifiOff } from 'lucide-react'
+import { Check, X, Lightbulb, AlertCircle, Loader2, WifiOff, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 interface SuggestionCardsProps {
   filterType?: 'grammar' | 'tone'
@@ -53,17 +59,24 @@ export function SuggestionCards({ filterType }: SuggestionCardsProps = {}) {
       newCursorPos = cursorPos + lengthDiff
     }
     
-    setContent(newContent, false) // Don't add to history for suggestion accepts
+    // Update the content in the store (this will trigger the editor to update)
+    setContent(newContent, true) // Add to history so user can undo
     acceptSuggestion(suggestion.id)
     await trackSuggestion(suggestion, true, draftId)
     
-    // Restore cursor position after React re-render
+    // Force update the textarea value directly and restore cursor position
     setTimeout(() => {
       if (textarea) {
+        // Force the textarea to update its value
+        textarea.value = newContent
         textarea.setSelectionRange(newCursorPos, newCursorPos)
         textarea.focus()
+        
+        // Trigger a change event to ensure the editor pane's local state updates
+        const event = new Event('input', { bubbles: true })
+        textarea.dispatchEvent(event)
       }
-    }, 0)
+    }, 50) // Small delay to ensure React has updated
   }
 
   const handleReject = async (suggestion: typeof suggestions[0]) => {
@@ -111,7 +124,27 @@ export function SuggestionCards({ filterType }: SuggestionCardsProps = {}) {
       
       {/* Overall Score */}
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-medium">Content Score</h4>
+        <div className="flex items-center gap-1">
+          <h4 className="font-medium">Content Score</h4>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="h-3 w-3 text-gray-400" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs text-sm">
+                  Overall quality score based on grammar, tone, clarity, and marketing effectiveness.
+                  <br /><br />
+                  • 80%+ = Excellent
+                  <br />
+                  • 60-79% = Good
+                  <br />
+                  • Below 60% = Needs improvement
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <Badge className={cn('px-3', getScoreBadge(overallScore))}>
           <span className={getScoreColor(overallScore)}>{overallScore}%</span>
         </Badge>

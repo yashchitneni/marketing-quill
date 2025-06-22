@@ -72,7 +72,7 @@
         "dependencies": [
           1
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -435,18 +435,22 @@
         "details": "Performance issues identified:\n1. Fetching ALL drafts at once with select('*')\n2. Missing database indexes on critical fields\n3. Client-side filtering instead of server-side\n4. No pagination or lazy loading\n5. Overfetching data (full content when only preview needed)\n\nImplementation required:\n- Add database indexes for updated_at, status, channel\n- Implement server-side pagination (20-30 items per page)\n- Add React Query or SWR for caching\n- Convert to server component for initial data fetch\n- Optimize data fetching to only required fields",
         "testStrategy": "1. Measure load time before and after optimization\n2. Test with large datasets (100+ drafts)\n3. Verify pagination works correctly\n4. Test cache invalidation on updates\n5. Verify server-side rendering works properly",
         "priority": "high",
-        "dependencies": [3],
+        "dependencies": [
+          3
+        ],
         "status": "completed",
         "subtasks": []
       },
       {
         "id": 17,
-        "title": "Fix slow suggestion loading", 
+        "title": "Fix slow suggestion loading",
         "description": "Suggestions loading is slow (>2 seconds). Need to implement streaming, reduce debounce time, add caching, and optimize AI model usage.",
         "details": "Performance bottlenecks:\n1. 1500ms debounce delay before analysis\n2. Synchronous GPT-4o API calls without streaming\n3. Inefficient cache key generation\n4. No request cancellation for in-flight requests\n5. Missing client-side caching\n\nOptimizations needed:\n- Reduce debounce to 800ms\n- Implement streaming responses\n- Add AbortController for request cancellation\n- Option to use faster model (GPT-3.5-turbo)\n- Client-side caching with TTL\n- Progressive loading (grammar first, then tone)",
         "testStrategy": "1. Measure suggestion latency\n2. Test streaming response functionality\n3. Verify request cancellation works\n4. Test cache hit rate\n5. Compare performance between models\n6. Load test with concurrent users",
-        "priority": "high", 
-        "dependencies": [5],
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
         "status": "completed",
         "subtasks": []
       },
@@ -457,7 +461,9 @@
         "details": "UX improvements needed:\n1. Add notification badges/counts on inactive tabs\n2. Visual indicator when new suggestions arrive\n3. Auto-switch to tab with new suggestions (optional)\n4. Persistent badge until user views the tab\n5. Clear visual hierarchy for tabs with content vs empty tabs",
         "testStrategy": "1. Verify badges appear when suggestions arrive\n2. Test badge clearing when tab is viewed\n3. Verify visual indicators are clear\n4. Test with multiple suggestion types\n5. Verify accessibility of badges",
         "priority": "medium",
-        "dependencies": [5],
+        "dependencies": [
+          5
+        ],
         "status": "pending",
         "subtasks": []
       },
@@ -468,7 +474,9 @@
         "details": "Current issues:\n1. 30-second save interval is too long\n2. Risk of data loss if browser crashes\n3. No visual feedback during save\n4. No conflict resolution for concurrent edits\n\nImplementation:\n- Debounced save (2-3 seconds after last keystroke)\n- Visual save indicator (saving/saved)\n- Optimistic updates with rollback on failure\n- Conflict detection for multi-user scenarios\n- Local storage backup for recovery",
         "testStrategy": "1. Verify save triggers after debounce period\n2. Test save indicator visibility\n3. Verify data persistence on page refresh\n4. Test error handling and recovery\n5. Verify no data loss scenarios",
         "priority": "high",
-        "dependencies": [4],
+        "dependencies": [
+          4
+        ],
         "status": "pending",
         "subtasks": []
       },
@@ -479,7 +487,9 @@
         "details": "Bug behavior:\n1. Cursor jumps to end of textarea after applying suggestion\n2. Loss of editing context for user\n3. Disrupts writing flow\n\nFix required:\n- Track cursor position before applying suggestion\n- Calculate new position based on text changes\n- Restore cursor to appropriate location\n- Handle edge cases (suggestion at cursor position)\n- Maintain selection if text was selected",
         "testStrategy": "1. Test cursor restoration after applying suggestions\n2. Verify position calculation accuracy\n3. Test with suggestions at different positions\n4. Verify selection preservation\n5. Test edge cases (start/end of text)",
         "priority": "high",
-        "dependencies": [5],
+        "dependencies": [
+          5
+        ],
         "status": "completed",
         "subtasks": []
       },
@@ -490,7 +500,9 @@
         "details": "Issues:\n1. No visual indication of selected/active item\n2. Users unsure which document is currently open\n3. Poor navigation experience\n\nImplementation:\n- Add active state styling (background color, border)\n- Ensure contrast meets accessibility standards\n- Add hover states for better interactivity\n- Persist active state across page refreshes\n- Add transition animations for smooth UX",
         "testStrategy": "1. Verify active state styling appears\n2. Test persistence across refreshes\n3. Verify accessibility contrast ratios\n4. Test hover and focus states\n5. Verify animations are smooth",
         "priority": "medium",
-        "dependencies": [3],
+        "dependencies": [
+          3
+        ],
         "status": "pending",
         "subtasks": []
       },
@@ -501,7 +513,9 @@
         "details": "Current issue:\n- Shows generic 'No drafts' message\n- Should show 'No published drafts yet'\n- Include CTA to publish first draft\n\nImplementation:\n- Create specific empty state component for published tab\n- Add appropriate messaging and imagery\n- Include action button to guide users\n- Ensure consistent with other empty states",
         "testStrategy": "1. Verify correct empty state message\n2. Test CTA functionality\n3. Verify state updates when draft is published\n4. Check consistency with design system\n5. Test responsiveness",
         "priority": "low",
-        "dependencies": [3],
+        "dependencies": [
+          3
+        ],
         "status": "pending",
         "subtasks": []
       },
@@ -512,7 +526,10 @@
         "details": "Feature requirements:\n1. Automatic subject generation when content reaches threshold\n2. Context-aware suggestions based on content type\n3. Multiple variants with confidence scores\n4. Non-intrusive UI (suggestion, not forced)\n5. Learn from user selections over time\n\nImplementation:\n- Trigger after 50+ words of content\n- Use GPT to generate 3-5 subject variants\n- Display as subtle suggestion below subject field\n- One-click to apply suggestion\n- Track which suggestions are used",
         "testStrategy": "1. Test auto-generation trigger\n2. Verify subject relevance to content\n3. Test UI appearance and dismissal\n4. Verify one-click application\n5. Test with various content types",
         "priority": "medium",
-        "dependencies": [4, 5],
+        "dependencies": [
+          4,
+          5
+        ],
         "status": "pending",
         "subtasks": []
       },
@@ -523,7 +540,9 @@
         "details": "Settings to include:\n1. Account information (email, name, avatar)\n2. Password/authentication management\n3. Notification preferences\n4. Editor preferences (font size, theme)\n5. AI model preferences (fast vs accurate)\n6. Data export/deletion options\n7. Billing and subscription info\n\nUI Requirements:\n- Organized sections with clear labels\n- Save confirmation for changes\n- Validation for inputs\n- Loading states for async operations",
         "testStrategy": "1. Test all preference toggles\n2. Verify data persistence\n3. Test validation rules\n4. Verify save confirmations\n5. Test billing integration\n6. Verify GDPR compliance features",
         "priority": "low",
-        "dependencies": [1],
+        "dependencies": [
+          1
+        ],
         "status": "pending",
         "subtasks": []
       },
@@ -534,14 +553,16 @@
         "details": "Content to include:\n1. Getting started guide\n2. Feature documentation with screenshots\n3. FAQ section with common questions\n4. Video tutorials (embedded)\n5. Contact support information\n6. Keyboard shortcuts reference\n7. API documentation (if applicable)\n\nUI Requirements:\n- Searchable content\n- Categorized navigation\n- Responsive layout\n- Print-friendly styling\n- Feedback mechanism on articles",
         "testStrategy": "1. Test search functionality\n2. Verify all links work\n3. Test video playback\n4. Verify responsive design\n5. Test print styling\n6. Verify feedback submission",
         "priority": "low",
-        "dependencies": [1],
+        "dependencies": [
+          1
+        ],
         "status": "pending",
         "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-06-18T20:07:13.913Z",
-      "updated": "2025-06-19T23:59:59.067Z",
+      "updated": "2025-06-21T18:38:40.451Z",
       "description": "Tasks for master context"
     }
   }
