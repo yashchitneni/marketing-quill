@@ -1,7 +1,7 @@
 import { DashboardLayout } from '@/components/dashboard/dashboard-layout'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, BookOpen, Target, TrendingUp, Users, Clock, Hash, Image, FileText } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ArrowLeft, BookOpen, Target, TrendingUp, Clock, Hash, Image, FileText } from 'lucide-react'
 import Link from 'next/link'
 
 export default function LinkedInBestPracticesPage() {
@@ -41,11 +41,11 @@ export default function LinkedInBestPracticesPage() {
               <div>
                 <h3 className="font-semibold mb-2">1. Hook Your Readers</h3>
                 <p className="text-gray-600 mb-2">
-                  The first 2-3 lines are crucial - they determine whether someone clicks "see more"
+                  The first 2-3 lines are crucial - they determine whether someone clicks &quot;see more&quot;
                 </p>
                 <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-sm"><strong>Good:</strong> "I made a $50K mistake yesterday. Here's what I learned..."</p>
-                  <p className="text-sm mt-2"><strong>Bad:</strong> "Today I want to share some thoughts about business..."</p>
+                  <p className="text-sm"><strong>Good:</strong> &quot;I made a $50K mistake yesterday. Here&apos;s what I learned...&quot;</p>
+                  <p className="text-sm mt-2"><strong>Bad:</strong> &quot;Today I want to share some thoughts about business...&quot;</p>
                 </div>
               </div>
 

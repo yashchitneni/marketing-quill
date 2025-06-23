@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { useSpellCheckStore } from '@/lib/stores/spell-check-store'
 import { Button } from '@/components/ui/button'
 
 interface SpellCheckTooltipProps {
@@ -69,7 +68,7 @@ export function SpellCheckTooltip({
       }}
     >
       <div className="text-sm font-medium mb-2">
-        Spelling: "<span className="text-red-600">{word}</span>"
+        Spelling: &quot;<span className="text-red-600">{word}</span>&quot;
       </div>
       
       {suggestions.length > 0 ? (

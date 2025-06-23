@@ -3,13 +3,11 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { useEditorStore } from '@/lib/stores/editor-store'
-import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
+import { useSuggestionsStore, type Suggestion } from '@/lib/stores/suggestions-store'
 import { useSpellCheckStore } from '@/lib/stores/spell-check-store'
 import { SuggestionCards } from './suggestion-cards'
 import { SpellCheckPanel } from './spell-check-panel'
@@ -20,10 +18,7 @@ import { FormattedPreview } from './formatted-preview'
 import { 
   ChevronRight, 
   ChevronLeft,
-  Wand2,
-  MessageSquare,
   Target,
-  Clock,
   Zap,
   Sparkles,
   SpellCheck,
@@ -42,7 +37,7 @@ export function EditorSidebar() {
   // Get counts for badges
   const { suggestions } = useSuggestionsStore()
   const { errors: spellErrors } = useSpellCheckStore()
-  const { content } = useEditorStore()
+  useEditorStore()
   
   const counts = useMemo(() => {
     const grammarSuggestions = suggestions.filter(s => s.type === 'grammar')
@@ -266,7 +261,7 @@ function LinkedInSuggestionsPanel() {
   )
 }
 
-function LinkedInSuggestionCard({ suggestion }: { suggestion: any }) {
+function LinkedInSuggestionCard({ suggestion }: { suggestion: Suggestion }) {
   const { content, setContent, draftId } = useEditorStore()
   const { acceptSuggestion, rejectSuggestion, trackSuggestion } = useSuggestionsStore()
   
@@ -348,7 +343,7 @@ function EngagementPanel() {
         <div className="space-y-2 text-xs text-gray-600">
           <p>✓ End with an open question</p>
           <p>✓ Share a personal story</p>
-          <p>✓ Use "you" to address readers</p>
+          <p>✓ Use &quot;you&quot; to address readers</p>
           <p>✓ Include 1-3 relevant hashtags</p>
           <p>✓ Add a visual for longer posts</p>
         </div>
@@ -369,56 +364,6 @@ function ToolsPanel() {
   )
 }
 
-function GrammarSuggestions() {
-  const { useFastModel, setUseFastModel, isAnalyzing } = useSuggestionsStore()
-  
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
-        <div className="flex items-center gap-2">
-          <Label htmlFor="speed-mode" className="text-sm font-medium cursor-pointer">
-            {useFastModel ? (
-              <>
-                <Zap className="h-4 w-4 inline mr-1 text-yellow-600" />
-                Fast Mode
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-4 w-4 inline mr-1 text-blue-600" />
-                Accurate Mode
-              </>
-            )}
-          </Label>
-        </div>
-        <Switch
-          id="speed-mode"
-          checked={useFastModel}
-          onCheckedChange={setUseFastModel}
-          disabled={isAnalyzing}
-        />
-      </div>
-      
-      <div className="text-xs text-gray-500 -mt-2 px-1">
-        {useFastModel 
-          ? "Faster responses with basic suggestions" 
-          : "More thorough analysis with advanced suggestions"}
-      </div>
-      
-      <div className="text-xs text-gray-400 bg-gray-50 p-2 rounded-lg">
-        <p className="font-medium mb-1">Grammar checks include:</p>
-        <ul className="space-y-0.5 ml-2">
-          <li>• Subject-verb agreement</li>
-          <li>• Punctuation & capitalization</li>
-          <li>• Sentence structure</li>
-          <li>• Articles (a/an/the)</li>
-        </ul>
-        <p className="mt-2 italic">For spelling errors, use the Spell Check tab</p>
-      </div>
-      
-      <SuggestionCards filterType="grammar" />
-    </div>
-  )
-}
 
 function ToneSuggestions() {
   return (

@@ -5,7 +5,6 @@ import { DashboardLayout } from '@/components/dashboard/dashboard-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -15,20 +14,14 @@ import {
   Settings, 
   User, 
   Linkedin, 
-  Bot, 
-  Bell, 
-  Shield,
+  Bot,
   ExternalLink,
-  CheckCircle,
-  AlertCircle,
-  Plus,
-  Trash2
+  CheckCircle
 } from 'lucide-react'
 
 export default function SettingsPage() {
-  const [linkedinConnected, setLinkedinConnected] = useState(false)
-  const [voiceProfileSetup, setVoiceProfileSetup] = useState(false)
-  const [writingGoals, setWritingGoals] = useState<string[]>([])
+  const [linkedinConnected] = useState(false)
+  const [voiceProfileSetup] = useState(false)
 
   const handleLinkedInConnect = () => {
     // Start LinkedIn OAuth flow

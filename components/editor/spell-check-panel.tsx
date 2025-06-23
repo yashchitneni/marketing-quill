@@ -91,12 +91,12 @@ export function SpellCheckPanel() {
             <span>{errors.length} spelling {errors.length === 1 ? 'error' : 'errors'} found</span>
           </div>
           
-          {errors.map((error, index) => (
+          {errors.map((error) => (
             <Card key={`${error.word}-${error.startIndex}`} className="overflow-hidden">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    <span className="text-red-600 font-mono">"{error.word}"</span>
+                    <span className="text-red-600 font-mono">&quot;{error.word}&quot;</span>
                   </CardTitle>
                   <Badge variant="outline" className="text-xs">
                     Position {error.startIndex}

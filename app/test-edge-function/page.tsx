@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 
 export default function TestEdgeFunction() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [result, setResult] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -32,9 +33,9 @@ export default function TestEdgeFunction() {
       }
 
       setResult(response.data)
-    } catch (err: any) {
+    } catch (err) {
       console.error('Edge function error:', err)
-      setError(err.message || 'Unknown error occurred')
+      setError(err instanceof Error ? err.message : 'Unknown error occurred')
     } finally {
       setLoading(false)
     }

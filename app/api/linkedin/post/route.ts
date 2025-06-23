@@ -4,7 +4,7 @@ import { linkedInAPI } from '@/lib/services/linkedin-api'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Get current user
     const { data: { user }, error } = await supabase.auth.getUser()
@@ -60,10 +60,10 @@ export async function POST(request: NextRequest) {
       activity: result.activity
     })
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('LinkedIn post error:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to post to LinkedIn' },
+      { error: error instanceof Error ? error.message : 'Failed to post to LinkedIn' },
       { status: 500 }
     )
   }

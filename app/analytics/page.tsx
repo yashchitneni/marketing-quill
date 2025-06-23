@@ -22,7 +22,7 @@ export default function AnalyticsPage() {
           <CardHeader>
             <CardTitle className="text-green-900">Analytics Dashboard Coming Soon!</CardTitle>
             <CardDescription className="text-green-700">
-              We're building powerful analytics to help you understand what content resonates with your LinkedIn audience.
+              We&apos;re building powerful analytics to help you understand what content resonates with your LinkedIn audience.
             </CardDescription>
           </CardHeader>
         </Card>

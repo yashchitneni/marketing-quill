@@ -28,7 +28,7 @@ export function LinkedInPostButton({ draftId }: LinkedInPostButtonProps) {
   } | null>(null)
   
   const { content } = useEditorStore()
-  const { user } = useAuthStore()
+  useAuthStore()
   const router = useRouter()
 
   const handlePost = async () => {
@@ -71,10 +71,10 @@ export function LinkedInPostButton({ draftId }: LinkedInPostButtonProps) {
         router.push('/dashboard?tab=published')
       }, 2000)
 
-    } catch (error: any) {
+    } catch (error) {
       console.error('Post error:', error)
       
-      if (error.message === 'LinkedIn not connected') {
+      if (error instanceof Error && error.message === 'LinkedIn not connected') {
         setPostResult({
           success: false,
           message: 'Please connect your LinkedIn account in Settings first'
@@ -82,7 +82,7 @@ export function LinkedInPostButton({ draftId }: LinkedInPostButtonProps) {
       } else {
         setPostResult({
           success: false,
-          message: error.message || 'Failed to post to LinkedIn'
+          message: error instanceof Error ? error.message : 'Failed to post to LinkedIn'
         })
       }
     } finally {

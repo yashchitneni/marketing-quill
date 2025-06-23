@@ -8,10 +8,11 @@ import { Card } from '@/components/ui/card'
 
 export default function TestLocalGrammar() {
   const [text, setText] = useState("Myba we should try a different approach to fix this isue.")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [results, setResults] = useState<any>(null)
 
-  const runTest = () => {
-    const suggestions = performLocalGrammarCheck(text)
+  const runTest = async () => {
+    const suggestions = await performLocalGrammarCheck(text)
     const score = calculateLocalScore(text, suggestions)
     setResults({ suggestions, score })
   }
@@ -41,6 +42,7 @@ export default function TestLocalGrammar() {
               </p>
             </Card>
 
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {results.suggestions.map((suggestion: any, index: number) => (
               <Card key={index} className="p-4">
                 <div className="space-y-2">
@@ -68,11 +70,11 @@ export default function TestLocalGrammar() {
             <div className="mt-6 p-4 bg-gray-50 rounded">
               <h4 className="font-semibold mb-2">Test Cases:</h4>
               <ul className="text-sm space-y-1">
-                <li>• "Myba" → "Maybe" (typo detection)</li>
-                <li>• "a example" → "an example" (article correction)</li>
-                <li>• "Your the best" → "You're the best" (your/you're)</li>
-                <li>• "very quickly" → suggests removing intensifier</li>
-                <li>• Double words like "the the"</li>
+                <li>• &quot;Myba&quot; → &quot;Maybe&quot; (typo detection)</li>
+                <li>• &quot;a example&quot; → &quot;an example&quot; (article correction)</li>
+                <li>• &quot;Your the best&quot; → &quot;You&apos;re the best&quot; (your/you&apos;re)</li>
+                <li>• &quot;very quickly&quot; → suggests removing intensifier</li>
+                <li>• Double words like &quot;the the&quot;</li>
                 <li>• Missing punctuation at end of sentence</li>
               </ul>
             </div>

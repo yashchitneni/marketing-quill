@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 
 export default function TestNetwork() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [results, setResults] = useState<any>({})
   const [loading, setLoading] = useState(false)
 
@@ -29,9 +30,9 @@ export default function TestNetwork() {
         })
       })
       const data = await response.json()
-      setResults(prev => ({ ...prev, directFetch: { success: true, data } }))
-    } catch (error: any) {
-      setResults(prev => ({ ...prev, directFetch: { success: false, error: error.message } }))
+      setResults((prev: any) => ({ ...prev, directFetch: { success: true, data } }))
+    } catch (error) {
+      setResults((prev: any) => ({ ...prev, directFetch: { success: false, error: error instanceof Error ? error.message : 'Unknown error' } }))
     }
     
     // Test 2: Supabase client
@@ -49,7 +50,7 @@ export default function TestNetwork() {
         }
       })
       
-      setResults(prev => ({ 
+      setResults((prev: any) => ({ 
         ...prev, 
         supabaseClient: { 
           success: !response.error, 
@@ -58,8 +59,8 @@ export default function TestNetwork() {
           hasSession: !!session
         } 
       }))
-    } catch (error: any) {
-      setResults(prev => ({ ...prev, supabaseClient: { success: false, error: error.message } }))
+    } catch (error) {
+      setResults((prev: any) => ({ ...prev, supabaseClient: { success: false, error: error instanceof Error ? error.message : 'Unknown error' } }))
     }
     
     setLoading(false)
@@ -74,6 +75,7 @@ export default function TestNetwork() {
       </Button>
       
       <div className="mt-8 space-y-4">
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         {Object.entries(results).map(([test, result]: [string, any]) => (
           <div key={test} className="p-4 border rounded">
             <h3 className="font-semibold">{test}</h3>

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
 export default function TestEdgeDirect() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [result, setResult] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -34,9 +35,9 @@ export default function TestEdgeDirect() {
 
       const data = await response.json()
       setResult(data)
-    } catch (err: any) {
+    } catch (err) {
       console.error('Direct fetch error:', err)
-      setError(err.message || 'Unknown error occurred')
+      setError(err instanceof Error ? err.message : 'Unknown error occurred')
     } finally {
       setLoading(false)
     }
@@ -66,9 +67,10 @@ export default function TestEdgeDirect() {
             </pre>
             <div className="mt-4">
               <h3 className="font-semibold">Found {result.grammar?.length || 0} grammar suggestions:</h3>
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {result.grammar?.map((s: any, i: number) => (
                 <div key={i} className="mt-2 p-2 bg-white rounded">
-                  <p>"{s.text}" → "{s.suggestion}"</p>
+                  <p>&quot;{s.text}&quot; → &quot;{s.suggestion}&quot;</p>
                   <p className="text-xs text-gray-600">{s.reason}</p>
                 </div>
               ))}

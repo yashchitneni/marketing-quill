@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/settings?error=invalid_callback', request.url))
   }
 
-  const supabase = createClient()
+  const supabase = await createClient()
   
   // Get current user
   const { data: { user }, error: userError } = await supabase.auth.getUser()

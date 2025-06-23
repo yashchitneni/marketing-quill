@@ -8,14 +8,11 @@ import { cn } from '@/lib/utils'
 import { 
   Home,
   FileText,
-  BarChart3,
   Settings,
   HelpCircle,
   ChevronLeft,
   ChevronRight,
-  PenTool,
   Archive,
-  Trash2,
   Linkedin,
   BookOpen,
   TrendingUp,
@@ -52,12 +49,6 @@ const sidebarItems = [
     href: '/analytics',
     icon: TrendingUp,
     id: 'analytics'
-  },
-  {
-    title: 'Published',
-    href: '/dashboard?status=published',
-    icon: BarChart3,
-    id: 'published'
   },
   {
     title: 'Archived',

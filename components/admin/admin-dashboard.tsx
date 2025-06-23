@@ -32,6 +32,7 @@ export function AdminDashboard() {
     activeUsers: 0,
     recentActivity: 0
   })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [auditLogs, setAuditLogs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()

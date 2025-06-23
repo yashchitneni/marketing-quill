@@ -18,10 +18,8 @@ import {
   Smile,
   Undo,
   Redo,
-  Type,
-  Sparkles
+  Type
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { useEditorStore } from '@/lib/stores/editor-store'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 

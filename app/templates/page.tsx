@@ -7,11 +7,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { BookOpen, Search, Sparkles, TrendingUp, Star, Clock, Plus, ArrowRight } from 'lucide-react'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { BookOpen, Search, Sparkles, Star, Clock, Plus, ArrowRight } from 'lucide-react'
 import { linkedInTemplates, templateCategories, getTemplatesByCategory, getViralTemplates } from '@/lib/data/linkedin-templates'
 import { useTemplatesStore } from '@/lib/stores/templates-store'
-import { useEditorStore } from '@/lib/stores/editor-store'
 import { createClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/lib/stores/auth-store'
 
@@ -47,7 +46,7 @@ export default function TemplatesPage() {
     setFilteredTemplates(templates)
   }, [selectedCategory, searchQuery, favoriteTemplateIds, recentTemplateIds])
 
-  const useTemplate = async (template: any) => {
+  const handleUseTemplate = async (template: typeof linkedInTemplates[0]) => {
     try {
       // Track usage
       await trackTemplateUsage(template.id)
@@ -199,7 +198,7 @@ export default function TemplatesPage() {
                 
                 {/* Actions */}
                 <Button 
-                  onClick={() => useTemplate(template)}
+                  onClick={() => handleUseTemplate(template)}
                   className="w-full"
                   size="sm"
                 >

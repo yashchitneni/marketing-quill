@@ -4,7 +4,7 @@ import { linkedInAPI } from '@/lib/services/linkedin-api'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Get current user
     const { data: { user }, error } = await supabase.auth.getUser()
@@ -36,10 +36,10 @@ export async function GET(request: NextRequest) {
       count: processedPosts.length
     })
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('LinkedIn get posts error:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch LinkedIn posts' },
+      { error: error instanceof Error ? error.message : 'Failed to fetch LinkedIn posts' },
       { status: 500 }
     )
   }
