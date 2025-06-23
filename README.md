@@ -2,6 +2,7 @@
 
 [![Deployed on Vercel](https://vercel.com/button)](https://marketing-quill.vercel.app)
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Deploy Status](https://img.shields.io/badge/deploy-active-blue)
 
 LinkedIn Writing Assistant is an AI-powered tool designed specifically for LinkedIn content creators, consultants, and professionals. It provides LinkedIn-optimized writing suggestions, hook optimization, and engagement predictions to help create compelling LinkedIn posts that drive meaningful professional connections.
 
