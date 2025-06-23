@@ -94,35 +94,12 @@ export function TemplateCard({ template, onSelect, isFavorite }: TemplateCardPro
           {preview}
         </div>
         
-        {/* Metrics - This will grow to fill available space */}
+        {/* Content Type */}
         <div className="flex-1">
-          {template.metrics && (
-            <div className="flex items-center gap-4 text-xs">
-              {template.metrics.avgEngagement && (
-                <div className="flex items-center gap-1">
-                  <BarChart3 className="h-3 w-3 text-gray-400" />
-                  <span className="text-gray-600">
-                    {template.metrics.avgEngagement} engagement
-                  </span>
-                </div>
-              )}
-              {template.metrics.bestFor && (
-                <div className="flex items-center gap-1">
-                  <Target className="h-3 w-3 text-gray-400" />
-                  <span className="text-gray-600">{template.metrics.bestFor}</span>
-                </div>
-              )}
-              {template.metrics.difficulty && (
-                <div className="flex items-center gap-1">
-                  <Gauge className="h-3 w-3 text-gray-400" />
-                  <Badge 
-                    variant="secondary" 
-                    className={cn("text-xs px-2 py-0", getDifficultyColor(template.metrics.difficulty))}
-                  >
-                    {template.metrics.difficulty}
-                  </Badge>
-                </div>
-              )}
+          {template.metrics?.bestFor && (
+            <div className="flex items-center gap-1 text-xs">
+              <Target className="h-3 w-3 text-gray-400" />
+              <span className="text-gray-600">{template.metrics.bestFor}</span>
             </div>
           )}
         </div>

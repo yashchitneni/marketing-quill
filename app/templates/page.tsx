@@ -48,29 +48,37 @@ export default function TemplatesPage() {
   }, [selectedCategory, searchQuery, favoriteTemplateIds, recentTemplateIds])
 
   const useTemplate = async (template: any) => {
-    // Track usage
-    await trackTemplateUsage(template.id)
-    
-    // Create a new draft with the template
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('drafts')
-      .insert({
-        user_id: user?.id,
-        title: template.title,
-        content: template.template,
-        channel: 'linkedin',
-        optimization_score: 0,
-        metadata: {
-          templateId: template.id,
-          templateCategory: template.category
-        }
-      })
-      .select()
-      .single()
-    
-    if (!error && data) {
-      router.push(`/editor/${data.id}`)
+    try {
+      // Track usage
+      await trackTemplateUsage(template.id)
+      
+      // Create a new draft with the template
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('drafts')
+        .insert({
+          user_id: user?.id,
+          title: template.title,
+          content: template.template,
+          optimization_score: 0,
+          metadata: {
+            templateId: template.id,
+            templateCategory: template.category
+          }
+        })
+        .select()
+        .single()
+      
+      if (error) {
+        console.error('Error creating draft:', error)
+        return
+      }
+      
+      if (data) {
+        router.push(`/editor/${data.id}`)
+      }
+    } catch (error) {
+      console.error('Error using template:', error)
     }
   }
 
@@ -173,29 +181,12 @@ export default function TemplatesPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col">
-                {/* Metrics */}
-                {template.metrics && (
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {template.metrics.avgEngagement && (
-                      <Badge variant="outline" className="text-xs">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        {template.metrics.avgEngagement} engagement
-                      </Badge>
-                    )}
-                    {template.metrics.difficulty && (
-                      <Badge variant="outline" className="text-xs">
-                        {template.metrics.difficulty === 'easy' && '🟢'}
-                        {template.metrics.difficulty === 'medium' && '🟡'}
-                        {template.metrics.difficulty === 'hard' && '🔴'}
-                        {' ' + template.metrics.difficulty}
-                      </Badge>
-                    )}
-                    {template.isViral && (
-                      <Badge className="text-xs bg-purple-100 text-purple-700">
-                        <Sparkles className="h-3 w-3 mr-1" />
-                        High viral potential
-                      </Badge>
-                    )}
+                {/* Content Type */}
+                {template.metrics?.bestFor && (
+                  <div className="mb-4">
+                    <Badge variant="outline" className="text-xs">
+                      {template.metrics.bestFor}
+                    </Badge>
                   </div>
                 )}
                 
