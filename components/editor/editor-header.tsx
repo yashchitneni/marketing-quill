@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTemplatesStore } from '@/lib/stores/templates-store'
+import { LinkedInPostButton } from './linkedin-post-button'
 
 
 export function EditorHeader() {
@@ -123,6 +124,8 @@ export function EditorHeader() {
             <Save className="h-4 w-4 mr-2" />
             {isDirty ? 'Save' : 'Saved'}
           </Button>
+          
+          <LinkedInPostButton />
         </div>
       </div>
     </div>
