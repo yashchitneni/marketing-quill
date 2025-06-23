@@ -18,7 +18,8 @@ import {
   Trash2,
   Linkedin,
   BookOpen,
-  TrendingUp
+  TrendingUp,
+  CheckCircle
 } from 'lucide-react'
 
 const sidebarItems = [
@@ -29,10 +30,16 @@ const sidebarItems = [
     id: 'home'
   },
   {
-    title: 'My Posts',
-    href: '/dashboard?status=all',
+    title: 'My Drafts',
+    href: '/dashboard?status=draft',
     icon: FileText,
     id: 'all-drafts'
+  },
+  {
+    title: 'Published',
+    href: '/dashboard?status=published',
+    icon: CheckCircle,
+    id: 'published'
   },
   {
     title: 'Templates',

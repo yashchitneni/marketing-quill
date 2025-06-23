@@ -33,12 +33,18 @@ async function getInitialDrafts(userId: string, searchParams: Awaited<DashboardP
   // Fetch all data including content in ONE query
   let query = supabase
     .from('drafts')
-    .select('id, title, channel, optimization_score, status, updated_at, created_at, content', { count: 'exact' })
+    .select('id, title, channel, optimization_score, status, updated_at, created_at, content, published_at, linkedin_url', { count: 'exact' })
     .eq('user_id', userId)
   
   // Apply filters
   if (searchParams.status && searchParams.status !== 'all') {
-    query = query.eq('status', searchParams.status)
+    if (searchParams.status === 'published') {
+      query = query.not('published_at', 'is', null)
+    } else if (searchParams.status === 'draft') {
+      query = query.is('published_at', null)
+    } else {
+      query = query.eq('status', searchParams.status)
+    }
   }
   
   if (searchParams.channel && searchParams.channel !== 'all') {

@@ -31,8 +31,8 @@ export default function SettingsPage() {
   const [writingGoals, setWritingGoals] = useState<string[]>([])
 
   const handleLinkedInConnect = () => {
-    // TODO: Implement LinkedIn OAuth flow
-    window.open('/api/auth/linkedin', '_blank')
+    // Start LinkedIn OAuth flow
+    window.location.href = '/api/auth/linkedin'
   }
 
   const handleVoiceProfileSetup = () => {
