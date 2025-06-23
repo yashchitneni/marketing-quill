@@ -4,7 +4,10 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useEditorStore } from '@/lib/stores/editor-store'
 import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
 import { useSpellCheckStore } from '@/lib/stores/spell-check-store'
+import { useLinkedInOptimizerStore } from '@/lib/stores/linkedin-optimizer-store'
 import { SuggestionHighlights } from './suggestion-highlights'
+import { TemplateModal } from './template-modal'
+import { EditorToolbar } from './editor-toolbar'
 import { cn } from '@/lib/utils'
 
 export function EditorPane() {
@@ -91,17 +94,73 @@ export function EditorPane() {
     }, 1500) // Analyze after 1.5 seconds of no typing
   }, [editorStore, analyzeText, cancelAnalysis])
 
+  const handleInsert = useCallback((before: string, after: string, placeholder?: string) => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const selectedText = textarea.value.substring(start, end)
+    const textToInsert = selectedText || placeholder || ''
+    
+    const newContent = 
+      localContent.substring(0, start) + 
+      before + textToInsert + after +
+      localContent.substring(end)
+    
+    setLocalContent(newContent)
+    
+    // Update cursor position
+    const newCursorPos = start + before.length + textToInsert.length
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus()
+        textareaRef.current.selectionStart = start + before.length
+        textareaRef.current.selectionEnd = newCursorPos
+      }
+    }, 0)
+    
+    // Trigger save
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      editorStore.setContent(newContent)
+      saveTimeoutRef.current = null
+    }, 500)
+  }, [localContent, editorStore])
+
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    // Undo/Redo shortcuts
-    if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === 'z') {
-      e.preventDefault()
-      editorStore.undo()
-    } else if (
-      ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'z') ||
-      ((e.metaKey || e.ctrlKey) && e.key === 'y')
-    ) {
-      e.preventDefault()
-      editorStore.redo()
+    // Formatting shortcuts
+    if (e.metaKey || e.ctrlKey) {
+      switch(e.key.toLowerCase()) {
+        case 'b':
+          e.preventDefault()
+          handleInsert('**', '**', 'bold text')
+          break
+        case 'i':
+          e.preventDefault()
+          handleInsert('*', '*', 'italic text')
+          break
+        case 's':
+          e.preventDefault()
+          // Manual save with Cmd/Ctrl + S (force save)
+          editorStore.save(true)
+          break
+        case 'z':
+          if (e.shiftKey) {
+            e.preventDefault()
+            editorStore.redo()
+          } else {
+            e.preventDefault()
+            editorStore.undo()
+          }
+          break
+        case 'y':
+          e.preventDefault()
+          editorStore.redo()
+          break
+      }
     }
     
     // Tab handling
@@ -133,7 +192,7 @@ export function EditorPane() {
         saveTimeoutRef.current = null
       }, 500)
     }
-  }, [localContent, editorStore])
+  }, [localContent, editorStore, handleInsert])
 
   // Clean up timeouts on unmount
   useEffect(() => {
@@ -154,34 +213,43 @@ export function EditorPane() {
   const { errors: spellErrors } = useSpellCheckStore()
 
   return (
-    <div className="flex-1 relative bg-background">
-      {/* Highlights layer */}
-      {(suggestions.length > 0 || spellErrors.length > 0) && (
-        <SuggestionHighlights text={localContent} textareaRef={textareaRef} />
-      )}
+    <>
+      <div className="flex-1 flex flex-col bg-background">
+        {/* Editor Toolbar */}
+        <EditorToolbar textareaRef={textareaRef} onInsert={handleInsert} />
+        
+        <div className="flex-1 relative">
+          {/* Highlights layer */}
+          {(suggestions.length > 0 || spellErrors.length > 0) && (
+            <SuggestionHighlights text={localContent} textareaRef={textareaRef} />
+          )}
+          
+          {/* Main editor textarea */}
+          <textarea
+            ref={textareaRef}
+            value={localContent}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Start typing your LinkedIn post..."
+            className={cn(
+              "w-full h-full p-8 bg-transparent resize-none",
+              "text-base leading-relaxed",
+              "focus:outline-none",
+              "placeholder:text-muted-foreground/50",
+              // Make sure textarea is above highlights
+              "relative z-10"
+            )}
+            style={{
+              fontSize: '16px',
+              lineHeight: '1.75',
+              minHeight: '100%',
+            }}
+          />
+        </div>
+      </div>
       
-      {/* Main editor textarea */}
-      <textarea
-        ref={textareaRef}
-        value={localContent}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        placeholder="Start typing your content..."
-        className={cn(
-          "w-full h-full p-8 bg-transparent resize-none",
-          "font-mono text-base leading-relaxed",
-          "focus:outline-none",
-          "placeholder:text-muted-foreground/50",
-          // Make sure textarea is above highlights
-          "relative z-10"
-        )}
-        style={{
-          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-          fontSize: '16px',
-          lineHeight: '1.75',
-          minHeight: '100%',
-        }}
-      />
-    </div>
+      {/* Template Modal */}
+      <TemplateModal />
+    </>
   )
 }

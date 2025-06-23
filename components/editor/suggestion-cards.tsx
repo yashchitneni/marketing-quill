@@ -184,7 +184,7 @@ export function SuggestionCards({ filterType }: SuggestionCardsProps = {}) {
                       <Lightbulb className="h-4 w-4 text-blue-500" />
                     )}
                     <CardTitle className="text-sm">
-                      {suggestion.type === 'grammar' ? 'Grammar' : 'Tone & Style'}
+                      {suggestion.type === 'grammar' ? 'Grammar & Structure' : 'Tone & Style'}
                     </CardTitle>
                   </div>
                   <Badge variant="outline" className="text-xs">

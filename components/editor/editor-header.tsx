@@ -20,9 +20,10 @@ import {
   FileText, 
   Share2, 
   Globe, 
-  Megaphone 
+  Megaphone
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTemplatesStore } from '@/lib/stores/templates-store'
 
 const channels = [
   { value: 'email', label: 'Email', icon: Mail },
@@ -45,9 +46,11 @@ export function EditorHeader() {
     isDirty,
     lastSaved 
   } = useEditorStore()
+  const { setTemplateModalOpen } = useTemplatesStore()
 
   const handleSave = async () => {
-    await save()
+    // Force save even if not dirty when manually clicking
+    await save(true)
   }
 
   const getSaveStatus = () => {
@@ -130,6 +133,15 @@ export function EditorHeader() {
               ))}
             </SelectContent>
           </Select>
+          
+          <Button
+            variant="outline"
+            onClick={() => setTemplateModalOpen(true)}
+            className="gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            Templates
+          </Button>
         </div>
         
         <div className="flex items-center gap-4">
@@ -140,11 +152,12 @@ export function EditorHeader() {
           
           <Button 
             onClick={handleSave}
-            disabled={!isDirty || isSaving}
+            disabled={isSaving || saveStatus === 'saving'}
             size="sm"
+            variant={isDirty ? "default" : "outline"}
           >
             <Save className="h-4 w-4 mr-2" />
-            Save
+            {isDirty ? 'Save' : 'Saved'}
           </Button>
         </div>
       </div>

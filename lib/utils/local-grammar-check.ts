@@ -148,56 +148,9 @@ const stylePatterns = [
 export async function performLocalGrammarCheck(text: string): Promise<LocalSuggestion[]> {
   const suggestions: LocalSuggestion[] = []
   
-  // First, use the dictionary-based spell checker
-  try {
-    const spellErrors = await checkSpelling(text)
-    
-    for (const error of spellErrors) {
-      // Check if we have a common typo correction first
-      const commonCorrection = commonTypos[error.word.toLowerCase()]
-      
-      if (commonCorrection) {
-        // Use the common typo correction
-        const correctedWord = error.word[0] === error.word[0].toUpperCase() 
-          ? commonCorrection[0].toUpperCase() + commonCorrection.slice(1)
-          : commonCorrection
-          
-        suggestions.push({
-          text: error.word,
-          suggestion: correctedWord,
-          reason: 'Common misspelling',
-          startIndex: error.startIndex,
-          endIndex: error.endIndex,
-          confidence: 0.95,
-          type: 'grammar'
-        })
-      } else if (error.suggestions.length > 0) {
-        // Use spell checker suggestions
-        suggestions.push({
-          text: error.word,
-          suggestion: error.suggestions[0], // Use the first suggestion
-          reason: 'Misspelled word',
-          startIndex: error.startIndex,
-          endIndex: error.endIndex,
-          confidence: 0.9,
-          type: 'grammar'
-        })
-      } else {
-        // No suggestions available
-        suggestions.push({
-          text: error.word,
-          suggestion: error.word, // Keep the same word
-          reason: 'Unknown word - please check spelling',
-          startIndex: error.startIndex,
-          endIndex: error.endIndex,
-          confidence: 0.7,
-          type: 'grammar'
-        })
-      }
-    }
-  } catch (error) {
-    console.warn('Spell checker not available, falling back to basic checks', error)
-  }
+  // NOTE: We NO LONGER include spelling errors here
+  // Spelling is handled separately by the spell-check-store
+  // This function only handles grammar and tone suggestions
   
   // Check grammar patterns
   grammarPatterns.forEach(({ pattern, suggestion, reason }) => {

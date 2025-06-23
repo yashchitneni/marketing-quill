@@ -249,7 +249,7 @@
         "dependencies": [
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -569,7 +569,7 @@
         "dependencies": [
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -631,7 +631,7 @@
     ],
     "metadata": {
       "created": "2025-06-18T20:07:13.913Z",
-      "updated": "2025-06-22T21:45:00.000Z",
+      "updated": "2025-06-23T14:46:47.378Z",
       "description": "LinkedIn Writing Assistant - Tasks for LinkedIn-focused pivot"
     }
   }

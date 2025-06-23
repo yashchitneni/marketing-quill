@@ -30,9 +30,10 @@ interface EditorState {
   setChannel: (channel: string | null) => void
   undo: () => void
   redo: () => void
-  save: () => Promise<void>
+  save: (force?: boolean) => Promise<void>
   autoSave: () => Promise<void>
   debouncedSave: () => void
+  clearSaveStatus: () => void
   loadDraft: (id: string) => Promise<void>
   reset: () => void
   createSnapshot: () => Promise<void>
@@ -108,8 +109,10 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       }
     }
     
-    // Trigger debounced save
-    get().debouncedSave()
+    // Trigger debounced save only if we have a draftId
+    if (state.draftId) {
+      get().debouncedSave()
+    }
   },
   
   undo: () => {
@@ -136,10 +139,20 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     }
   },
   
-  save: async () => {
-    const { draftId, title, content, channel } = get()
-    if (!draftId) return
+  save: async (force = false) => {
+    const { draftId, title, content, channel, isDirty } = get()
+    if (!draftId) {
+      console.warn('Cannot save: No draft ID set')
+      return
+    }
     
+    // Skip if not dirty and not forced
+    if (!isDirty && !force) {
+      console.log('Skip save - no changes')
+      return
+    }
+    
+    console.log('Saving draft:', draftId, 'Force:', force)
     set({ isSaving: true, saveStatus: 'saving' })
     const supabase = createClient()
     
@@ -176,20 +189,35 @@ export const useEditorStore = create<EditorState>((set, get) => ({
           }
         }, 2000)
       } else {
-        set({ saveStatus: 'error' })
+        set({ saveStatus: 'error', isSaving: false })
         console.error('Failed to save draft:', error)
+        // Clear error status after 3 seconds
+        setTimeout(() => {
+          const currentStatus = get().saveStatus
+          if (currentStatus === 'error') {
+            set({ saveStatus: null })
+          }
+        }, 3000)
       }
     } catch (error) {
-      set({ saveStatus: 'error' })
+      set({ saveStatus: 'error', isSaving: false })
       console.error('Failed to save draft:', error)
+      // Clear error status after 3 seconds
+      setTimeout(() => {
+        const currentStatus = get().saveStatus
+        if (currentStatus === 'error') {
+          set({ saveStatus: null })
+        }
+      }, 3000)
     } finally {
       set({ isSaving: false })
     }
   },
   
   autoSave: async () => {
-    const { isDirty, isSaving } = get()
-    if (isDirty && !isSaving) {
+    const { isDirty, isSaving, draftId } = get()
+    if (isDirty && !isSaving && draftId) {
+      console.log('Auto-saving...')
       set({ isAutoSaving: true })
       await get().save()
       set({ isAutoSaving: false })
@@ -197,15 +225,27 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   },
   
   debouncedSave: () => {
+    const { draftId } = get()
+    if (!draftId) {
+      console.log('Skipping debounced save - no draft ID')
+      return
+    }
+    
     // Clear existing timer
     if (saveDebounceTimer) {
       clearTimeout(saveDebounceTimer)
     }
     
     // Set new timer for 2 seconds
+    console.log('Setting auto-save timer...')
     saveDebounceTimer = setTimeout(() => {
+      console.log('Auto-save timer triggered')
       get().autoSave()
     }, 2000)
+  },
+  
+  clearSaveStatus: () => {
+    set({ saveStatus: null, isSaving: false })
   },
   
   loadDraft: async (id: string) => {

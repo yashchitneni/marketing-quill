@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { createClient } from '@/lib/supabase/client'
 import { performLocalGrammarCheck, calculateLocalScore } from '@/lib/utils/local-grammar-check'
+import { analyzeLinkedInContent } from '@/lib/utils/linkedin-suggestions'
 
 export interface Suggestion {
   id: string
@@ -10,7 +11,8 @@ export interface Suggestion {
   startIndex: number
   endIndex: number
   confidence: number
-  type: 'grammar' | 'tone'
+  type: 'grammar' | 'tone' | 'linkedin' | 'hook' | 'structure'
+  urgency?: 'high' | 'medium' | 'low'
 }
 
 interface CacheEntry {
@@ -118,6 +120,9 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
       
       const { grammar, tone, overallScore } = response.data
       
+      // Also run LinkedIn-specific analysis
+      const linkedInSuggestions = analyzeLinkedInContent(text)
+      
       // Combine and format suggestions
       const formattedSuggestions: Suggestion[] = [
         ...grammar.map((s: Omit<Suggestion, 'id' | 'type'>, index: number) => ({
@@ -129,6 +134,10 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
           id: `tone-${index}`,
           ...s,
           type: 'tone' as const
+        })),
+        ...linkedInSuggestions.map((s, index) => ({
+          id: `linkedin-${s.type}-${index}`,
+          ...s
         }))
       ].sort((a, b) => a.startIndex - b.startIndex)
       
@@ -166,13 +175,20 @@ export const useSuggestionsStore = create<SuggestionsState>((set, get) => ({
         // Use local grammar checking as fallback
         try {
           const localSuggestions = await performLocalGrammarCheck(text)
+          const linkedInSuggestions = analyzeLinkedInContent(text)
           const localScore = calculateLocalScore(text, localSuggestions)
           
           // Format local suggestions to match our structure
-          const formattedLocalSuggestions: Suggestion[] = localSuggestions.map((s, index) => ({
-            id: `local-${s.type}-${index}`,
-            ...s
-          }))
+          const formattedLocalSuggestions: Suggestion[] = [
+            ...localSuggestions.map((s, index) => ({
+              id: `local-${s.type}-${index}`,
+              ...s
+            })),
+            ...linkedInSuggestions.map((s, index) => ({
+              id: `linkedin-${s.type}-${index}`,
+              ...s
+            }))
+          ]
           
           // Update cache with local results
           const newCache = new Map(get().cache)
