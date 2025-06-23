@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { 
@@ -77,6 +77,7 @@ const bottomItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [collapsed, setCollapsed] = useState(false)
 
   return (
@@ -102,12 +103,18 @@ export function Sidebar() {
       {/* Main Navigation */}
       <nav className="flex-1 p-4 space-y-1">
         {sidebarItems.map((item) => {
+          // Build current URL for comparison
+          const currentSearch = searchParams.toString()
+          const currentUrl = currentSearch ? `${pathname}?${currentSearch}` : pathname
+          
           // Check if we're on the home page
-          const isHomePage = pathname === '/dashboard' && !window.location.search
+          const isHomePage = pathname === '/dashboard' && !currentSearch
+          
+          // Determine if this item is active
           const isActive = 
             (item.id === 'home' && isHomePage) ||
-            (item.id !== 'home' && pathname === item.href) || 
-            (item.href.includes('?') && pathname + window.location.search === item.href)
+            (item.id !== 'home' && item.href === currentUrl)
+            
           return (
             <Link
               key={item.id}

@@ -42,6 +42,7 @@ interface QuickAction {
   icon: React.ElementType
   action: () => void
   color: string
+  loading?: boolean
 }
 
 export function DashboardHome() {
@@ -120,31 +121,13 @@ export function DashboardHome() {
     setLoading(false)
   }
 
-  const createNewDraft = async () => {
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('drafts')
-      .insert({
-        user_id: user?.id,
-        title: 'Untitled LinkedIn Post',
-        content: '',
-        channel: 'linkedin',
-        optimization_score: 0
-      })
-      .select()
-      .single()
-    
-    if (!error && data) {
-      router.push(`/editor/${data.id}`)
-    }
-  }
 
   const quickActions: QuickAction[] = [
     {
       title: 'Write LinkedIn Post',
       description: 'Create engaging content for LinkedIn',
       icon: Linkedin,
-      action: createNewDraft,
+      action: () => router.push('/editor/new'),
       color: 'bg-blue-500'
     },
     {
@@ -328,9 +311,11 @@ export function DashboardHome() {
               <div className="text-center py-8">
                 <PenTool className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                 <p className="text-gray-500">No drafts yet</p>
-                <Button onClick={createNewDraft} size="sm" className="mt-3">
-                  Create Your First Draft
-                </Button>
+                <Link href="/editor/new">
+                  <Button size="sm" className="mt-3">
+                    Create Your First Draft
+                  </Button>
+                </Link>
               </div>
             )}
           </CardContent>

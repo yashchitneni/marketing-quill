@@ -1,8 +1,10 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
 import { useSpellCheckStore } from '@/lib/stores/spell-check-store'
+import { SpellCheckTooltip } from './spell-check-tooltip'
+import { useEditorStore } from '@/lib/stores/editor-store'
 
 interface SuggestionHighlightsProps {
   text: string
@@ -19,8 +21,16 @@ interface TextSegment {
 export function SuggestionHighlights({ text, textareaRef }: SuggestionHighlightsProps) {
   const highlightContainerRef = useRef<HTMLDivElement>(null)
   const { suggestions } = useSuggestionsStore()
-  const { errors: spellErrors } = useSpellCheckStore()
+  const { errors: spellErrors, addToPersonalDictionary } = useSpellCheckStore()
+  const { setContent } = useEditorStore()
   const lastTextRef = useRef<string>(text)
+  const [tooltipInfo, setTooltipInfo] = useState<{
+    word: string
+    suggestions: string[]
+    position: { x: number; y: number }
+    startIndex: number
+    endIndex: number
+  } | null>(null)
 
   // Sync scroll position between textarea and highlights
   useEffect(() => {
@@ -53,6 +63,11 @@ export function SuggestionHighlights({ text, textareaRef }: SuggestionHighlights
     if (!text) {
       return null;
     }
+
+    // Debug logging
+    console.log('SuggestionHighlights - text:', text)
+    console.log('SuggestionHighlights - spellErrors:', spellErrors)
+    console.log('SuggestionHighlights - suggestions:', suggestions)
 
     // Combine all highlights (spell errors and suggestions)
     const allHighlights: TextSegment[] = []
@@ -110,11 +125,37 @@ export function SuggestionHighlights({ text, textareaRef }: SuggestionHighlights
           : highlight.type === 'grammar'
           ? '2px wavy #ef4444'
           : '2px wavy #3b82f6',
-        paddingBottom: '2px'
+        paddingBottom: '2px',
+        cursor: highlight.type === 'spell-error' ? 'pointer' : 'default'
+      }
+      
+      const handleSpellErrorClick = (e: React.MouseEvent) => {
+        if (highlight.type === 'spell-error') {
+          e.stopPropagation()
+          const error = spellErrors.find(err => 
+            err.startIndex === highlight.startIndex && 
+            err.endIndex === highlight.endIndex
+          )
+          if (error) {
+            const rect = (e.target as HTMLElement).getBoundingClientRect()
+            setTooltipInfo({
+              word: error.word,
+              suggestions: error.suggestions || [],
+              position: { x: rect.left, y: rect.bottom },
+              startIndex: error.startIndex,
+              endIndex: error.endIndex
+            })
+          }
+        }
       }
       
       segments.push(
-        <span key={`highlight-${index}`} style={highlightStyle}>
+        <span 
+          key={`highlight-${index}`} 
+          style={highlightStyle}
+          onClick={handleSpellErrorClick}
+          className={highlight.type === 'spell-error' ? 'pointer-events-auto cursor-pointer' : ''}
+        >
           {text.slice(highlight.startIndex, highlight.endIndex)}
         </span>
       )
@@ -134,23 +175,51 @@ export function SuggestionHighlights({ text, textareaRef }: SuggestionHighlights
     return segments
   }
 
+  const handleReplace = (replacement: string) => {
+    if (!tooltipInfo) return
+    
+    const newText = 
+      text.slice(0, tooltipInfo.startIndex) + 
+      replacement + 
+      text.slice(tooltipInfo.endIndex)
+    
+    setContent(newText)
+    setTooltipInfo(null)
+  }
+
   return (
-    <div
-      ref={highlightContainerRef}
-      className="absolute inset-0 overflow-hidden pointer-events-none"
-      style={{
-        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-        fontSize: '16px',
-        lineHeight: '1.75',
-        padding: '32px',
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word',
-        userSelect: 'none' // Prevent text selection in the highlights layer
-      }}
-    >
-      <div className="pointer-events-auto">
-        {renderHighlightedText()}
+    <>
+      <div
+        ref={highlightContainerRef}
+        className="absolute inset-0 overflow-hidden pointer-events-none z-0"
+        style={{
+          fontFamily: 'inherit', // Use same font as textarea
+          fontSize: '16px',
+          lineHeight: '1.75',
+          padding: '32px',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word',
+          userSelect: 'none' // Prevent text selection in the highlights layer
+        }}
+      >
+        <div>
+          {renderHighlightedText()}
+        </div>
       </div>
-    </div>
+      
+      {tooltipInfo && (
+        <SpellCheckTooltip
+          word={tooltipInfo.word}
+          position={tooltipInfo.position}
+          suggestions={tooltipInfo.suggestions}
+          onReplace={handleReplace}
+          onDismiss={() => setTooltipInfo(null)}
+          onAddToDictionary={(word) => {
+            addToPersonalDictionary(word)
+            setTooltipInfo(null)
+          }}
+        />
+      )}
+    </>
   )
 }

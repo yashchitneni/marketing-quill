@@ -40,7 +40,15 @@ export async function initializeSpellChecker() {
       'onboarding', 'upsell', 'upselling', 'crosssell', 'crossselling',
       'analytics', 'metric', 'metrics', 'KPI', 'KPIs', 'ROI',
       'personalization', 'personalize', 'personalized',
-      'MarketingQuill', 'Quill', 'copilot'
+      'MarketingQuill', 'Quill', 'copilot',
+      // AI/Tech terms
+      'AI', 'ML', 'LLM', 'LLMs', 'GPT', 'ChatGPT', 'OpenAI', 'NLP',
+      'LinkedIn', 'Instagram', 'Facebook', 'Twitter', 'YouTube',
+      'URL', 'URLs', 'PDF', 'CSV', 'JSON', 'XML', 'HTML', 'CSS',
+      'JavaScript', 'TypeScript', 'Python', 'React', 'NextJS', 'NodeJS',
+      'webhook', 'webhooks', 'API', 'SDK', 'OAuth', 'JWT', 'CORS',
+      'async', 'sync', 'frontend', 'backend', 'fullstack', 'DevOps',
+      'UI', 'UX', 'UX/UI', 'MVP', 'POC', 'QA', 'CI/CD'
     ]
     
     customWords.forEach(word => {
@@ -68,7 +76,7 @@ export interface SpellError {
 }
 
 // Check spelling of a text and return errors
-export async function checkSpelling(text: string): Promise<SpellError[]> {
+export async function checkSpelling(text: string, personalDictionary: string[] = []): Promise<SpellError[]> {
   // Initialize if not already done
   if (!spellChecker) {
     await initializeSpellChecker()
@@ -93,6 +101,11 @@ export async function checkSpelling(text: string): Promise<SpellError[]> {
     
     // Skip very short words (1-2 chars) and numbers
     if (word.length <= 2 || /^\d+$/.test(word)) {
+      continue
+    }
+    
+    // Skip words in personal dictionary
+    if (personalDictionary.includes(word) || personalDictionary.includes(word.toLowerCase())) {
       continue
     }
     

@@ -232,17 +232,19 @@ export function EditorPane() {
             onKeyDown={handleKeyDown}
             placeholder="Start typing your LinkedIn post..."
             className={cn(
-              "w-full h-full p-8 bg-transparent resize-none",
+              "w-full h-full p-8 resize-none",
               "text-base leading-relaxed",
               "focus:outline-none",
               "placeholder:text-muted-foreground/50",
-              // Make sure textarea is above highlights
-              "relative z-10"
+              // Make textarea background transparent and ensure proper layering
+              "bg-transparent relative z-10"
             )}
             style={{
               fontSize: '16px',
               lineHeight: '1.75',
               minHeight: '100%',
+              backgroundColor: 'transparent',
+              color: 'inherit'
             }}
           />
         </div>

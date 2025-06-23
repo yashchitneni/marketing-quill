@@ -134,24 +134,6 @@ export default function DashboardContent({
     }
   }, [user, currentPage, fetchDrafts])
 
-  const createNewDraft = async () => {
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('drafts')
-      .insert({
-        user_id: user?.id,
-        title: 'Untitled LinkedIn Post',
-        content: '',
-        channel: 'linkedin',
-        optimization_score: 0
-      })
-      .select()
-      .single()
-    
-    if (!error && data) {
-      router.push(`/editor/${data.id}`)
-    }
-  }
 
   const handleDelete = async (id: string) => {
     const supabase = createClient()
@@ -248,10 +230,12 @@ export default function DashboardContent({
              'Create and manage your LinkedIn content'}
           </p>
         </div>
-        <Button onClick={createNewDraft} className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="mr-2 h-4 w-4" />
-          New Post
-        </Button>
+        <Link href="/editor/new">
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="mr-2 h-4 w-4" />
+            New Post
+          </Button>
+        </Link>
       </div>
 
       {/* Filters and Search */}
@@ -320,13 +304,23 @@ export default function DashboardContent({
       ) : filteredDrafts.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 mb-4">
-            {searchQuery ? 'No drafts found matching your search.' : 'No drafts yet. Create your first one!'}
+            {searchQuery ? (
+              'No posts found matching your search.'
+            ) : status === 'published' ? (
+              "You haven't published any posts yet."
+            ) : status === 'archived' ? (
+              "You haven't archived any posts yet."
+            ) : (
+              "You haven't created any posts yet."
+            )}
           </p>
           {!searchQuery && (
-            <Button onClick={createNewDraft} variant="outline">
-              <Plus className="mr-2 h-4 w-4" />
-              Create Draft
-            </Button>
+            <Link href="/editor/new">
+              <Button variant="outline">
+                <Plus className="mr-2 h-4 w-4" />
+                {status === 'published' ? 'Create & Publish Post' : 'Create New Post'}
+              </Button>
+            </Link>
           )}
         </div>
       ) : (

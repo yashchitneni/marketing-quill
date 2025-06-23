@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 export function SpellCheckPanel() {
   const { content, setContent } = useEditorStore()
-  const { errors, isChecking, isEnabled, setEnabled, checkText } = useSpellCheckStore()
+  const { errors, isChecking, isEnabled, setEnabled, checkText, addToPersonalDictionary } = useSpellCheckStore()
 
   const handleCorrect = async (error: typeof errors[0], suggestion: string) => {
     // Apply the correction to the content
@@ -128,6 +128,16 @@ export function SpellCheckPanel() {
                     Unknown word - please check spelling
                   </CardDescription>
                 )}
+                <div className="pt-2 border-t mt-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => addToPersonalDictionary(error.word)}
+                    className="text-xs h-7 w-full"
+                  >
+                    Add to Dictionary
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

@@ -6,11 +6,14 @@ interface SpellCheckState {
   isChecking: boolean
   isEnabled: boolean
   lastCheckedText: string
+  personalDictionary: string[]
   
   // Actions
   checkText: (text: string, forceCheck?: boolean) => Promise<void>
   clearErrors: () => void
   setEnabled: (enabled: boolean) => void
+  addToPersonalDictionary: (word: string) => void
+  removeFromPersonalDictionary: (word: string) => void
 }
 
 export const useSpellCheckStore = create<SpellCheckState>((set, get) => ({
@@ -18,6 +21,7 @@ export const useSpellCheckStore = create<SpellCheckState>((set, get) => ({
   isChecking: false,
   isEnabled: true, // Enabled by default
   lastCheckedText: '',
+  personalDictionary: [],
   
   checkText: async (text: string, forceCheck = false) => {
     // Skip if disabled or same text (unless forced)
@@ -34,7 +38,7 @@ export const useSpellCheckStore = create<SpellCheckState>((set, get) => ({
     set({ isChecking: true, lastCheckedText: text })
     
     try {
-      const errors = await checkSpelling(text)
+      const errors = await checkSpelling(text, get().personalDictionary)
       set({ errors, isChecking: false })
     } catch (error) {
       console.error('Spell check failed:', error)
@@ -52,5 +56,21 @@ export const useSpellCheckStore = create<SpellCheckState>((set, get) => ({
       // Clear errors when disabled
       set({ errors: [] })
     }
+  },
+  
+  addToPersonalDictionary: (word: string) => {
+    const { personalDictionary, lastCheckedText } = get()
+    if (!personalDictionary.includes(word)) {
+      set({ personalDictionary: [...personalDictionary, word] })
+      // Re-check the text to remove this word from errors
+      get().checkText(lastCheckedText, true)
+    }
+  },
+  
+  removeFromPersonalDictionary: (word: string) => {
+    const { personalDictionary, lastCheckedText } = get()
+    set({ personalDictionary: personalDictionary.filter(w => w !== word) })
+    // Re-check the text to potentially add this word back to errors
+    get().checkText(lastCheckedText, true)
   }
 }))

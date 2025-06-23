@@ -4,42 +4,22 @@ import { useRouter } from 'next/navigation'
 import { useEditorStore } from '@/lib/stores/editor-store'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { 
   ArrowLeft, 
   Save, 
   Cloud, 
   CloudOff,
-  Mail, 
-  FileText, 
-  Share2, 
-  Globe, 
-  Megaphone
+  FileText
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTemplatesStore } from '@/lib/stores/templates-store'
 
-const channels = [
-  { value: 'email', label: 'Email', icon: Mail },
-  { value: 'blog', label: 'Blog', icon: FileText },
-  { value: 'social', label: 'Social', icon: Share2 },
-  { value: 'website', label: 'Website', icon: Globe },
-  { value: 'ad', label: 'Ad', icon: Megaphone }
-]
 
 export function EditorHeader() {
   const router = useRouter()
   const { 
     title, 
     setTitle, 
-    channel, 
-    setChannel, 
     save, 
     isSaving,
     saveStatus,
@@ -114,25 +94,9 @@ export function EditorHeader() {
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="max-w-sm font-medium"
-            placeholder="Untitled Draft"
+            className="max-w-md font-medium"
+            placeholder="Untitled LinkedIn Post"
           />
-          
-          <Select value={channel || ''} onValueChange={(value) => setChannel(value || null)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select channel" />
-            </SelectTrigger>
-            <SelectContent>
-              {channels.map(({ value, label, icon: Icon }) => (
-                <SelectItem key={value} value={value}>
-                  <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    {label}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           
           <Button
             variant="outline"
