@@ -13,7 +13,7 @@ interface SuggestionHighlightsProps {
 
 interface TextSegment {
   text: string
-  type: 'normal' | 'spell-error' | 'grammar' | 'tone'
+  type: 'normal' | 'spell-error' | 'grammar' | 'tone' | 'linkedin' | 'hook' | 'structure' | 'engagement' | 'algorithm' | 'visual'
   startIndex: number
   endIndex: number
 }

@@ -11,7 +11,7 @@ export interface Suggestion {
   startIndex: number
   endIndex: number
   confidence: number
-  type: 'grammar' | 'tone' | 'linkedin' | 'hook' | 'structure'
+  type: 'grammar' | 'tone' | 'linkedin' | 'hook' | 'structure' | 'engagement' | 'algorithm' | 'visual'
   urgency?: 'high' | 'medium' | 'low'
 }
 

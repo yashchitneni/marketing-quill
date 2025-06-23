@@ -26,7 +26,7 @@ import { useEditorStore } from '@/lib/stores/editor-store'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 interface EditorToolbarProps {
-  textareaRef: React.RefObject<HTMLTextAreaElement>
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>
   onInsert: (before: string, after: string, placeholder?: string) => void
 }
 

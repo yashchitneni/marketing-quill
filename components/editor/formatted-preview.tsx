@@ -60,7 +60,7 @@ export function FormattedPreview({ content, className }: FormattedPreviewProps) 
   return (
     <div 
       className={cn("formatted-preview", className)}
-      dangerouslySetInnerHTML={{ __html: formattedContent }}
+      dangerouslySetInnerHTML={{ __html: formattedContent || '' }}
       style={{
         fontFamily: 'system-ui, -apple-system, sans-serif',
         fontSize: '14px',

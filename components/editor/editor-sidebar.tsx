@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { useEditorStore } from '@/lib/stores/editor-store'
 import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
 import { useSpellCheckStore } from '@/lib/stores/spell-check-store'
@@ -563,7 +564,7 @@ function TemplatesPanel() {
         <div>
           <h4 className="font-medium mb-2 text-sm">Favorite Templates</h4>
           <div className="space-y-2">
-            {favoriteTemplates.map((template) => (
+            {favoriteTemplates.map((template) => template && (
               <button
                 key={template.id}
                 onClick={() => setTemplateModalOpen(true)}
@@ -583,7 +584,7 @@ function TemplatesPanel() {
         <div>
           <h4 className="font-medium mb-2 text-sm">Recently Used</h4>
           <div className="space-y-2">
-            {recentTemplates.map((template) => (
+            {recentTemplates.map((template) => template && (
               <button
                 key={template.id}
                 onClick={() => setTemplateModalOpen(true)}

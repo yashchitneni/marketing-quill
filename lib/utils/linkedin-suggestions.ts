@@ -76,7 +76,7 @@ const structurePatterns = [
     suggestion: 'Break into shorter paragraphs or use line breaks'
   },
   {
-    pattern: /^(?!.*\n\n).{500,}/s, // 500+ chars without paragraph break
+    pattern: /^(?!.*\n\n).{500,}/gs, // 500+ chars without paragraph break
     reason: 'Dense text blocks reduce engagement',
     suggestion: 'Add white space with paragraph breaks'
   }
