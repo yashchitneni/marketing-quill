@@ -7,6 +7,7 @@ import { useEditorStore } from '@/lib/stores/editor-store'
 import { EditorHeader } from '@/components/editor/editor-header'
 import { EditorPane } from '@/components/editor/editor-pane'
 import { EditorSidebar } from '@/components/editor/editor-sidebar'
+import { AppLayout } from '@/components/layouts/app-layout'
 import { Loader2 } from 'lucide-react'
 
 type Params = Promise<{ id: string }>
@@ -69,12 +70,14 @@ export default function EditorPage({ params }: { params: Params }) {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100">
-      <EditorHeader />
-      <div className="flex-1 flex overflow-hidden">
-        <EditorPane />
-        <EditorSidebar />
+    <AppLayout fullWidth>
+      <div className="h-full flex flex-col bg-gray-100">
+        <EditorHeader />
+        <div className="flex-1 flex overflow-hidden">
+          <EditorPane />
+          <EditorSidebar />
+        </div>
       </div>
-    </div>
+    </AppLayout>
   )
 }

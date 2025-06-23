@@ -15,21 +15,36 @@ import {
   ChevronRight,
   PenTool,
   Archive,
-  Trash2
+  Trash2,
+  Linkedin,
+  BookOpen,
+  TrendingUp
 } from 'lucide-react'
 
 const sidebarItems = [
   {
-    title: 'Dashboard',
+    title: 'Home',
     href: '/dashboard',
     icon: Home,
-    id: 'dashboard'
+    id: 'home'
   },
   {
-    title: 'All Drafts',
+    title: 'My Posts',
     href: '/dashboard?status=all',
     icon: FileText,
     id: 'all-drafts'
+  },
+  {
+    title: 'Templates',
+    href: '/templates',
+    icon: BookOpen,
+    id: 'templates'
+  },
+  {
+    title: 'Analytics',
+    href: '/analytics',
+    icon: TrendingUp,
+    id: 'analytics'
   },
   {
     title: 'Published',
@@ -42,12 +57,6 @@ const sidebarItems = [
     href: '/dashboard?status=archived',
     icon: Archive,
     id: 'archived'
-  },
-  {
-    title: 'Trash',
-    href: '/dashboard/trash',
-    icon: Trash2,
-    id: 'trash'
   }
 ]
 
@@ -78,9 +87,14 @@ export function Sidebar() {
       {/* Logo */}
       <div className="p-4 border-b">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <PenTool className="h-6 w-6 text-indigo-600 flex-shrink-0" />
+          <div className="bg-blue-600 p-1.5 rounded-lg flex-shrink-0">
+            <Linkedin className="h-5 w-5 text-white" />
+          </div>
           {!collapsed && (
-            <span className="text-xl font-bold">MarketingQuill</span>
+            <div>
+              <span className="text-xl font-bold">LinkedIn</span>
+              <span className="text-xl font-light ml-1">Writer</span>
+            </div>
           )}
         </Link>
       </div>
@@ -88,7 +102,12 @@ export function Sidebar() {
       {/* Main Navigation */}
       <nav className="flex-1 p-4 space-y-1">
         {sidebarItems.map((item) => {
-          const isActive = pathname === item.href
+          // Check if we're on the home page
+          const isHomePage = pathname === '/dashboard' && !window.location.search
+          const isActive = 
+            (item.id === 'home' && isHomePage) ||
+            (item.id !== 'home' && pathname === item.href) || 
+            (item.href.includes('?') && pathname + window.location.search === item.href)
           return (
             <Link
               key={item.id}
@@ -96,7 +115,7 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                 isActive 
-                  ? "bg-indigo-100 text-indigo-700" 
+                  ? "bg-blue-50 text-blue-700 border-l-4 border-blue-700" 
                   : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                 collapsed && "justify-center"
               )}

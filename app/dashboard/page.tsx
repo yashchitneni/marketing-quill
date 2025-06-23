@@ -8,11 +8,9 @@ import DashboardContent from './dashboard-content'
 // Loading component for Suspense fallback
 function DashboardLoading() {
   return (
-    <DashboardLayout>
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    </DashboardLayout>
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="h-8 w-8 animate-spin" />
+    </div>
   )
 }
 
@@ -91,8 +89,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const { drafts, totalCount } = await getInitialDrafts(user.id, resolvedSearchParams)
   
   return (
-    <Suspense fallback={<DashboardLoading />}>
-      <DashboardContent initialDrafts={drafts} initialTotalCount={totalCount} />
-    </Suspense>
+    <DashboardLayout>
+      <Suspense fallback={<DashboardLoading />}>
+        <DashboardContent initialDrafts={drafts} initialTotalCount={totalCount} />
+      </Suspense>
+    </DashboardLayout>
   )
 }

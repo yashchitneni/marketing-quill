@@ -70,9 +70,6 @@ const nextConfig = {
   // Disable x-powered-by header
   poweredByHeader: false,
   
-  // Optimize production builds
-  swcMinify: true,
-  
   // Environment variables that should be available on the client
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
