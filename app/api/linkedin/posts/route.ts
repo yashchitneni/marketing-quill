@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const count = parseInt(searchParams.get('count') || '10')
 
     // Fetch user's LinkedIn posts
-    const posts = await linkedInAPI.getUserPosts(user.id, count)
+    const posts = await linkedInAPI.getUserPosts(supabase, user.id, count)
 
     // Process and store posts for voice analysis
     const processedPosts = posts.map(post => ({

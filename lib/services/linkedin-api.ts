@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { SupabaseClient } from '@supabase/supabase-js'
 
 export interface LinkedInPost {
   text: string
@@ -24,9 +24,7 @@ export interface LinkedInShareResponse {
 }
 
 class LinkedInAPIService {
-  private async getAccessToken(userId: string): Promise<string | null> {
-    const supabase = createClient()
-    
+  private async getAccessToken(supabase: SupabaseClient, userId: string): Promise<string | null> {
     const { data, error } = await supabase
       .from('user_profiles')
       .select('linkedin_access_token, linkedin_expires_at')
@@ -34,6 +32,9 @@ class LinkedInAPIService {
       .single()
 
     if (error || !data?.linkedin_access_token) {
+      console.error('LinkedIn access token error:', error)
+      console.error('User ID:', userId)
+      console.error('Data:', data)
       throw new Error('LinkedIn not connected')
     }
 
@@ -48,12 +49,11 @@ class LinkedInAPIService {
   /**
    * Post content to LinkedIn
    */
-  async postToLinkedIn(userId: string, content: string): Promise<LinkedInShareResponse> {
-    const accessToken = await this.getAccessToken(userId)
+  async postToLinkedIn(supabase: SupabaseClient, userId: string, content: string): Promise<LinkedInShareResponse> {
+    const accessToken = await this.getAccessToken(supabase, userId)
     if (!accessToken) throw new Error('No access token')
 
     // Get LinkedIn user URN
-    const supabase = createClient()
     const { data: profile } = await supabase
       .from('user_profiles')
       .select('linkedin_profile_id')
@@ -104,11 +104,10 @@ class LinkedInAPIService {
   /**
    * Get user's LinkedIn posts
    */
-  async getUserPosts(userId: string, count: number = 10): Promise<any[]> {
-    const accessToken = await this.getAccessToken(userId)
+  async getUserPosts(supabase: SupabaseClient, userId: string, count: number = 10): Promise<any[]> {
+    const accessToken = await this.getAccessToken(supabase, userId)
     if (!accessToken) throw new Error('No access token')
 
-    const supabase = createClient()
     const { data: profile } = await supabase
       .from('user_profiles')
       .select('linkedin_profile_id')
@@ -141,8 +140,8 @@ class LinkedInAPIService {
   /**
    * Get LinkedIn profile information
    */
-  async getProfile(userId: string): Promise<LinkedInProfile> {
-    const accessToken = await this.getAccessToken(userId)
+  async getProfile(supabase: SupabaseClient, userId: string): Promise<LinkedInProfile> {
+    const accessToken = await this.getAccessToken(supabase, userId)
     if (!accessToken) throw new Error('No access token')
 
     const response = await fetch(
@@ -172,8 +171,8 @@ class LinkedInAPIService {
   /**
    * Get post analytics/engagement
    */
-  async getPostAnalytics(userId: string, postId: string): Promise<any> {
-    const accessToken = await this.getAccessToken(userId)
+  async getPostAnalytics(supabase: SupabaseClient, userId: string, postId: string): Promise<any> {
+    const accessToken = await this.getAccessToken(supabase, userId)
     if (!accessToken) throw new Error('No access token')
 
     // Note: Analytics API requires additional permissions
@@ -197,9 +196,9 @@ class LinkedInAPIService {
   /**
    * Check if LinkedIn is connected and valid
    */
-  async isConnected(userId: string): Promise<boolean> {
+  async isConnected(supabase: SupabaseClient, userId: string): Promise<boolean> {
     try {
-      const token = await this.getAccessToken(userId)
+      const token = await this.getAccessToken(supabase, userId)
       return !!token
     } catch {
       return false
@@ -209,9 +208,7 @@ class LinkedInAPIService {
   /**
    * Disconnect LinkedIn
    */
-  async disconnect(userId: string): Promise<void> {
-    const supabase = createClient()
-    
+  async disconnect(supabase: SupabaseClient, userId: string): Promise<void> {
     await supabase
       .from('user_profiles')
       .update({

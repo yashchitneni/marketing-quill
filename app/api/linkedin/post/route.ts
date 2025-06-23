@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Post to LinkedIn
-    const result = await linkedInAPI.postToLinkedIn(user.id, content)
+    const result = await linkedInAPI.postToLinkedIn(supabase, user.id, content)
 
     // Update draft status if provided
     if (draftId) {

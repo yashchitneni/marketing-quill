@@ -17,12 +17,12 @@ export async function GET() {
     }
 
     // Check if LinkedIn is connected
-    const isConnected = await linkedInAPI.isConnected(user.id)
+    const isConnected = await linkedInAPI.isConnected(supabase, user.id)
 
     if (isConnected) {
       // Get profile info if connected
       try {
-        const profile = await linkedInAPI.getProfile(user.id)
+        const profile = await linkedInAPI.getProfile(supabase, user.id)
         
         return NextResponse.json({
           connected: true,
