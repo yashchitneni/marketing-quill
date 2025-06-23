@@ -64,10 +64,6 @@ export function SuggestionHighlights({ text, textareaRef }: SuggestionHighlights
       return null;
     }
 
-    // Debug logging
-    console.log('SuggestionHighlights - text:', text)
-    console.log('SuggestionHighlights - spellErrors:', spellErrors)
-    console.log('SuggestionHighlights - suggestions:', suggestions)
 
     // Combine all highlights (spell errors and suggestions)
     const allHighlights: TextSegment[] = []
@@ -121,12 +117,15 @@ export function SuggestionHighlights({ text, textareaRef }: SuggestionHighlights
       const highlightStyle = {
         color: 'transparent',
         borderBottom: highlight.type === 'spell-error' 
-          ? '2px wavy red'
+          ? '2px dotted red'
           : highlight.type === 'grammar'
-          ? '2px wavy #ef4444'
-          : '2px wavy #3b82f6',
-        paddingBottom: '2px',
-        cursor: highlight.type === 'spell-error' ? 'pointer' : 'default'
+          ? '2px dotted #ef4444'
+          : '2px dotted #3b82f6',
+        cursor: highlight.type === 'spell-error' ? 'pointer' : 'default',
+        position: 'relative' as const,
+        backgroundColor: highlight.type === 'spell-error' 
+          ? 'rgba(255, 0, 0, 0.1)'
+          : 'transparent'
       }
       
       const handleSpellErrorClick = (e: React.MouseEvent) => {
@@ -185,13 +184,19 @@ export function SuggestionHighlights({ text, textareaRef }: SuggestionHighlights
     
     setContent(newText)
     setTooltipInfo(null)
+    
+    // Force spell check to re-run after replacement
+    setTimeout(() => {
+      const { checkText } = useSpellCheckStore.getState()
+      checkText(newText, true) // Force check even if same text
+    }, 100)
   }
 
   return (
     <>
       <div
         ref={highlightContainerRef}
-        className="absolute inset-0 overflow-hidden pointer-events-none z-0"
+        className="absolute inset-0 overflow-hidden pointer-events-none z-20"
         style={{
           fontFamily: 'inherit', // Use same font as textarea
           fontSize: '16px',
