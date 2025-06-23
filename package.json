@@ -8,6 +8,7 @@
     "postinstall": "node scripts/setup-dictionaries.js",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "task:sync": "node scripts/task-sync.js",
     "task:bug": "node scripts/task-sync.js bug",
     "task:status": "node scripts/task-sync.js status",
