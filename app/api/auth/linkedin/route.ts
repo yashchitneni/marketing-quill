@@ -13,13 +13,24 @@ const SCOPES = [
 ].join('%20')
 
 export async function GET(request: NextRequest) {
+  // Check for required environment variables
+  if (!LINKEDIN_CLIENT_ID) {
+    console.error('LINKEDIN_CLIENT_ID is not set')
+    return NextResponse.redirect(new URL('/settings?error=linkedin_config', request.url))
+  }
+  
+  if (!process.env.NEXT_PUBLIC_APP_URL) {
+    console.error('NEXT_PUBLIC_APP_URL is not set')
+    return NextResponse.redirect(new URL('/settings?error=app_url_config', request.url))
+  }
+  
   const supabase = await createClient()
   
   // Check if user is authenticated
   const { data: { user }, error } = await supabase.auth.getUser()
   
   if (error || !user) {
-    return NextResponse.redirect(new URL('/auth/signin', request.url))
+    return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
   // Generate state parameter for security

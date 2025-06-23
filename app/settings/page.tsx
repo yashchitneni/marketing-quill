@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { DashboardLayout } from '@/components/dashboard/dashboard-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -20,8 +21,22 @@ import {
 } from 'lucide-react'
 
 export default function SettingsPage() {
+  const searchParams = useSearchParams()
   const [linkedinConnected] = useState(false)
   const [voiceProfileSetup] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Check for error messages
+    const errorParam = searchParams.get('error')
+    if (errorParam === 'linkedin_config') {
+      setError('LinkedIn integration is not configured. Please contact support.')
+    } else if (errorParam === 'app_url_config') {
+      setError('Application URL is not configured. Please contact support.')
+    } else if (errorParam === 'invalid_callback') {
+      setError('LinkedIn authentication failed. Please try again.')
+    }
+  }, [searchParams])
 
   const handleLinkedInConnect = () => {
     // Start LinkedIn OAuth flow
@@ -56,6 +71,11 @@ export default function SettingsPage() {
 
           {/* LinkedIn Integration */}
           <TabsContent value="linkedin" className="space-y-6">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <p className="text-sm">{error}</p>
+              </div>
+            )}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
