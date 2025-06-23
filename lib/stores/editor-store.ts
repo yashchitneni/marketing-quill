@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { createClient } from '@/lib/supabase/client'
+import { sanitizeText, sanitizeUuid } from '@/lib/security/sanitization'
 
 interface Snapshot {
   id: string
@@ -63,12 +64,14 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   setDraftId: (id) => set({ draftId: id }),
   
   setTitle: (title) => {
-    set({ title, isDirty: true })
+    const sanitized = sanitizeText(title)
+    set({ title: sanitized, isDirty: true })
     get().debouncedSave()
   },
   
   setChannel: (channel) => {
-    set({ channel, isDirty: true })
+    const sanitized = channel ? sanitizeText(channel) : null
+    set({ channel: sanitized, isDirty: true })
     get().debouncedSave()
   },
   
@@ -249,18 +252,27 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   },
   
   loadDraft: async (id: string) => {
+    // Validate UUID format
+    let validatedId: string
+    try {
+      validatedId = sanitizeUuid(id)
+    } catch (error) {
+      console.error('Invalid draft ID:', error)
+      return
+    }
+    
     const supabase = createClient()
     const { data, error } = await supabase
       .from('drafts')
       .select('*')
-      .eq('id', id)
+      .eq('id', validatedId)
       .single()
     
     if (!error && data) {
       // Check for local backup
       let recoveredContent = null
       try {
-        const backup = localStorage.getItem(`draft_backup_${id}`)
+        const backup = localStorage.getItem(`draft_backup_${validatedId}`)
         if (backup) {
           const parsed = JSON.parse(backup)
           const backupTime = new Date(parsed.timestamp).getTime()
@@ -273,7 +285,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
           }
           
           // Clear old backup
-          localStorage.removeItem(`draft_backup_${id}`)
+          localStorage.removeItem(`draft_backup_${validatedId}`)
         }
       } catch (e) {
         console.warn('Failed to check backup:', e)

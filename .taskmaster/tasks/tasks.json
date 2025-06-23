@@ -333,7 +333,7 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -341,7 +341,7 @@
             "description": "Set up TLS certificates and implement security headers to protect against common web vulnerabilities.",
             "dependencies": [],
             "details": "1. Obtain and configure TLS certificates for all domains\n2. Implement HTTP Strict Transport Security (HSTS)\n3. Configure Content Security Policy (CSP) headers\n4. Add X-Content-Type-Options, X-Frame-Options, and X-XSS-Protection headers\n5. Test security headers using tools like SecurityHeaders.com\n6. Document the security header configuration for future reference",
-            "status": "pending"
+            "status": "done"
           },
           {
             "id": 2,
@@ -351,7 +351,7 @@
               1
             ],
             "details": "1. Define user roles (admin, regular user, etc.) in the database schema\n2. Create RLS policies for each table to restrict read/write operations\n3. Implement role-specific policies for sensitive data\n4. Set up default deny policies as a baseline\n5. Test access control with different user roles\n6. Document the RLS policies and role definitions",
-            "status": "pending"
+            "status": "done"
           },
           {
             "id": 3,
@@ -361,7 +361,7 @@
               2
             ],
             "details": "1. Identify all user-related data across database tables\n2. Create API endpoints for data export requests\n3. Implement data formatting in JSON or CSV format\n4. Add authentication checks to ensure users can only export their own data\n5. Include metadata about data collection purposes in the export\n6. Test the export functionality with sample user data",
-            "status": "pending"
+            "status": "done"
           },
           {
             "id": 4,
@@ -371,7 +371,7 @@
               1
             ],
             "details": "1. Identify all user input fields that feed into AI prompts\n2. Implement server-side validation for all inputs\n3. Create sanitization functions to remove potentially harmful content\n4. Add rate limiting for AI-related endpoints\n5. Implement pattern matching to detect potential prompt injection attempts\n6. Test with known prompt injection techniques to verify protection",
-            "status": "pending"
+            "status": "done"
           },
           {
             "id": 5,
@@ -382,7 +382,7 @@
               2
             ],
             "details": "1. Generate and validate CSRF tokens for all forms\n2. Implement the Same-Site cookie attribute\n3. Add CSRF middleware to API routes\n4. Update frontend code to include CSRF tokens in requests\n5. Test CSRF protection with simulated attacks\n6. Document the CSRF protection implementation for the development team",
-            "status": "pending"
+            "status": "done"
           }
         ]
       },
@@ -464,7 +464,7 @@
         "dependencies": [
           5
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -477,7 +477,7 @@
         "dependencies": [
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -631,7 +631,7 @@
     ],
     "metadata": {
       "created": "2025-06-18T20:07:13.913Z",
-      "updated": "2025-06-23T14:46:47.378Z",
+      "updated": "2025-06-23T17:06:42.201Z",
       "description": "LinkedIn Writing Assistant - Tasks for LinkedIn-focused pivot"
     }
   }

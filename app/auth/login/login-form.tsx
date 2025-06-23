@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { Loader2, AlertCircle } from 'lucide-react'
+import { sanitizeEmail } from '@/lib/security/sanitization'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -31,9 +32,17 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { BrandButtons } from './brand-buttons'
 
 const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
+  email: z.string()
+    .email({
+      message: "Please enter a valid email address.",
+    })
+    .transform((email) => {
+      try {
+        return sanitizeEmail(email)
+      } catch {
+        return email
+      }
+    }),
 })
 
 export default function LoginForm() {

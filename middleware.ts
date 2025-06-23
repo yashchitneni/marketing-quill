@@ -5,7 +5,42 @@ import { createServerClient } from '@supabase/ssr'
 export async function middleware(request: NextRequest) {
   try {
     // Update session
-    const response = await updateSession(request)
+    let response = await updateSession(request)
+    
+    // Add security headers
+    response.headers.set('X-DNS-Prefetch-Control', 'on')
+    response.headers.set('X-Permitted-Cross-Domain-Policies', 'none')
+    
+    // CSRF Protection for state-changing requests
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method)) {
+      // Check for proper content-type (prevents simple CSRF)
+      const contentType = request.headers.get('content-type')
+      if (!contentType?.includes('application/json')) {
+        return new NextResponse('Invalid content type', { status: 400 })
+      }
+      
+      // Verify origin/referer for additional protection
+      const origin = request.headers.get('origin')
+      const referer = request.headers.get('referer')
+      const host = request.headers.get('host')
+      
+      if (origin) {
+        const originUrl = new URL(origin)
+        const hostUrl = new URL(`https://${host}`)
+        
+        // Allow localhost in development
+        const isLocalhost = originUrl.hostname === 'localhost' || 
+                           originUrl.hostname === '127.0.0.1'
+        
+        if (!isLocalhost && originUrl.hostname !== hostUrl.hostname) {
+          return new NextResponse('CSRF validation failed', { status: 403 })
+        }
+      }
+    }
+    
+    // Remove sensitive headers
+    response.headers.delete('X-Powered-By')
+    response.headers.delete('Server')
   
   // Protected routes that require authentication
   const protectedPaths = ['/dashboard', '/editor', '/admin']

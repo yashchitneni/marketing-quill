@@ -5,6 +5,9 @@ import { OpenAI } from 'https://esm.sh/openai@4'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block'
 }
 
 interface AnalyzeRequest {
@@ -46,12 +49,32 @@ serve(async (req) => {
   }
 
   try {
-    const { text, mode = 'full', model = 'gpt-4o', maxTokens = 2000 } = await req.json() as AnalyzeRequest
+    const requestData = await req.json() as AnalyzeRequest
+    
+    // Sanitize inputs
+    const text = typeof requestData.text === 'string' 
+      ? requestData.text.trim().substring(0, 10000) // Limit to 10k chars
+      : ''
+    const mode = requestData.mode === 'streaming' ? 'streaming' : 'full'
+    const model = ['gpt-3.5-turbo', 'gpt-4o'].includes(requestData.model || '') 
+      ? requestData.model 
+      : 'gpt-4o'
+    const maxTokens = Math.min(
+      Math.max(100, parseInt(String(requestData.maxTokens || 2000))), 
+      4000
+    )
 
     // Validate input
     if (!text || text.length < 10) {
       return new Response(
         JSON.stringify({ error: 'Text must be at least 10 characters long' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      )
+    }
+    
+    if (text.length > 10000) {
+      return new Response(
+        JSON.stringify({ error: 'Text must be less than 10,000 characters' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       )
     }
