@@ -70,6 +70,12 @@ async function getInitialDrafts(userId: string, searchParams: Awaited<DashboardP
   
   if (error) {
     console.error('Error fetching drafts:', error)
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint
+    })
     return { drafts: [], totalCount: 0 }
   }
   

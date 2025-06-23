@@ -10,9 +10,18 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code')
   const state = searchParams.get('state')
   const error = searchParams.get('error')
+  const errorDescription = searchParams.get('error_description')
+
+  console.log('LinkedIn callback received:', {
+    code: code ? 'present' : 'missing',
+    state: state ? 'present' : 'missing',
+    error,
+    errorDescription,
+    url: request.url
+  })
 
   if (error) {
-    console.error('LinkedIn OAuth error:', error)
+    console.error('LinkedIn OAuth error:', error, errorDescription)
     return NextResponse.redirect(new URL('/settings?error=linkedin_auth_failed', request.url))
   }
 
@@ -57,21 +66,33 @@ export async function GET(request: NextRequest) {
     })
 
     if (!tokenResponse.ok) {
-      throw new Error('Failed to exchange code for token')
+      const errorText = await tokenResponse.text()
+      console.error('Token exchange failed:', {
+        status: tokenResponse.status,
+        statusText: tokenResponse.statusText,
+        error: errorText
+      })
+      throw new Error(`Failed to exchange code for token: ${tokenResponse.status} - ${errorText}`)
     }
 
     const tokens = await tokenResponse.json()
 
-    // Get LinkedIn profile information
-    const profileResponse = await fetch('https://api.linkedin.com/v2/people/~:(id,firstName,lastName,profilePicture(displayImage~:playableStreams))', {
+    // Get LinkedIn profile information using the new API endpoint
+    const profileResponse = await fetch('https://api.linkedin.com/v2/userinfo', {
       headers: {
         'Authorization': `Bearer ${tokens.access_token}`,
       },
     })
 
+    if (!profileResponse.ok) {
+      console.error('Failed to fetch LinkedIn profile:', await profileResponse.text())
+      throw new Error('Failed to fetch LinkedIn profile')
+    }
+
     const linkedinProfile = await profileResponse.json()
 
     // Store LinkedIn connection in database
+    // The new userinfo endpoint returns: sub, name, given_name, family_name, picture, email, email_verified, locale
     await supabase
       .from('user_profiles')
       .upsert({
@@ -79,11 +100,14 @@ export async function GET(request: NextRequest) {
         linkedin_access_token: tokens.access_token,
         linkedin_refresh_token: tokens.refresh_token || null,
         linkedin_expires_at: tokens.expires_in ? new Date(Date.now() + tokens.expires_in * 1000).toISOString() : null,
-        linkedin_profile_id: linkedinProfile.id,
-        linkedin_first_name: linkedinProfile.firstName?.localized?.en_US,
-        linkedin_last_name: linkedinProfile.lastName?.localized?.en_US,
+        linkedin_profile_id: linkedinProfile.sub, // 'sub' is the unique identifier
+        linkedin_first_name: linkedinProfile.given_name || linkedinProfile.name?.split(' ')[0],
+        linkedin_last_name: linkedinProfile.family_name || linkedinProfile.name?.split(' ').slice(1).join(' '),
         linkedin_connected_at: new Date().toISOString(),
         linkedin_oauth_state: null, // Clear the state
+        email: linkedinProfile.email || user.email, // Update email if provided
+        full_name: linkedinProfile.name,
+        avatar_url: linkedinProfile.picture
       }, {
         onConflict: 'user_id'
       })

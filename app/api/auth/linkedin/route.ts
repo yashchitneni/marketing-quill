@@ -6,11 +6,13 @@ const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID
 const LINKEDIN_REDIRECT_URI = process.env.NEXT_PUBLIC_APP_URL + '/api/auth/linkedin/callback'
 
 // LinkedIn OAuth scopes for posting and reading content
+// Using the new LinkedIn OAuth 2.0 scopes (as of 2024)
 const SCOPES = [
-  'w_member_social',  // Post on behalf of user
-  'r_liteprofile',    // Read basic profile info
-  'r_emailaddress'    // Read email (optional)
-].join('%20')
+  'openid',           // Required for OpenID Connect flow
+  'profile',          // Read member's profile
+  'email',            // Read member's email address
+  'w_member_social'   // Post, comment and react on behalf of the authenticated member
+].join(' ')
 
 export async function GET(request: NextRequest) {
   // Check for required environment variables

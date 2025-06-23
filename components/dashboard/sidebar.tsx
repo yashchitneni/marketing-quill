@@ -16,8 +16,12 @@ import {
   Linkedin,
   BookOpen,
   TrendingUp,
-  CheckCircle
+  CheckCircle,
+  LogOut,
+  User
 } from 'lucide-react'
+import { useAuthStore } from '@/lib/stores/auth-store'
+import { useRouter } from 'next/navigation'
 
 const sidebarItems = [
   {
@@ -77,6 +81,13 @@ export function Sidebar() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [collapsed, setCollapsed] = useState(false)
+  const { user, signOut } = useAuthStore()
+  const router = useRouter()
+  
+  const handleLogout = async () => {
+    await signOut()
+    router.push('/auth/login')
+  }
 
   return (
     <div className={cn(
@@ -149,6 +160,43 @@ export function Sidebar() {
             {!collapsed && <span>{item.title}</span>}
           </Link>
         ))}
+        
+        {/* User Info & Logout */}
+        <div className="mt-4 pt-4 border-t">
+          {user && (
+            <>
+              <div className={cn(
+                "flex items-center gap-3 px-3 py-2 mb-2",
+                collapsed && "justify-center"
+              )}>
+                <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
+                  <User className="h-4 w-4 text-gray-600" />
+                </div>
+                {!collapsed && (
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {user.email}
+                    </p>
+                  </div>
+                )}
+              </div>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className={cn(
+                  "w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50",
+                  collapsed && "justify-center px-2"
+                )}
+                title={collapsed ? "Sign out" : undefined}
+              >
+                <LogOut className="h-4 w-4 flex-shrink-0" />
+                {!collapsed && <span className="ml-2">Sign out</span>}
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Collapse Toggle */}

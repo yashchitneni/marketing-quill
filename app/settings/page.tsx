@@ -19,24 +19,60 @@ import {
   ExternalLink,
   CheckCircle
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { useAuthStore } from '@/lib/stores/auth-store'
 
 export default function SettingsPage() {
   const searchParams = useSearchParams()
-  const [linkedinConnected] = useState(false)
-  const [voiceProfileSetup] = useState(false)
+  const [linkedinConnected, setLinkedinConnected] = useState(false)
+  const [linkedinProfile, setLinkedinProfile] = useState<any>(null)
+  const [voiceProfileSetup, setVoiceProfileSetup] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const user = useAuthStore(state => state.user)
 
   useEffect(() => {
     // Check for error messages
     const errorParam = searchParams.get('error')
+    const successParam = searchParams.get('success')
+    
     if (errorParam === 'linkedin_config') {
       setError('LinkedIn integration is not configured. Please contact support.')
     } else if (errorParam === 'app_url_config') {
       setError('Application URL is not configured. Please contact support.')
     } else if (errorParam === 'invalid_callback') {
       setError('LinkedIn authentication failed. Please try again.')
+    } else if (errorParam === 'token_exchange_failed') {
+      setError('Failed to connect LinkedIn. Please try again.')
+    }
+    
+    if (successParam === 'linkedin_connected') {
+      setSuccess('LinkedIn connected successfully!')
+      // Clear the success message after 5 seconds
+      setTimeout(() => setSuccess(null), 5000)
     }
   }, [searchParams])
+  
+  // Check LinkedIn connection status
+  useEffect(() => {
+    const checkLinkedInStatus = async () => {
+      if (!user) return
+      
+      const supabase = createClient()
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('linkedin_profile_id, linkedin_connected_at, linkedin_first_name, linkedin_last_name, avatar_url')
+        .eq('user_id', user.id)
+        .single()
+      
+      if (profile?.linkedin_profile_id) {
+        setLinkedinConnected(true)
+        setLinkedinProfile(profile)
+      }
+    }
+    
+    checkLinkedInStatus()
+  }, [user, searchParams]) // Re-check when searchParams change (after redirect)
 
   const handleLinkedInConnect = () => {
     // Start LinkedIn OAuth flow
@@ -46,6 +82,32 @@ export default function SettingsPage() {
   const handleVoiceProfileSetup = () => {
     // TODO: Navigate to voice profile setup flow
     console.log('Starting voice profile setup...')
+  }
+  
+  const handleLinkedInDisconnect = async () => {
+    if (!user) return
+    
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('user_profiles')
+      .update({
+        linkedin_access_token: null,
+        linkedin_refresh_token: null,
+        linkedin_expires_at: null,
+        linkedin_profile_id: null,
+        linkedin_first_name: null,
+        linkedin_last_name: null,
+        linkedin_connected_at: null,
+        linkedin_oauth_state: null
+      })
+      .eq('user_id', user.id)
+    
+    if (!error) {
+      setLinkedinConnected(false)
+      setLinkedinProfile(null)
+      setSuccess('LinkedIn disconnected successfully')
+      setTimeout(() => setSuccess(null), 5000)
+    }
   }
 
   return (
@@ -74,6 +136,11 @@ export default function SettingsPage() {
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
                 <p className="text-sm">{error}</p>
+              </div>
+            )}
+            {success && (
+              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
+                <p className="text-sm">{success}</p>
               </div>
             )}
             <Card>
@@ -117,12 +184,28 @@ export default function SettingsPage() {
                     <div>
                       <h3 className="font-medium mb-2">Connected Account</h3>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                          <User className="h-5 w-5 text-white" />
-                        </div>
+                        {linkedinProfile?.avatar_url ? (
+                          <img 
+                            src={linkedinProfile.avatar_url} 
+                            alt="Profile" 
+                            className="w-10 h-10 rounded-full"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                            <User className="h-5 w-5 text-white" />
+                          </div>
+                        )}
                         <div>
-                          <p className="font-medium">Your Name</p>
-                          <p className="text-sm text-gray-500">Professional Title</p>
+                          <p className="font-medium">
+                            {linkedinProfile?.linkedin_first_name && linkedinProfile?.linkedin_last_name
+                              ? `${linkedinProfile.linkedin_first_name} ${linkedinProfile.linkedin_last_name}`
+                              : 'LinkedIn User'}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Connected {linkedinProfile?.linkedin_connected_at 
+                              ? new Date(linkedinProfile.linkedin_connected_at).toLocaleDateString()
+                              : 'recently'}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -143,6 +226,18 @@ export default function SettingsPage() {
                           <span>Access basic profile information</span>
                         </div>
                       </div>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div className="flex justify-end">
+                      <Button 
+                        onClick={handleLinkedInDisconnect}
+                        variant="destructive"
+                        size="sm"
+                      >
+                        Disconnect LinkedIn
+                      </Button>
                     </div>
                   </div>
                 )}

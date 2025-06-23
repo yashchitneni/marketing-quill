@@ -43,6 +43,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dictionary-en": "^4.0.0",
+    "dotenv": "^16.5.0",
     "isomorphic-dompurify": "^2.25.0",
     "lucide-react": "^0.517.0",
     "next": "15.3.4",
