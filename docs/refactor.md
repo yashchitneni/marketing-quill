@@ -1,5 +1,21 @@
 <file_map>
 /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill
+├── .cursor
+│   └── rules
+│       ├── commit-messages.mdc
+│       ├── cursor_rules.mdc
+│       ├── debug-commands.mdc
+│       ├── dev_workflow.mdc
+│       ├── generate-tasks.mdc
+│       ├── nextjs-app-router.mdc
+│       ├── nextjs-supabase-auth.mdc
+│       ├── npm-package-check.mdc
+│       ├── process-task-list.mdc
+│       ├── python-development.mdc
+│       ├── self_improve.mdc
+│       ├── taskmaster.mdc
+│       ├── terminal-path-verification.mdc
+│       └── yoda-quotes.mdc
 ├── app
 │   ├── admin
 │   │   └── page.tsx
@@ -78,68 +94,73 @@
 │   ├── globals.css
 │   ├── layout.tsx
 │   └── page.tsx
-└── components
-    ├── admin
-    │   └── admin-dashboard.tsx
-    ├── auth
-    │   └── role-guard.tsx
-    ├── dashboard
-    │   ├── dashboard-home.tsx
-    │   ├── dashboard-layout.tsx
-    │   ├── draft-card.tsx
-    │   └── sidebar.tsx
-    ├── editor
-    │   ├── editor-header.tsx
-    │   ├── editor-pane.tsx
-    │   ├── editor-sidebar.tsx
-    │   ├── editor-toolbar.tsx
-    │   ├── formatted-preview.tsx
-    │   ├── linkedin-optimization-panel.tsx
-    │   ├── linkedin-post-button.tsx
-    │   ├── save-indicator.tsx
-    │   ├── spell-check-panel.tsx
-    │   ├── spell-check-tooltip.tsx
-    │   ├── suggestion-cards.tsx
-    │   ├── suggestion-highlights.tsx
-    │   ├── template-card.tsx
-    │   ├── template-customizer.tsx
-    │   └── template-modal.tsx
-    ├── landing
-    │   ├── features-section.tsx
-    │   ├── footer.tsx
-    │   ├── hero-section.tsx
-    │   ├── navbar.tsx
-    │   ├── pricing-section.tsx
-    │   └── testimonials-section.tsx
-    ├── layouts
-    │   └── app-layout.tsx
-    ├── providers
-    │   └── auth-provider.tsx
-    ├── settings
-    │   └── data-privacy.tsx
-    ├── ui
-    │   ├── alert-dialog.tsx
-    │   ├── alert.tsx
-    │   ├── badge.tsx
-    │   ├── button.tsx
-    │   ├── card.tsx
-    │   ├── dialog.tsx
-    │   ├── dropdown-menu.tsx
-    │   ├── form.tsx
-    │   ├── input.tsx
-    │   ├── label.tsx
-    │   ├── popover.tsx
-    │   ├── progress.tsx
-    │   ├── scroll-area.tsx
-    │   ├── select.tsx
-    │   ├── separator.tsx
-    │   ├── switch.tsx
-    │   ├── tabs.tsx
-    │   ├── textarea.tsx
-    │   ├── toast.tsx
-    │   ├── toaster.tsx
-    │   └── tooltip.tsx
-    └── test-suggestions.tsx
+├── components
+│   ├── admin
+│   │   └── admin-dashboard.tsx
+│   ├── auth
+│   │   └── role-guard.tsx
+│   ├── dashboard
+│   │   ├── dashboard-home.tsx
+│   │   ├── dashboard-layout.tsx
+│   │   ├── draft-card.tsx
+│   │   └── sidebar.tsx
+│   ├── editor
+│   │   ├── editor-header.tsx
+│   │   ├── editor-pane.tsx
+│   │   ├── editor-sidebar.tsx
+│   │   ├── editor-toolbar.tsx
+│   │   ├── formatted-preview.tsx
+│   │   ├── linkedin-optimization-panel.tsx
+│   │   ├── linkedin-post-button.tsx
+│   │   ├── save-indicator.tsx
+│   │   ├── spell-check-panel.tsx
+│   │   ├── spell-check-tooltip.tsx
+│   │   ├── suggestion-cards.tsx
+│   │   ├── suggestion-highlights.tsx
+│   │   ├── template-card.tsx
+│   │   ├── template-customizer.tsx
+│   │   └── template-modal.tsx
+│   ├── landing
+│   │   ├── features-section.tsx
+│   │   ├── footer.tsx
+│   │   ├── hero-section.tsx
+│   │   ├── navbar.tsx
+│   │   ├── pricing-section.tsx
+│   │   └── testimonials-section.tsx
+│   ├── layouts
+│   │   └── app-layout.tsx
+│   ├── providers
+│   │   └── auth-provider.tsx
+│   ├── settings
+│   │   └── data-privacy.tsx
+│   ├── ui
+│   │   ├── alert-dialog.tsx
+│   │   ├── alert.tsx
+│   │   ├── badge.tsx
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── dialog.tsx
+│   │   ├── dropdown-menu.tsx
+│   │   ├── form.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   ├── popover.tsx
+│   │   ├── progress.tsx
+│   │   ├── scroll-area.tsx
+│   │   ├── select.tsx
+│   │   ├── separator.tsx
+│   │   ├── switch.tsx
+│   │   ├── tabs.tsx
+│   │   ├── textarea.tsx
+│   │   ├── toast.tsx
+│   │   ├── toaster.tsx
+│   │   └── tooltip.tsx
+│   └── test-suggestions.tsx
+└── docs
+    ├── frontend-guidelines.md
+    ├── pivot-update-summary.md
+    ├── prd.md
+    └── tech-stack.md
 
 </file_map>
 
@@ -11085,6 +11106,2803 @@ export function TestSuggestions() {
   )
 }
 ```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/commit-messages.mdc
+```mdc
+---
+description: Standardized commit message format for consistent version control history
+globs: **/*.{js,jsx,ts,tsx,md,mdx}
+---
+
+## Commit Messages
+
+// Description: Standardized commit message format for consistent version control history
+// Recommended Globs: **/*.{js,jsx,ts,tsx,md,mdx}
+
+## Format
+Always prefix commit messages in the following format:
+
+```
+# Separate commands
+git add <changed_files>
+git commit -m "Type(scope): description"
+
+# Combined command (shorthand)
+git add . && git commit -m "Type(scope): description"
+```
+
+## Types
+- `Feat`: New feature or enhancement
+- `Fix`: Bug fix
+- `Docs`: Documentation changes
+- `Style`: Code style/formatting changes
+- `Refactor`: Code refactoring
+- `Test`: Adding or updating tests
+- `Chore`: Maintenance tasks, dependencies, etc.
+
+## Examples
+```bash
+# Single file
+git add src/components/Button.tsx
+git commit -m "Feat(component): add new Button component"
+
+# Multiple files
+git add src/api/auth.ts src/hooks/useAuth.ts
+git commit -m "Fix(auth): resolve login session issues"
+
+# All changes
+git add .
+git commit -m "Style(css): update global theme colors"
+```
+
+## Guidelines
+- Use imperative mood in descriptions ("add", not "added")
+- Keep descriptions concise but meaningful
+- Always include both type and scope
+- Use lowercase for descriptions
+- No period at the end of the message
+
+## Common Patterns
+- Documentation: `Docs(readme): update installation steps`
+- Dependencies: `Chore(deps): update package versions`
+- Bug fixes: `Fix(api): resolve undefined user error`
+- New features: `Feat(auth): add Google OAuth login`
+
+Don't forget to commit! Here's a template:
+```bash
+git add .
+git commit -m "Type(scope): description"
+```
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/cursor_rules.mdc
+```mdc
+---
+description: Guidelines for creating and maintaining Cursor rules to ensure consistency and effectiveness.
+globs: .cursor/rules/*.mdc
+alwaysApply: true
+---
+
+- **Required Rule Structure:**
+  ```markdown
+  ---
+  description: Clear, one-line description of what the rule enforces
+  globs: path/to/files/*.ext, other/path/**/*
+  alwaysApply: boolean
+  ---
+
+  - **Main Points in Bold**
+    - Sub-points with details
+    - Examples and explanations
+  ```
+
+- **File References:**
+  - Use `[filename](mdc:path/to/file)` ([filename](mdc:filename)) to reference files
+  - Example: [prisma.mdc](mdc:.cursor/rules/prisma.mdc) for rule references
+  - Example: [schema.prisma](mdc:prisma/schema.prisma) for code references
+
+- **Code Examples:**
+  - Use language-specific code blocks
+  ```typescript
+  // ✅ DO: Show good examples
+  const goodExample = true;
+  
+  // ❌ DON'T: Show anti-patterns
+  const badExample = false;
+  ```
+
+- **Rule Content Guidelines:**
+  - Start with high-level overview
+  - Include specific, actionable requirements
+  - Show examples of correct implementation
+  - Reference existing code when possible
+  - Keep rules DRY by referencing other rules
+
+- **Rule Maintenance:**
+  - Update rules when new patterns emerge
+  - Add examples from actual codebase
+  - Remove outdated patterns
+  - Cross-reference related rules
+
+- **Best Practices:**
+  - Use bullet points for clarity
+  - Keep descriptions concise
+  - Include both DO and DON'T examples
+  - Reference actual code over theoretical examples
+  - Use consistent formatting across rules 
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/debug-commands.mdc
+```mdc
+---
+description: This tool performs debugging steps for applications
+globs: **/*.{js,ts,jsx,tsx,py,html,css,json}
+---
+
+# Debug Commands
+
+// Description: This tool performs debugging steps for applications
+// Recommended Globs: **/*.{js,ts,jsx,tsx,py,html,css,json}
+
+## Overview
+Debug commands provide a streamlined approach to troubleshooting applications by gathering console logs, network errors, and taking screenshots to help identify and fix issues.
+
+## Core Commands
+
+### `/debug` Command
+When you type `/debug` in the chat, the AI will automatically:
+1. Gather all console logs from the browser
+2. Collect any console errors
+3. Take a screenshot of the current application state
+
+## Implementation
+
+```javascript
+// Example implementation of debug command handler
+async function handleDebugCommand() {
+  // Gather console logs
+  const consoleLogs = await mcp__getConsoleLogs();
+  
+  // Collect console errors
+  const consoleErrors = await mcp__getConsoleErrors();
+  
+  // Take screenshot
+  const screenshot = await mcp__takeScreenshot();
+  
+  // Analyze and present results
+  return {
+    consoleLogs,
+    consoleErrors,
+    screenshot
+  };
+}
+```
+
+## Usage Examples
+
+### Example 1: Debugging a React Application
+```
+User: My React app is showing a blank screen
+AI: Let me help you debug this issue. Type /debug to gather diagnostic information.
+User: /debug
+AI: [Executes debug command and analyzes results]
+    I've found the following issues:
+    1. Console error: "TypeError: Cannot read property 'map' of undefined"
+    The screenshot shows a blank page with React's error boundary not properly configured.
+```
+
+### Example 2: Troubleshooting API Integration
+```
+User: My API calls are failing and I'm not sure why
+AI: Let's investigate. Type /debug while the application is making the API call.
+User: /debug
+AI: [Executes debug command and analyzes results]
+    I've found the following issues:
+    1. Console log shows the authorization header is missing
+    Based on the screenshot, you need to add proper authentication to your API calls.
+```
+
+## Best Practices
+
+### When to Use Debug Commands
+- When an application shows unexpected behavior
+- When there are no visible error messages
+- When troubleshooting network or API issues
+- When investigating performance problems
+- When helping users who can't easily access developer tools
+
+### Interpreting Debug Results
+- Look for patterns in console errors
+- Check for failed network requests
+- Examine the visual state in screenshots
+- Correlate timestamps between different logs
+- Identify missing resources or dependencies
+
+### Security Considerations
+- Ensure sensitive information is not captured in logs or screenshots
+- Be cautious with debugging production environments
+- Consider implementing log sanitization for sensitive data
+- Use secure channels when sharing debug information
+
+## Supported Environments
+- Web browsers (Chrome, Firefox, Safari, Edge)
+- React, Angular, Vue applications
+- Node.js backend services
+- Python applications with proper logging
+- Mobile web applications
+
+## Additional Commands
+
+### `/debug:console`
+Focus specifically on console output:
+```
+User: /debug:console
+AI: [Gathers console logs and errors]
+```
+
+### `/debug:visual`
+Focus specifically on visual issues:
+```
+User: /debug:visual
+AI: [Takes screenshot and analyzes visual elements]
+```
+
+## Resources
+- [Browser DevTools Documentation](https://developer.chrome.com/docs/devtools/)
+- [React Error Boundaries](https://reactjs.org/docs/error-boundaries.html)
+- [JavaScript Debugging Techniques](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Debugging)
+- [Python Debugging Tools](https://docs.python.org/3/library/debug.html)
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/dev_workflow.mdc
+```mdc
+---
+description: Guide for using Taskmaster to manage task-driven development workflows
+globs: **/*
+alwaysApply: true
+---
+
+# Taskmaster Development Workflow
+
+This guide outlines the standard process for using Taskmaster to manage software development projects. It is written as a set of instructions for you, the AI agent.
+
+- **Your Default Stance**: For most projects, the user can work directly within the `master` task context. Your initial actions should operate on this default context unless a clear pattern for multi-context work emerges.
+- **Your Goal**: Your role is to elevate the user's workflow by intelligently introducing advanced features like **Tagged Task Lists** when you detect the appropriate context. Do not force tags on the user; suggest them as a helpful solution to a specific need.
+
+## The Basic Loop
+The fundamental development cycle you will facilitate is:
+1.  **`list`**: Show the user what needs to be done.
+2.  **`next`**: Help the user decide what to work on.
+3.  **`show <id>`**: Provide details for a specific task.
+4.  **`expand <id>`**: Break down a complex task into smaller, manageable subtasks.
+5.  **Implement**: The user writes the code and tests.
+6.  **`update-subtask`**: Log progress and findings on behalf of the user.
+7.  **`set-status`**: Mark tasks and subtasks as `done` as work is completed.
+8.  **Repeat**.
+
+All your standard command executions should operate on the user's current task context, which defaults to `master`.
+
+---
+
+## Standard Development Workflow Process
+
+### Simple Workflow (Default Starting Point)
+
+For new projects or when users are getting started, operate within the `master` tag context:
+
+-   Start new projects by running `initialize_project` tool / `task-master init` or `parse_prd` / `task-master parse-prd --input='<prd-file.txt>'` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) to generate initial tasks.json with tagged structure
+-   Begin coding sessions with `get_tasks` / `task-master list` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) to see current tasks, status, and IDs
+-   Determine the next task to work on using `next_task` / `task-master next` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc))
+-   Analyze task complexity with `analyze_project_complexity` / `task-master analyze-complexity --research` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) before breaking down tasks
+-   Review complexity report using `complexity_report` / `task-master complexity-report` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc))
+-   Select tasks based on dependencies (all marked 'done'), priority level, and ID order
+-   View specific task details using `get_task` / `task-master show <id>` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) to understand implementation requirements
+-   Break down complex tasks using `expand_task` / `task-master expand --id=<id> --force --research` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) with appropriate flags like `--force` (to replace existing subtasks) and `--research`
+-   Implement code following task details, dependencies, and project standards
+-   Mark completed tasks with `set_task_status` / `task-master set-status --id=<id> --status=done` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc))
+-   Update dependent tasks when implementation differs from original plan using `update` / `task-master update --from=<id> --prompt="..."` or `update_task` / `task-master update-task --id=<id> --prompt="..."` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc))
+
+---
+
+## Leveling Up: Agent-Led Multi-Context Workflows
+
+While the basic workflow is powerful, your primary opportunity to add value is by identifying when to introduce **Tagged Task Lists**. These patterns are your tools for creating a more organized and efficient development environment for the user, especially if you detect agentic or parallel development happening across the same session.
+
+**Critical Principle**: Most users should never see a difference in their experience. Only introduce advanced workflows when you detect clear indicators that the project has evolved beyond simple task management.
+
+### When to Introduce Tags: Your Decision Patterns
+
+Here are the patterns to look for. When you detect one, you should propose the corresponding workflow to the user.
+
+#### Pattern 1: Simple Git Feature Branching
+This is the most common and direct use case for tags.
+
+- **Trigger**: The user creates a new git branch (e.g., `git checkout -b feature/user-auth`).
+- **Your Action**: Propose creating a new tag that mirrors the branch name to isolate the feature's tasks from `master`.
+- **Your Suggested Prompt**: *"I see you've created a new branch named 'feature/user-auth'. To keep all related tasks neatly organized and separate from your main list, I can create a corresponding task tag for you. This helps prevent merge conflicts in your `tasks.json` file later. Shall I create the 'feature-user-auth' tag?"*
+- **Tool to Use**: `task-master add-tag --from-branch`
+
+#### Pattern 2: Team Collaboration
+- **Trigger**: The user mentions working with teammates (e.g., "My teammate Alice is handling the database schema," or "I need to review Bob's work on the API.").
+- **Your Action**: Suggest creating a separate tag for the user's work to prevent conflicts with shared master context.
+- **Your Suggested Prompt**: *"Since you're working with Alice, I can create a separate task context for your work to avoid conflicts. This way, Alice can continue working with the master list while you have your own isolated context. When you're ready to merge your work, we can coordinate the tasks back to master. Shall I create a tag for your current work?"*
+- **Tool to Use**: `task-master add-tag my-work --copy-from-current --description="My tasks while collaborating with Alice"`
+
+#### Pattern 3: Experiments or Risky Refactors
+- **Trigger**: The user wants to try something that might not be kept (e.g., "I want to experiment with switching our state management library," or "Let's refactor the old API module, but I want to keep the current tasks as a reference.").
+- **Your Action**: Propose creating a sandboxed tag for the experimental work.
+- **Your Suggested Prompt**: *"This sounds like a great experiment. To keep these new tasks separate from our main plan, I can create a temporary 'experiment-zustand' tag for this work. If we decide not to proceed, we can simply delete the tag without affecting the main task list. Sound good?"*
+- **Tool to Use**: `task-master add-tag experiment-zustand --description="Exploring Zustand migration"`
+
+#### Pattern 4: Large Feature Initiatives (PRD-Driven)
+This is a more structured approach for significant new features or epics.
+
+- **Trigger**: The user describes a large, multi-step feature that would benefit from a formal plan.
+- **Your Action**: Propose a comprehensive, PRD-driven workflow.
+- **Your Suggested Prompt**: *"This sounds like a significant new feature. To manage this effectively, I suggest we create a dedicated task context for it. Here's the plan: I'll create a new tag called 'feature-xyz', then we can draft a Product Requirements Document (PRD) together to scope the work. Once the PRD is ready, I'll automatically generate all the necessary tasks within that new tag. How does that sound?"*
+- **Your Implementation Flow**:
+    1.  **Create an empty tag**: `task-master add-tag feature-xyz --description "Tasks for the new XYZ feature"`. You can also start by creating a git branch if applicable, and then create the tag from that branch.
+    2.  **Collaborate & Create PRD**: Work with the user to create a detailed PRD file (e.g., `.taskmaster/docs/feature-xyz-prd.txt`).
+    3.  **Parse PRD into the new tag**: `task-master parse-prd .taskmaster/docs/feature-xyz-prd.txt --tag feature-xyz`
+    4.  **Prepare the new task list**: Follow up by suggesting `analyze-complexity` and `expand-all` for the newly created tasks within the `feature-xyz` tag.
+
+#### Pattern 5: Version-Based Development
+Tailor your approach based on the project maturity indicated by tag names.
+
+- **Prototype/MVP Tags** (`prototype`, `mvp`, `poc`, `v0.x`):
+  - **Your Approach**: Focus on speed and functionality over perfection
+  - **Task Generation**: Create tasks that emphasize "get it working" over "get it perfect"
+  - **Complexity Level**: Lower complexity, fewer subtasks, more direct implementation paths
+  - **Research Prompts**: Include context like "This is a prototype - prioritize speed and basic functionality over optimization"
+  - **Example Prompt Addition**: *"Since this is for the MVP, I'll focus on tasks that get core functionality working quickly rather than over-engineering."*
+
+- **Production/Mature Tags** (`v1.0+`, `production`, `stable`):
+  - **Your Approach**: Emphasize robustness, testing, and maintainability
+  - **Task Generation**: Include comprehensive error handling, testing, documentation, and optimization
+  - **Complexity Level**: Higher complexity, more detailed subtasks, thorough implementation paths
+  - **Research Prompts**: Include context like "This is for production - prioritize reliability, performance, and maintainability"
+  - **Example Prompt Addition**: *"Since this is for production, I'll ensure tasks include proper error handling, testing, and documentation."*
+
+### Advanced Workflow (Tag-Based & PRD-Driven)
+
+**When to Transition**: Recognize when the project has evolved (or has initiated a project which existing code) beyond simple task management. Look for these indicators:
+- User mentions teammates or collaboration needs
+- Project has grown to 15+ tasks with mixed priorities
+- User creates feature branches or mentions major initiatives
+- User initializes Taskmaster on an existing, complex codebase
+- User describes large features that would benefit from dedicated planning
+
+**Your Role in Transition**: Guide the user to a more sophisticated workflow that leverages tags for organization and PRDs for comprehensive planning.
+
+#### Master List Strategy (High-Value Focus)
+Once you transition to tag-based workflows, the `master` tag should ideally contain only:
+- **High-level deliverables** that provide significant business value
+- **Major milestones** and epic-level features
+- **Critical infrastructure** work that affects the entire project
+- **Release-blocking** items
+
+**What NOT to put in master**:
+- Detailed implementation subtasks (these go in feature-specific tags' parent tasks)
+- Refactoring work (create dedicated tags like `refactor-auth`)
+- Experimental features (use `experiment-*` tags)
+- Team member-specific tasks (use person-specific tags)
+
+#### PRD-Driven Feature Development
+
+**For New Major Features**:
+1. **Identify the Initiative**: When user describes a significant feature
+2. **Create Dedicated Tag**: `add_tag feature-[name] --description="[Feature description]"`
+3. **Collaborative PRD Creation**: Work with user to create comprehensive PRD in `.taskmaster/docs/feature-[name]-prd.txt`
+4. **Parse & Prepare**: 
+   - `parse_prd .taskmaster/docs/feature-[name]-prd.txt --tag=feature-[name]`
+   - `analyze_project_complexity --tag=feature-[name] --research`
+   - `expand_all --tag=feature-[name] --research`
+5. **Add Master Reference**: Create a high-level task in `master` that references the feature tag
+
+**For Existing Codebase Analysis**:
+When users initialize Taskmaster on existing projects:
+1. **Codebase Discovery**: Use your native tools for producing deep context about the code base. You may use `research` tool with `--tree` and `--files` to collect up to date information using the existing architecture as context.
+2. **Collaborative Assessment**: Work with user to identify improvement areas, technical debt, or new features
+3. **Strategic PRD Creation**: Co-author PRDs that include:
+   - Current state analysis (based on your codebase research)
+   - Proposed improvements or new features
+   - Implementation strategy considering existing code
+4. **Tag-Based Organization**: Parse PRDs into appropriate tags (`refactor-api`, `feature-dashboard`, `tech-debt`, etc.)
+5. **Master List Curation**: Keep only the most valuable initiatives in master
+
+The parse-prd's `--append` flag enables the user to parse multple PRDs within tags or across tags. PRDs should be focused and the number of tasks they are parsed into should be strategically chosen relative to the PRD's complexity and level of detail.
+
+### Workflow Transition Examples
+
+**Example 1: Simple → Team-Based**
+```
+User: "Alice is going to help with the API work"
+Your Response: "Great! To avoid conflicts, I'll create a separate task context for your work. Alice can continue with the master list while you work in your own context. When you're ready to merge, we can coordinate the tasks back together."
+Action: add_tag my-api-work --copy-from-current --description="My API tasks while collaborating with Alice"
+```
+
+**Example 2: Simple → PRD-Driven**
+```
+User: "I want to add a complete user dashboard with analytics, user management, and reporting"
+Your Response: "This sounds like a major feature that would benefit from detailed planning. Let me create a dedicated context for this work and we can draft a PRD together to ensure we capture all requirements."
+Actions: 
+1. add_tag feature-dashboard --description="User dashboard with analytics and management"
+2. Collaborate on PRD creation
+3. parse_prd dashboard-prd.txt --tag=feature-dashboard
+4. Add high-level "User Dashboard" task to master
+```
+
+**Example 3: Existing Project → Strategic Planning**
+```
+User: "I just initialized Taskmaster on my existing React app. It's getting messy and I want to improve it."
+Your Response: "Let me research your codebase to understand the current architecture, then we can create a strategic plan for improvements."
+Actions:
+1. research "Current React app architecture and improvement opportunities" --tree --files=src/
+2. Collaborate on improvement PRD based on findings
+3. Create tags for different improvement areas (refactor-components, improve-state-management, etc.)
+4. Keep only major improvement initiatives in master
+```
+
+---
+
+## Primary Interaction: MCP Server vs. CLI
+
+Taskmaster offers two primary ways to interact:
+
+1.  **MCP Server (Recommended for Integrated Tools)**:
+    - For AI agents and integrated development environments (like Cursor), interacting via the **MCP server is the preferred method**.
+    - The MCP server exposes Taskmaster functionality through a set of tools (e.g., `get_tasks`, `add_subtask`).
+    - This method offers better performance, structured data exchange, and richer error handling compared to CLI parsing.
+    - Refer to [`mcp.mdc`](mdc:.cursor/rules/mcp.mdc) for details on the MCP architecture and available tools.
+    - A comprehensive list and description of MCP tools and their corresponding CLI commands can be found in [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc).
+    - **Restart the MCP server** if core logic in `scripts/modules` or MCP tool/direct function definitions change.
+    - **Note**: MCP tools fully support tagged task lists with complete tag management capabilities.
+
+2.  **`task-master` CLI (For Users & Fallback)**:
+    - The global `task-master` command provides a user-friendly interface for direct terminal interaction.
+    - It can also serve as a fallback if the MCP server is inaccessible or a specific function isn't exposed via MCP.
+    - Install globally with `npm install -g task-master-ai` or use locally via `npx task-master-ai ...`.
+    - The CLI commands often mirror the MCP tools (e.g., `task-master list` corresponds to `get_tasks`).
+    - Refer to [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc) for a detailed command reference.
+    - **Tagged Task Lists**: CLI fully supports the new tagged system with seamless migration.
+
+## How the Tag System Works (For Your Reference)
+
+- **Data Structure**: Tasks are organized into separate contexts (tags) like "master", "feature-branch", or "v2.0".
+- **Silent Migration**: Existing projects automatically migrate to use a "master" tag with zero disruption.
+- **Context Isolation**: Tasks in different tags are completely separate. Changes in one tag do not affect any other tag.
+- **Manual Control**: The user is always in control. There is no automatic switching. You facilitate switching by using `use-tag <name>`.
+- **Full CLI & MCP Support**: All tag management commands are available through both the CLI and MCP tools for you to use. Refer to [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc) for a full command list.
+
+---
+
+## Task Complexity Analysis
+
+-   Run `analyze_project_complexity` / `task-master analyze-complexity --research` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) for comprehensive analysis
+-   Review complexity report via `complexity_report` / `task-master complexity-report` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) for a formatted, readable version.
+-   Focus on tasks with highest complexity scores (8-10) for detailed breakdown
+-   Use analysis results to determine appropriate subtask allocation
+-   Note that reports are automatically used by the `expand_task` tool/command
+
+## Task Breakdown Process
+
+-   Use `expand_task` / `task-master expand --id=<id>`. It automatically uses the complexity report if found, otherwise generates default number of subtasks.
+-   Use `--num=<number>` to specify an explicit number of subtasks, overriding defaults or complexity report recommendations.
+-   Add `--research` flag to leverage Perplexity AI for research-backed expansion.
+-   Add `--force` flag to clear existing subtasks before generating new ones (default is to append).
+-   Use `--prompt="<context>"` to provide additional context when needed.
+-   Review and adjust generated subtasks as necessary.
+-   Use `expand_all` tool or `task-master expand --all` to expand multiple pending tasks at once, respecting flags like `--force` and `--research`.
+-   If subtasks need complete replacement (regardless of the `--force` flag on `expand`), clear them first with `clear_subtasks` / `task-master clear-subtasks --id=<id>`.
+
+## Implementation Drift Handling
+
+-   When implementation differs significantly from planned approach
+-   When future tasks need modification due to current implementation choices
+-   When new dependencies or requirements emerge
+-   Use `update` / `task-master update --from=<futureTaskId> --prompt='<explanation>\nUpdate context...' --research` to update multiple future tasks.
+-   Use `update_task` / `task-master update-task --id=<taskId> --prompt='<explanation>\nUpdate context...' --research` to update a single specific task.
+
+## Task Status Management
+
+-   Use 'pending' for tasks ready to be worked on
+-   Use 'done' for completed and verified tasks
+-   Use 'deferred' for postponed tasks
+-   Add custom status values as needed for project-specific workflows
+
+## Task Structure Fields
+
+- **id**: Unique identifier for the task (Example: `1`, `1.1`)
+- **title**: Brief, descriptive title (Example: `"Initialize Repo"`)
+- **description**: Concise summary of what the task involves (Example: `"Create a new repository, set up initial structure."`)
+- **status**: Current state of the task (Example: `"pending"`, `"done"`, `"deferred"`)
+- **dependencies**: IDs of prerequisite tasks (Example: `[1, 2.1]`)
+    - Dependencies are displayed with status indicators (✅ for completed, ⏱️ for pending)
+    - This helps quickly identify which prerequisite tasks are blocking work
+- **priority**: Importance level (Example: `"high"`, `"medium"`, `"low"`)
+- **details**: In-depth implementation instructions (Example: `"Use GitHub client ID/secret, handle callback, set session token."`) 
+- **testStrategy**: Verification approach (Example: `"Deploy and call endpoint to confirm 'Hello World' response."`) 
+- **subtasks**: List of smaller, more specific tasks (Example: `[{"id": 1, "title": "Configure OAuth", ...}]`) 
+- Refer to task structure details (previously linked to `tasks.mdc`).
+
+## Configuration Management (Updated)
+
+Taskmaster configuration is managed through two main mechanisms:
+
+1.  **`.taskmaster/config.json` File (Primary):**
+    *   Located in the project root directory.
+    *   Stores most configuration settings: AI model selections (main, research, fallback), parameters (max tokens, temperature), logging level, default subtasks/priority, project name, etc.
+    *   **Tagged System Settings**: Includes `global.defaultTag` (defaults to "master") and `tags` section for tag management configuration.
+    *   **Managed via `task-master models --setup` command.** Do not edit manually unless you know what you are doing.
+    *   **View/Set specific models via `task-master models` command or `models` MCP tool.**
+    *   Created automatically when you run `task-master models --setup` for the first time or during tagged system migration.
+
+2.  **Environment Variables (`.env` / `mcp.json`):**
+    *   Used **only** for sensitive API keys and specific endpoint URLs.
+    *   Place API keys (one per provider) in a `.env` file in the project root for CLI usage.
+    *   For MCP/Cursor integration, configure these keys in the `env` section of `.cursor/mcp.json`.
+    *   Available keys/variables: See `assets/env.example` or the Configuration section in the command reference (previously linked to `taskmaster.mdc`).
+
+3.  **`.taskmaster/state.json` File (Tagged System State):**
+    *   Tracks current tag context and migration status.
+    *   Automatically created during tagged system migration.
+    *   Contains: `currentTag`, `lastSwitched`, `migrationNoticeShown`.
+
+**Important:** Non-API key settings (like model selections, `MAX_TOKENS`, `TASKMASTER_LOG_LEVEL`) are **no longer configured via environment variables**. Use the `task-master models` command (or `--setup` for interactive configuration) or the `models` MCP tool.
+**If AI commands FAIL in MCP** verify that the API key for the selected provider is present in the `env` section of `.cursor/mcp.json`.
+**If AI commands FAIL in CLI** verify that the API key for the selected provider is present in the `.env` file in the root of the project.
+
+## Determining the Next Task
+
+- Run `next_task` / `task-master next` to show the next task to work on.
+- The command identifies tasks with all dependencies satisfied
+- Tasks are prioritized by priority level, dependency count, and ID
+- The command shows comprehensive task information including:
+    - Basic task details and description
+    - Implementation details
+    - Subtasks (if they exist)
+    - Contextual suggested actions
+- Recommended before starting any new development work
+- Respects your project's dependency structure
+- Ensures tasks are completed in the appropriate sequence
+- Provides ready-to-use commands for common task actions
+
+## Viewing Specific Task Details
+
+- Run `get_task` / `task-master show <id>` to view a specific task.
+- Use dot notation for subtasks: `task-master show 1.2` (shows subtask 2 of task 1)
+- Displays comprehensive information similar to the next command, but for a specific task
+- For parent tasks, shows all subtasks and their current status
+- For subtasks, shows parent task information and relationship
+- Provides contextual suggested actions appropriate for the specific task
+- Useful for examining task details before implementation or checking status
+
+## Managing Task Dependencies
+
+- Use `add_dependency` / `task-master add-dependency --id=<id> --depends-on=<id>` to add a dependency.
+- Use `remove_dependency` / `task-master remove-dependency --id=<id> --depends-on=<id>` to remove a dependency.
+- The system prevents circular dependencies and duplicate dependency entries
+- Dependencies are checked for existence before being added or removed
+- Task files are automatically regenerated after dependency changes
+- Dependencies are visualized with status indicators in task listings and files
+
+## Task Reorganization
+
+- Use `move_task` / `task-master move --from=<id> --to=<id>` to move tasks or subtasks within the hierarchy
+- This command supports several use cases:
+  - Moving a standalone task to become a subtask (e.g., `--from=5 --to=7`)
+  - Moving a subtask to become a standalone task (e.g., `--from=5.2 --to=7`) 
+  - Moving a subtask to a different parent (e.g., `--from=5.2 --to=7.3`)
+  - Reordering subtasks within the same parent (e.g., `--from=5.2 --to=5.4`)
+  - Moving a task to a new, non-existent ID position (e.g., `--from=5 --to=25`)
+  - Moving multiple tasks at once using comma-separated IDs (e.g., `--from=10,11,12 --to=16,17,18`)
+- The system includes validation to prevent data loss:
+  - Allows moving to non-existent IDs by creating placeholder tasks
+  - Prevents moving to existing task IDs that have content (to avoid overwriting)
+  - Validates source tasks exist before attempting to move them
+- The system maintains proper parent-child relationships and dependency integrity
+- Task files are automatically regenerated after the move operation
+- This provides greater flexibility in organizing and refining your task structure as project understanding evolves
+- This is especially useful when dealing with potential merge conflicts arising from teams creating tasks on separate branches. Solve these conflicts very easily by moving your tasks and keeping theirs.
+
+## Iterative Subtask Implementation
+
+Once a task has been broken down into subtasks using `expand_task` or similar methods, follow this iterative process for implementation:
+
+1.  **Understand the Goal (Preparation):**
+    *   Use `get_task` / `task-master show <subtaskId>` (see [`taskmaster.mdc`](mdc:.cursor/rules/taskmaster.mdc)) to thoroughly understand the specific goals and requirements of the subtask.
+
+2.  **Initial Exploration & Planning (Iteration 1):**
+    *   This is the first attempt at creating a concrete implementation plan.
+    *   Explore the codebase to identify the precise files, functions, and even specific lines of code that will need modification.
+    *   Determine the intended code changes (diffs) and their locations.
+    *   Gather *all* relevant details from this exploration phase.
+
+3.  **Log the Plan:**
+    *   Run `update_subtask` / `task-master update-subtask --id=<subtaskId> --prompt='<detailed plan>'`.
+    *   Provide the *complete and detailed* findings from the exploration phase in the prompt. Include file paths, line numbers, proposed diffs, reasoning, and any potential challenges identified. Do not omit details. The goal is to create a rich, timestamped log within the subtask's `details`.
+
+4.  **Verify the Plan:**
+    *   Run `get_task` / `task-master show <subtaskId>` again to confirm that the detailed implementation plan has been successfully appended to the subtask's details.
+
+5.  **Begin Implementation:**
+    *   Set the subtask status using `set_task_status` / `task-master set-status --id=<subtaskId> --status=in-progress`.
+    *   Start coding based on the logged plan.
+
+6.  **Refine and Log Progress (Iteration 2+):**
+    *   As implementation progresses, you will encounter challenges, discover nuances, or confirm successful approaches.
+    *   **Before appending new information**: Briefly review the *existing* details logged in the subtask (using `get_task` or recalling from context) to ensure the update adds fresh insights and avoids redundancy.
+    *   **Regularly** use `update_subtask` / `task-master update-subtask --id=<subtaskId> --prompt='<update details>\n- What worked...\n- What didn't work...'` to append new findings.
+    *   **Crucially, log:**
+        *   What worked ("fundamental truths" discovered).
+        *   What didn't work and why (to avoid repeating mistakes).
+        *   Specific code snippets or configurations that were successful.
+        *   Decisions made, especially if confirmed with user input.
+        *   Any deviations from the initial plan and the reasoning.
+    *   The objective is to continuously enrich the subtask's details, creating a log of the implementation journey that helps the AI (and human developers) learn, adapt, and avoid repeating errors.
+
+7.  **Review & Update Rules (Post-Implementation):**
+    *   Once the implementation for the subtask is functionally complete, review all code changes and the relevant chat history.
+    *   Identify any new or modified code patterns, conventions, or best practices established during the implementation.
+    *   Create new or update existing rules following internal guidelines (previously linked to `cursor_rules.mdc` and `self_improve.mdc`).
+
+8.  **Mark Task Complete:**
+    *   After verifying the implementation and updating any necessary rules, mark the subtask as completed: `set_task_status` / `task-master set-status --id=<subtaskId> --status=done`.
+
+9.  **Commit Changes (If using Git):**
+    *   Stage the relevant code changes and any updated/new rule files (`git add .`).
+    *   Craft a comprehensive Git commit message summarizing the work done for the subtask, including both code implementation and any rule adjustments.
+    *   Execute the commit command directly in the terminal (e.g., `git commit -m 'feat(module): Implement feature X for subtask <subtaskId>\n\n- Details about changes...\n- Updated rule Y for pattern Z'`).
+    *   Consider if a Changeset is needed according to internal versioning guidelines (previously linked to `changeset.mdc`). If so, run `npm run changeset`, stage the generated file, and amend the commit or create a new one.
+
+10. **Proceed to Next Subtask:**
+    *   Identify the next subtask (e.g., using `next_task` / `task-master next`).
+
+## Code Analysis & Refactoring Techniques
+
+- **Top-Level Function Search**:
+    - Useful for understanding module structure or planning refactors.
+    - Use grep/ripgrep to find exported functions/constants:
+      `rg "export (async function|function|const) \w+"` or similar patterns.
+    - Can help compare functions between files during migrations or identify potential naming conflicts.
+
+---
+*This workflow provides a general guideline. Adapt it based on your specific project needs and team practices.*
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/generate-tasks.mdc
+```mdc
+---
+description: Guide for creating detailed task lists from Product Requirements Documents (PRDs)
+globs: **/tasks/**/*.md, **/tasks-*.md
+---
+
+# Rule: Generating a Task List from a PRD
+
+// Description: Guide for creating detailed task lists from Product Requirements Documents (PRDs)
+// Recommended Globs: **/tasks/**/*.md, **/tasks-*.md
+
+## Goal
+
+To guide an AI assistant in creating a detailed, step-by-step task list in Markdown format based on an existing Product Requirements Document (PRD). The task list should guide a developer through implementation.
+
+## Output
+
+- **Format:** Markdown (`.md`)
+- **Location:** `/tasks/`
+- **Filename:** `tasks-[prd-file-name].md` (e.g., `tasks-prd-user-profile-editing.md`)
+
+## Process
+
+1.  **Receive PRD Reference:** The user points the AI to a specific PRD file
+2.  **Analyze PRD:** The AI reads and analyzes the functional requirements, user stories, and other sections of the specified PRD.
+3.  **Phase 1: Generate Parent Tasks:** Based on the PRD analysis, create the file and generate the main, high-level tasks required to implement the feature. Use your judgement on how many high-level tasks to use. It's likely to be about 5. Present these tasks to the user in the specified format (without sub-tasks yet). Inform the user: "I have generated the high-level tasks based on the PRD. Ready to generate the sub-tasks? Respond with 'Go' to proceed."
+4.  **Wait for Confirmation:** Pause and wait for the user to respond with "Go".
+5.  **Phase 2: Generate Sub-Tasks:** Once the user confirms, break down each parent task into smaller, actionable sub-tasks necessary to complete the parent task. Ensure sub-tasks logically follow from the parent task and cover the implementation details implied by the PRD.
+6.  **Identify Relevant Files:** Based on the tasks and PRD, identify potential files that will need to be created or modified. List these under the `Relevant Files` section, including corresponding test files if applicable.
+7.  **Generate Final Output:** Combine the parent tasks, sub-tasks, relevant files, and notes into the final Markdown structure.
+8.  **Save Task List:** Save the generated document in the `/tasks/` directory with the filename `tasks-[prd-file-name].md`, where `[prd-file-name]` matches the base name of the input PRD file (e.g., if the input was `prd-user-profile-editing.md`, the output is `tasks-prd-user-profile-editing.md`).
+
+## Output Format
+
+The generated task list _must_ follow this structure:
+
+```markdown
+## Relevant Files
+
+- `path/to/potential/file1.ts` - Brief description of why this file is relevant (e.g., Contains the main component for this feature).
+- `path/to/file1.test.ts` - Unit tests for `file1.ts`.
+- `path/to/another/file.tsx` - Brief description (e.g., API route handler for data submission).
+- `path/to/another/file.test.tsx` - Unit tests for `another/file.tsx`.
+- `lib/utils/helpers.ts` - Brief description (e.g., Utility functions needed for calculations).
+- `lib/utils/helpers.test.ts` - Unit tests for `helpers.ts`.
+
+### Notes
+
+- Unit tests should typically be placed alongside the code files they are testing (e.g., `MyComponent.tsx` and `MyComponent.test.tsx` in the same directory).
+- Use `npx jest [optional/path/to/test/file]` to run tests. Running without a path executes all tests found by the Jest configuration.
+
+## Tasks
+
+- [ ] 1.0 Parent Task Title
+  - [ ] 1.1 [Sub-task description 1.1]
+  - [ ] 1.2 [Sub-task description 1.2]
+- [ ] 2.0 Parent Task Title
+  - [ ] 2.1 [Sub-task description 2.1]
+- [ ] 3.0 Parent Task Title (may not require sub-tasks if purely structural or configuration)
+```
+
+## Interaction Model
+
+The process explicitly requires a pause after generating parent tasks to get user confirmation ("Go") before proceeding to generate the detailed sub-tasks. This ensures the high-level plan aligns with user expectations before diving into details.
+
+## Target Audience
+
+Assume the primary reader of the task list is a **junior developer** who will implement the feature.
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/nextjs-app-router.mdc
+```mdc
+---
+description: Best practices for Next.js App Router development with TypeScript, Shadcn UI, and Tailwind
+globs: **/*.{ts,tsx}, **/app/**/*, **/components/**/*, **/lib/**/*
+---
+
+# Next.js App Router
+
+// Description: Best practices for Next.js App Router development with TypeScript, Shadcn UI, and Tailwind
+// Recommended Globs: **/*.{ts,tsx}, **/app/**/*, **/components/**/*, **/lib/**/*
+
+## Project Structure
+```
+src/
+  app/
+    (auth)/
+      login/
+        page.tsx
+      register/
+        page.tsx
+    (dashboard)/
+      layout.tsx
+      page.tsx
+    api/
+      route.ts
+  components/
+    ui/
+      button.tsx
+      card.tsx
+    auth-wizard/
+      auth-form.tsx
+      password-input.tsx
+    dashboard/
+      stats-card.tsx
+  lib/
+    utils.ts
+    constants.ts
+  types/
+    index.ts
+  styles/
+    globals.css
+```
+
+## Component Structure
+```typescript
+// src/components/dashboard/stats-card.tsx
+import { Suspense } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatNumber } from '@/lib/utils';
+
+interface StatsData {
+  title: string;
+  value: number;
+  change: number;
+}
+
+interface StatsCardProps {
+  data: StatsData;
+  isLoading?: boolean;
+}
+
+function StatsSkeleton() {
+  return (
+    <div className="h-[120px] w-full animate-pulse rounded-lg bg-muted" />
+  );
+}
+
+export function StatsCard({ data, isLoading }: StatsCardProps) {
+  if (isLoading) return <StatsSkeleton />;
+
+  const { title, value, change } = data;
+
+  return (
+    <Card className="overflow-hidden rounded-xl border bg-background">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Suspense fallback={<StatsSkeleton />}>
+          <div className="text-2xl font-bold">{formatNumber(value)}</div>
+          <p className="text-xs text-muted-foreground">
+            {change > 0 ? '+' : ''}{change}% from last month
+          </p>
+        </Suspense>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+## Server Components
+```typescript
+// src/app/(dashboard)/page.tsx
+import { Suspense } from 'react';
+import { StatsCard } from '@/components/dashboard/stats-card';
+import { fetchDashboardStats } from '@/lib/api';
+
+async function DashboardStats() {
+  const stats = await fetchDashboardStats();
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {stats.map((stat) => (
+        <StatsCard key={stat.title} data={stat} />
+      ))}
+    </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <main className="container mx-auto p-4 md:p-6 lg:p-8">
+      <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
+      <Suspense fallback={<StatsCardSkeleton count={4} />}>
+        <DashboardStats />
+      </Suspense>
+    </main>
+  );
+}
+```
+
+## Client Components
+```typescript
+// src/components/auth-wizard/auth-form.tsx
+'use client';
+
+import { useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { authSchema } from '@/lib/validations/auth';
+import type { AuthFormData } from '@/types';
+
+export function AuthForm() {
+  const searchParams = useSearchParams();
+  const form = useForm<AuthFormData>({
+    resolver: zodResolver(authSchema),
+    defaultValues: {
+      email: searchParams.get('email') ?? '',
+      password: ''
+    }
+  });
+
+  async function onSubmit(data: AuthFormData) {
+    try {
+      // Handle form submission
+    } catch (error) {
+      // Handle error
+    }
+  }
+
+  return (
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <Input
+        type="email"
+        placeholder="Email"
+        {...form.register('email')}
+      />
+      <Input
+        type="password"
+        placeholder="Password"
+        {...form.register('password')}
+      />
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={form.formState.isSubmitting}
+      >
+        {form.formState.isSubmitting ? 'Loading...' : 'Sign In'}
+      </Button>
+    </form>
+  );
+}
+```
+
+## Data Fetching
+```typescript
+// src/lib/api.ts
+import { cache } from 'react';
+import { headers } from 'next/headers';
+
+export const fetchDashboardStats = cache(async () => {
+  const headersList = headers();
+  const response = await fetch('/api/stats', {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': headersList.get('authorization') ?? ''
+    },
+    next: {
+      revalidate: 60,
+      tags: ['dashboard-stats']
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch stats');
+  }
+
+  return response.json();
+});
+```
+
+## Best Practices
+
+### TypeScript Usage
+- Use interfaces for component props and data structures
+- Avoid enums; use const maps for static values
+- Leverage TypeScript's inference capabilities
+- Use strict type checking
+
+### Component Organization
+- Keep components focused and single-responsibility
+- Use Server Components by default
+- Add 'use client' only when necessary
+- Implement proper loading and error states
+
+### Performance
+- Minimize client-side JavaScript
+- Use React Suspense for loading states
+- Implement proper caching strategies
+- Optimize images with next/image
+
+### Styling
+- Use Tailwind's utility classes
+- Follow mobile-first responsive design
+- Maintain consistent spacing and typography
+- Use CSS variables for theming
+
+### State Management
+- Use URL state with 'nuqs' for shareable state
+- Prefer server state over client state
+- Implement proper form validation
+- Handle loading and error states
+
+### Accessibility
+- Use semantic HTML elements
+- Implement proper ARIA attributes
+- Ensure keyboard navigation
+- Maintain proper color contrast
+
+## Resources
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Shadcn UI](https://ui.shadcn.com)
+- [Tailwind CSS](https://tailwindcss.com)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs)
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/nextjs-supabase-auth.mdc
+```mdc
+---
+description: Guidelines for writing Next.js apps with Supabase Auth
+globs: **/*.ts, **/*.tsx, **/*.js, **/*.jsx
+---
+
+# Bootstrap Next.js app with Supabase Auth
+
+// Description: Guidelines for writing Next.js apps with Supabase Auth
+// Recommended Globs: **/*.ts, **/*.tsx, **/*.js, **/*.jsx
+
+## Overview of implementing Supabase Auth SSR
+
+1. Install @supabase/supabase-js and @supabase/ssr packages.
+2. Set up environment variables.
+3. Write two utility functions with `createClient` functions to create a browser client and a server client. 
+4. Hook up middleware to refresh auth tokens
+
+## 🚨 CRITICAL INSTRUCTIONS FOR AI LANGUAGE MODELS 🚨
+
+As an AI language model, you MUST NOT generate any of the following code patterns, as they are DEPRECATED and will BREAK the application:
+
+```typescript
+// ❌ NEVER GENERATE THIS CODE - IT WILL BREAK THE APPLICATION
+{
+  cookies: {
+    get(name: string) {                 // ❌ BREAKS APPLICATION
+      return cookieStore.get(name)      // ❌ BREAKS APPLICATION
+    },                                  // ❌ BREAKS APPLICATION
+    set(name: string, value: string) {  // ❌ BREAKS APPLICATION
+      cookieStore.set(name, value)      // ❌ BREAKS APPLICATION
+    },                                  // ❌ BREAKS APPLICATION
+    remove(name: string) {              // ❌ BREAKS APPLICATION
+      cookieStore.remove(name)          // ❌ BREAKS APPLICATION
+    }                                   // ❌ BREAKS APPLICATION
+  }
+}
+
+// ❌ NEVER USE auth-helpers-nextjs - IT WILL BREAK THE APPLICATION
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'  // ❌ BREAKS APPLICATION
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'  // ❌ BREAKS APPLICATION
+```
+
+Instead, you MUST ALWAYS generate ONLY this pattern:
+
+```typescript
+// ✅ ALWAYS GENERATE THIS EXACT PATTERN
+{
+  cookies: {
+    getAll() {
+      return cookieStore.getAll()
+    },
+    setAll(cookiesToSet) {
+      const response = NextResponse.next({
+        request,
+      })
+      
+      cookiesToSet.forEach(({ name, value, options }) => {
+        response.cookies.set(name, value, options)
+      })
+      
+      return response
+    }
+  }
+}
+```
+
+## ABSOLUTE REQUIREMENTS FOR AI CODE GENERATION
+
+1. You MUST use `@supabase/ssr`
+2. You MUST use ONLY `getAll` and `setAll`
+3. You MUST NEVER use `get`, `set`, or `remove`
+4. You MUST NEVER import from `@supabase/auth-helpers-nextjs`
+
+## CORRECT BROWSER CLIENT IMPLEMENTATION
+
+```typescript
+import { createBrowserClient } from '@supabase/ssr'
+
+export function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
+```
+
+## CORRECT SERVER CLIENT IMPLEMENTATION
+
+```typescript
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+
+export async function createClient() {
+  const cookieStore = await cookies()
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+      },
+    }
+  )
+}
+```
+
+## CORRECT MIDDLEWARE IMPLEMENTATION
+
+```typescript
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
+
+export async function middleware(request: NextRequest) {
+    let supabaseResponse = NextResponse.next({
+    request,
+  })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          supabaseResponse = NextResponse.next({
+            request,
+          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  // Do not run code between createServerClient and
+  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
+  // issues with users being randomly logged out.
+
+  // IMPORTANT: DO NOT REMOVE auth.getUser()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (
+    !user &&
+    !request.nextUrl.pathname.startsWith('/login') &&
+    !request.nextUrl.pathname.startsWith('/auth')
+  ) {
+    // no user, potentially respond by redirecting the user to the login page
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
+  // IMPORTANT: You *must* return the supabaseResponse object as it is.
+  // If you're creating a new response object with NextResponse.next() make sure to:
+  // 1. Pass the request in it, like so:
+  //    const myNewResponse = NextResponse.next({ request })
+  // 2. Copy over the cookies, like so:
+  //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
+  // 3. Change the myNewResponse object to fit your needs, but avoid changing
+  //    the cookies!
+  // 4. Finally:
+  //    return myNewResponse
+  // If this is not done, you may be causing the browser and server to go out
+  // of sync and terminate the user's session prematurely!
+
+  return supabaseResponse
+}
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to modify this pattern to include more paths.
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+}
+```
+
+## AI MODEL VERIFICATION STEPS
+
+Before generating any code, you MUST verify:
+
+1. Are you using ONLY `getAll` and `setAll`? If not, STOP and FIX.
+2. Are you importing from `@supabase/ssr`? If not, STOP and FIX.
+3. Do you see ANY instance of `get`, `set`, or `remove`? If yes, STOP and FIX.
+4. Are you importing from `auth-helpers-nextjs`? If yes, STOP and FIX.
+
+## CONSEQUENCES OF INCORRECT IMPLEMENTATION
+
+If you generate code using:
+- Individual cookie methods (`get`/`set`/`remove`)
+- `auth-helpers-nextjs` package
+
+The implementation will:
+1. Break in production
+2. Fail to maintain session state
+3. Cause authentication loops
+4. Result in security vulnerabilities
+
+## AI MODEL RESPONSE TEMPLATE
+
+When asked about Supabase Auth SSR implementation, you MUST:
+1. ONLY use code from this guide
+2. NEVER suggest deprecated approaches
+3. ALWAYS use the exact cookie handling shown above
+4. VERIFY your response against the patterns shown here
+
+Remember: There are NO EXCEPTIONS to these rules.
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/npm-package-check.mdc
+```mdc
+---
+description: Best practices for checking and installing NPM packages before use
+globs: **/*.{js,jsx,ts,tsx}, **/package.json
+---
+
+# NPM Package Check
+
+// Description: Best practices for checking and installing NPM packages before use
+// Recommended Globs: **/*.{js,jsx,ts,tsx}, **/package.json
+
+## Overview
+Ensure all required NPM packages are properly installed before use to prevent runtime errors.
+
+## Package Check Process
+1. Before requiring any npm package, check package.json dependencies
+2. If package exists in dependencies:
+   - Output: "✓ {package_name} is already installed"
+3. If package NOT found:
+   - Output terminal command: `npm install {package_name}`
+
+## Example Implementation
+```javascript
+const fs = require('fs');
+const path = require('path');
+
+function checkPackage(packageName) {
+  try {
+    const packageJson = JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8')
+    );
+
+    const deps = {
+      ...packageJson.dependencies,
+      ...packageJson.devDependencies
+    };
+
+    if (deps[packageName]) {
+      console.log(`✓ ${packageName} is already installed`);
+      return true;
+    } else {
+      console.log(`Installing ${packageName}...`);
+      console.log(`Run: npm install ${packageName}`);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error reading package.json:', error);
+    return false;
+  }
+}
+```
+
+## Usage Example
+```javascript
+// Before importing a package
+if (checkPackage('express')) {
+  const express = require('express');
+  // Use express...
+} else {
+  console.error('Please install express first');
+  process.exit(1);
+}
+```
+
+## Best Practices
+- Always check packages before requiring them
+- Handle missing package.json gracefully
+- Consider both dependencies and devDependencies
+- Provide clear installation instructions
+- Exit gracefully if required packages are missing
+
+## Common Patterns
+- Pre-startup dependency check
+- Dynamic package loading
+- Development tooling setup
+- Build process validation
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/process-task-list.mdc
+```mdc
+---
+description: Guidelines for managing task lists in markdown files to track progress on completing a PRD
+globs: **/tasks/**/*.md, **/tasks-*.md
+---
+
+# Task List Management
+
+// Description: Guidelines for managing task lists in markdown files to track progress on completing a PRD
+// Recommended Globs: **/tasks/**/*.md, **/tasks-*.md
+
+Guidelines for managing task lists in markdown files to track progress on completing a PRD
+
+## Task Implementation
+- **One sub-task at a time:** Do **NOT** start the next sub‑task until you ask the user for permission and they say "yes" or "y"
+- **Completion protocol:**
+  1. When you finish a **sub‑task**, immediately mark it as completed by changing `[ ]` to `[x]`.
+  2. If **all** subtasks underneath a parent task are now `[x]`, also mark the **parent task** as completed.
+- Stop after each sub‑task and wait for the user's go‑ahead.
+
+## Task List Maintenance
+
+1. **Update the task list as you work:**
+   - Mark tasks and subtasks as completed (`[x]`) per the protocol above.
+   - Add new tasks as they emerge.
+
+2. **Maintain the "Relevant Files" section:**
+   - List every file created or modified.
+   - Give each file a one‑line description of its purpose.
+
+## AI Instructions
+
+When working with task lists, the AI must:
+
+1. Regularly update the task list file after finishing any significant work.
+2. Follow the completion protocol:
+   - Mark each finished **sub‑task** `[x]`.
+   - Mark the **parent task** `[x]` once **all** its subtasks are `[x]`.
+3. Add newly discovered tasks.
+4. Keep "Relevant Files" accurate and up to date.
+5. Before starting work, check which sub‑task is next.
+6. After implementing a sub‑task, update the file and then pause for user approval.
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/python-development.mdc
+```mdc
+---
+description: Modern Python development practices with type hints, testing, and AI-friendly patterns
+globs: **/*.py, **/pyproject.toml, **/requirements.txt, **/.env*
+---
+
+# Python Development
+
+// Description: Modern Python development practices with type hints, testing, and AI-friendly patterns
+// Recommended Globs: **/*.py, **/pyproject.toml, **/requirements.txt, **/.env*
+
+## Project Structure
+```
+project_name/
+├── src/
+│   └── project_name/
+│       ├── __init__.py
+│       ├── models/
+│       ├── services/
+│       ├── controllers/
+│       └── utils/
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── unit/
+│   └── integration/
+├── docs/
+├── .env
+├── .env.example
+├── .gitignore
+├── pyproject.toml
+├── README.md
+└── requirements.txt
+```
+
+## Type Annotations
+Always use type hints for functions and classes:
+
+```python
+from typing import Optional, List, Dict, Any, TypeVar, Generic
+from typing_extensions import TypedDict  # For Python <3.8
+
+T = TypeVar('T')
+
+class DataResponse(TypedDict):
+    success: bool
+    data: Dict[str, Any]
+    error: Optional[str]
+
+class Repository(Generic[T]):
+    """Generic repository pattern implementation.
+
+    Args:
+        model: The model class this repository handles
+
+    Attributes:
+        model_class: Stored model class reference
+    """
+
+    def __init__(self, model: type[T]) -> None:
+        self.model_class = model
+
+    async def find_by_id(self, id: str) -> Optional[T]:
+        """Retrieve an entity by its ID.
+
+        Args:
+            id: The unique identifier of the entity
+
+        Returns:
+            Optional[T]: The found entity or None
+        """
+        # Implementation
+        ...
+```
+
+## Testing with Pytest
+Use pytest fixtures and type annotations in tests:
+
+```python
+from typing import TYPE_CHECKING, AsyncGenerator
+import pytest
+from httpx import AsyncClient
+
+if TYPE_CHECKING:
+    from _pytest.capture import CaptureFixture
+    from _pytest.fixtures import FixtureRequest
+    from _pytest.logging import LogCaptureFixture
+    from _pytest.monkeypatch import MonkeyPatch
+    from pytest_mock.plugin import MockerFixture
+
+@pytest.fixture
+async def client() -> AsyncGenerator[AsyncClient, None]:
+    """Create async test client.
+
+    Yields:
+        AsyncClient: The test client instance
+    """
+    async with AsyncClient() as client:
+        yield client
+
+@pytest.mark.asyncio
+async def test_create_user(
+    client: AsyncClient,
+    mocker: MockerFixture,
+    caplog: LogCaptureFixture,
+) -> None:
+    """Test user creation endpoint.
+
+    Args:
+        client: The test client
+        mocker: Pytest mocker fixture
+        caplog: Pytest log capture fixture
+    """
+    response = await client.post('/users', json={
+        'username': 'test_user',
+        'email': 'test@example.com'
+    })
+    
+    assert response.status_code == 201
+    assert 'User created successfully' in caplog.text
+```
+
+## Environment Configuration
+Use environment variables with type validation:
+
+```python
+from typing import Optional
+from pydantic import BaseSettings, SecretStr
+
+class Settings(BaseSettings):
+    """Application settings with environment variable validation.
+
+    Attributes:
+        app_name: Name of the application
+        database_url: Database connection string
+        api_key: Secret API key
+        debug: Debug mode flag
+    """
+    app_name: str
+    database_url: str
+    api_key: SecretStr
+    debug: bool = False
+
+    class Config:
+        env_file = '.env'
+```
+
+## Error Handling
+Implement structured error handling with context:
+
+```python
+from typing import Optional, Any
+from contextlib import contextmanager
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
+
+class AppError(Exception):
+    """Base application error with context.
+
+    Args:
+        message: Error description
+        context: Additional error context
+    """
+    def __init__(self, message: str, context: Optional[dict[str, Any]] = None) -> None:
+        self.message = message
+        self.context = context or {}
+        super().__init__(self.message)
+
+@contextmanager
+def error_handler(operation: str) -> Any:
+    """Context manager for standardized error handling.
+
+    Args:
+        operation: Description of the operation being performed
+
+    Raises:
+        AppError: Wrapped application error
+    """
+    try:
+        yield
+    except Exception as e:
+        logger.error(
+            f'Error during {operation}: {str(e)}\n{traceback.format_exc()}'
+        )
+        raise AppError(
+            f'Failed to {operation}',
+            {'error_type': type(e).__name__, 'details': str(e)}
+        )
+```
+
+## Dependency Management
+Use `uv` for faster package management:
+
+```toml
+# pyproject.toml
+[project]
+name = 'project_name'
+version = '0.1.0'
+description = 'Project description'
+requires-python = '>=3.8'
+
+[tool.ruff]
+line-length = 88
+target-version = 'py38'
+select = [
+    'E',   # pycodestyle errors
+    'W',   # pycodestyle warnings
+    'F',   # pyflakes
+    'I',   # isort
+    'D',   # pydocstyle
+]
+
+[tool.pytest.ini_options]
+testpaths = ['tests']
+python_files = ['test_*.py']
+addopts = '-v --cov=src --cov-report=term-missing'
+```
+
+## CI/CD Configuration
+GitHub Actions workflow example:
+
+```yaml
+# .github/workflows/python-app.yml
+name: Python application
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install uv
+        uv pip install -r requirements.txt
+    - name: Lint with ruff
+      run: |
+        ruff check .
+    - name: Test with pytest
+      run: |
+        pytest
+```
+
+## Best Practices
+
+### Documentation
+- Use PEP 257 docstring conventions
+- Document all public functions, classes, and modules
+- Include type hints in docstrings for better AI assistance
+- Keep README.md up to date with setup and usage instructions
+
+### Code Organization
+- One class per file (with rare exceptions)
+- Group related functionality in modules
+- Use `__init__.py` for package-level imports
+- Keep circular dependencies out
+
+### Testing
+- Write tests first (TDD when possible)
+- Use pytest fixtures for reusable test components
+- Mock external dependencies
+- Test both success and error cases
+
+### AI-Friendly Practices
+- Use descriptive variable names
+- Keep functions focused and small
+- Add type hints for better code completion
+- Include examples in docstrings
+
+## Resources
+- [Python Type Hints](https://docs.python.org/3/library/typing.html)
+- [pytest Documentation](https://docs.pytest.org/)
+- [Ruff Documentation](https://beta.ruff.rs/docs/)
+- [uv Package Manager](https://github.com/astral-sh/uv)
+- [pydantic Documentation](https://docs.pydantic.dev/)
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/self_improve.mdc
+```mdc
+---
+description: Guidelines for continuously improving Cursor rules based on emerging code patterns and best practices.
+globs: **/*
+alwaysApply: true
+---
+
+- **Rule Improvement Triggers:**
+  - New code patterns not covered by existing rules
+  - Repeated similar implementations across files
+  - Common error patterns that could be prevented
+  - New libraries or tools being used consistently
+  - Emerging best practices in the codebase
+
+- **Analysis Process:**
+  - Compare new code with existing rules
+  - Identify patterns that should be standardized
+  - Look for references to external documentation
+  - Check for consistent error handling patterns
+  - Monitor test patterns and coverage
+
+- **Rule Updates:**
+  - **Add New Rules When:**
+    - A new technology/pattern is used in 3+ files
+    - Common bugs could be prevented by a rule
+    - Code reviews repeatedly mention the same feedback
+    - New security or performance patterns emerge
+
+  - **Modify Existing Rules When:**
+    - Better examples exist in the codebase
+    - Additional edge cases are discovered
+    - Related rules have been updated
+    - Implementation details have changed
+
+- **Example Pattern Recognition:**
+  ```typescript
+  // If you see repeated patterns like:
+  const data = await prisma.user.findMany({
+    select: { id: true, email: true },
+    where: { status: 'ACTIVE' }
+  });
+  
+  // Consider adding to [prisma.mdc](mdc:.cursor/rules/prisma.mdc):
+  // - Standard select fields
+  // - Common where conditions
+  // - Performance optimization patterns
+  ```
+
+- **Rule Quality Checks:**
+  - Rules should be actionable and specific
+  - Examples should come from actual code
+  - References should be up to date
+  - Patterns should be consistently enforced
+
+- **Continuous Improvement:**
+  - Monitor code review comments
+  - Track common development questions
+  - Update rules after major refactors
+  - Add links to relevant documentation
+  - Cross-reference related rules
+
+- **Rule Deprecation:**
+  - Mark outdated patterns as deprecated
+  - Remove rules that no longer apply
+  - Update references to deprecated rules
+  - Document migration paths for old patterns
+
+- **Documentation Updates:**
+  - Keep examples synchronized with code
+  - Update references to external docs
+  - Maintain links between related rules
+  - Document breaking changes
+Follow [cursor_rules.mdc](mdc:.cursor/rules/cursor_rules.mdc) for proper rule formatting and structure.
+
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/taskmaster.mdc
+```mdc
+---
+description: Comprehensive reference for Taskmaster MCP tools and CLI commands.
+globs: **/*
+alwaysApply: true
+---
+# Taskmaster Tool & Command Reference
+
+This document provides a detailed reference for interacting with Taskmaster, covering both the recommended MCP tools, suitable for integrations like Cursor, and the corresponding `task-master` CLI commands, designed for direct user interaction or fallback.
+
+**Note:** For interacting with Taskmaster programmatically or via integrated tools, using the **MCP tools is strongly recommended** due to better performance, structured data, and error handling. The CLI commands serve as a user-friendly alternative and fallback. 
+
+**Important:** Several MCP tools involve AI processing... The AI-powered tools include `parse_prd`, `analyze_project_complexity`, `update_subtask`, `update_task`, `update`, `expand_all`, `expand_task`, and `add_task`.
+
+**🏷️ Tagged Task Lists System:** Task Master now supports **tagged task lists** for multi-context task management. This allows you to maintain separate, isolated lists of tasks for different features, branches, or experiments. Existing projects are seamlessly migrated to use a default "master" tag. Most commands now support a `--tag <name>` flag to specify which context to operate on. If omitted, commands use the currently active tag.
+
+---
+
+## Initialization & Setup
+
+### 1. Initialize Project (`init`)
+
+*   **MCP Tool:** `initialize_project`
+*   **CLI Command:** `task-master init [options]`
+*   **Description:** `Set up the basic Taskmaster file structure and configuration in the current directory for a new project.`
+*   **Key CLI Options:**
+    *   `--name <name>`: `Set the name for your project in Taskmaster's configuration.`
+    *   `--description <text>`: `Provide a brief description for your project.`
+    *   `--version <version>`: `Set the initial version for your project, e.g., '0.1.0'.`
+    *   `-y, --yes`: `Initialize Taskmaster quickly using default settings without interactive prompts.`
+*   **Usage:** Run this once at the beginning of a new project.
+*   **MCP Variant Description:** `Set up the basic Taskmaster file structure and configuration in the current directory for a new project by running the 'task-master init' command.`
+*   **Key MCP Parameters/Options:**
+    *   `projectName`: `Set the name for your project.` (CLI: `--name <name>`)
+    *   `projectDescription`: `Provide a brief description for your project.` (CLI: `--description <text>`)
+    *   `projectVersion`: `Set the initial version for your project, e.g., '0.1.0'.` (CLI: `--version <version>`)
+    *   `authorName`: `Author name.` (CLI: `--author <author>`)
+    *   `skipInstall`: `Skip installing dependencies. Default is false.` (CLI: `--skip-install`)
+    *   `addAliases`: `Add shell aliases tm and taskmaster. Default is false.` (CLI: `--aliases`)
+    *   `yes`: `Skip prompts and use defaults/provided arguments. Default is false.` (CLI: `-y, --yes`)
+*   **Usage:** Run this once at the beginning of a new project, typically via an integrated tool like Cursor. Operates on the current working directory of the MCP server. 
+*   **Important:** Once complete, you *MUST* parse a prd in order to generate tasks. There will be no tasks files until then. The next step after initializing should be to create a PRD using the example PRD in .taskmaster/templates/example_prd.txt. 
+*   **Tagging:** Use the `--tag` option to parse the PRD into a specific, non-default tag context. If the tag doesn't exist, it will be created automatically. Example: `task-master parse-prd spec.txt --tag=new-feature`.
+
+### 2. Parse PRD (`parse_prd`)
+
+*   **MCP Tool:** `parse_prd`
+*   **CLI Command:** `task-master parse-prd [file] [options]`
+*   **Description:** `Parse a Product Requirements Document, PRD, or text file with Taskmaster to automatically generate an initial set of tasks in tasks.json.`
+*   **Key Parameters/Options:**
+    *   `input`: `Path to your PRD or requirements text file that Taskmaster should parse for tasks.` (CLI: `[file]` positional or `-i, --input <file>`)
+    *   `output`: `Specify where Taskmaster should save the generated 'tasks.json' file. Defaults to '.taskmaster/tasks/tasks.json'.` (CLI: `-o, --output <file>`)
+    *   `numTasks`: `Approximate number of top-level tasks Taskmaster should aim to generate from the document.` (CLI: `-n, --num-tasks <number>`)
+    *   `force`: `Use this to allow Taskmaster to overwrite an existing 'tasks.json' without asking for confirmation.` (CLI: `-f, --force`)
+*   **Usage:** Useful for bootstrapping a project from an existing requirements document.
+*   **Notes:** Task Master will strictly adhere to any specific requirements mentioned in the PRD, such as libraries, database schemas, frameworks, tech stacks, etc., while filling in any gaps where the PRD isn't fully specified. Tasks are designed to provide the most direct implementation path while avoiding over-engineering.
+*   **Important:** This MCP tool makes AI calls and can take up to a minute to complete. Please inform users to hang tight while the operation is in progress. If the user does not have a PRD, suggest discussing their idea and then use the example PRD in `.taskmaster/templates/example_prd.txt` as a template for creating the PRD based on their idea, for use with `parse-prd`.
+
+---
+
+## AI Model Configuration
+
+### 2. Manage Models (`models`)
+*   **MCP Tool:** `models`
+*   **CLI Command:** `task-master models [options]`
+*   **Description:** `View the current AI model configuration or set specific models for different roles (main, research, fallback). Allows setting custom model IDs for Ollama and OpenRouter.`
+*   **Key MCP Parameters/Options:**
+    *   `setMain <model_id>`: `Set the primary model ID for task generation/updates.` (CLI: `--set-main <model_id>`)
+    *   `setResearch <model_id>`: `Set the model ID for research-backed operations.` (CLI: `--set-research <model_id>`)
+    *   `setFallback <model_id>`: `Set the model ID to use if the primary fails.` (CLI: `--set-fallback <model_id>`)
+    *   `ollama <boolean>`: `Indicates the set model ID is a custom Ollama model.` (CLI: `--ollama`)
+    *   `openrouter <boolean>`: `Indicates the set model ID is a custom OpenRouter model.` (CLI: `--openrouter`)
+    *   `listAvailableModels <boolean>`: `If true, lists available models not currently assigned to a role.` (CLI: No direct equivalent; CLI lists available automatically)
+    *   `projectRoot <string>`: `Optional. Absolute path to the project root directory.` (CLI: Determined automatically)
+*   **Key CLI Options:**
+    *   `--set-main <model_id>`: `Set the primary model.`
+    *   `--set-research <model_id>`: `Set the research model.`
+    *   `--set-fallback <model_id>`: `Set the fallback model.`
+    *   `--ollama`: `Specify that the provided model ID is for Ollama (use with --set-*).`
+    *   `--openrouter`: `Specify that the provided model ID is for OpenRouter (use with --set-*). Validates against OpenRouter API.`
+    *   `--bedrock`: `Specify that the provided model ID is for AWS Bedrock (use with --set-*).`
+    *   `--setup`: `Run interactive setup to configure models, including custom Ollama/OpenRouter IDs.`
+*   **Usage (MCP):** Call without set flags to get current config. Use `setMain`, `setResearch`, or `setFallback` with a valid model ID to update the configuration. Use `listAvailableModels: true` to get a list of unassigned models. To set a custom model, provide the model ID and set `ollama: true` or `openrouter: true`.
+*   **Usage (CLI):** Run without flags to view current configuration and available models. Use set flags to update specific roles. Use `--setup` for guided configuration, including custom models. To set a custom model via flags, use `--set-<role>=<model_id>` along with either `--ollama` or `--openrouter`.
+*   **Notes:** Configuration is stored in `.taskmaster/config.json` in the project root. This command/tool modifies that file. Use `listAvailableModels` or `task-master models` to see internally supported models. OpenRouter custom models are validated against their live API. Ollama custom models are not validated live.
+*   **API note:** API keys for selected AI providers (based on their model) need to exist in the mcp.json file to be accessible in MCP context. The API keys must be present in the local .env file for the CLI to be able to read them.
+*   **Model costs:** The costs in supported models are expressed in dollars. An input/output value of 3 is $3.00. A value of 0.8 is $0.80. 
+*   **Warning:** DO NOT MANUALLY EDIT THE .taskmaster/config.json FILE. Use the included commands either in the MCP or CLI format as needed. Always prioritize MCP tools when available and use the CLI as a fallback.
+
+---
+
+## Task Listing & Viewing
+
+### 3. Get Tasks (`get_tasks`)
+
+*   **MCP Tool:** `get_tasks`
+*   **CLI Command:** `task-master list [options]`
+*   **Description:** `List your Taskmaster tasks, optionally filtering by status and showing subtasks.`
+*   **Key Parameters/Options:**
+    *   `status`: `Show only Taskmaster tasks matching this status (or multiple statuses, comma-separated), e.g., 'pending' or 'done,in-progress'.` (CLI: `-s, --status <status>`)
+    *   `withSubtasks`: `Include subtasks indented under their parent tasks in the list.` (CLI: `--with-subtasks`)
+    *   `tag`: `Specify which tag context to list tasks from. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Get an overview of the project status, often used at the start of a work session.
+
+### 4. Get Next Task (`next_task`)
+
+*   **MCP Tool:** `next_task`
+*   **CLI Command:** `task-master next [options]`
+*   **Description:** `Ask Taskmaster to show the next available task you can work on, based on status and completed dependencies.`
+*   **Key Parameters/Options:**
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+    *   `tag`: `Specify which tag context to use. Defaults to the current active tag.` (CLI: `--tag <name>`)
+*   **Usage:** Identify what to work on next according to the plan.
+
+### 5. Get Task Details (`get_task`)
+
+*   **MCP Tool:** `get_task`
+*   **CLI Command:** `task-master show [id] [options]`
+*   **Description:** `Display detailed information for one or more specific Taskmaster tasks or subtasks by ID.`
+*   **Key Parameters/Options:**
+    *   `id`: `Required. The ID of the Taskmaster task (e.g., '15'), subtask (e.g., '15.2'), or a comma-separated list of IDs ('1,5,10.2') you want to view.` (CLI: `[id]` positional or `-i, --id <id>`)
+    *   `tag`: `Specify which tag context to get the task(s) from. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Understand the full details for a specific task. When multiple IDs are provided, a summary table is shown.
+*   **CRITICAL INFORMATION** If you need to collect information from multiple tasks, use comma-separated IDs (i.e. 1,2,3) to receive an array of tasks. Do not needlessly get tasks one at a time if you need to get many as that is wasteful.
+
+---
+
+## Task Creation & Modification
+
+### 6. Add Task (`add_task`)
+
+*   **MCP Tool:** `add_task`
+*   **CLI Command:** `task-master add-task [options]`
+*   **Description:** `Add a new task to Taskmaster by describing it; AI will structure it.`
+*   **Key Parameters/Options:**
+    *   `prompt`: `Required. Describe the new task you want Taskmaster to create, e.g., "Implement user authentication using JWT".` (CLI: `-p, --prompt <text>`)
+    *   `dependencies`: `Specify the IDs of any Taskmaster tasks that must be completed before this new one can start, e.g., '12,14'.` (CLI: `-d, --dependencies <ids>`)
+    *   `priority`: `Set the priority for the new task: 'high', 'medium', or 'low'. Default is 'medium'.` (CLI: `--priority <priority>`)
+    *   `research`: `Enable Taskmaster to use the research role for potentially more informed task creation.` (CLI: `-r, --research`)
+    *   `tag`: `Specify which tag context to add the task to. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Quickly add newly identified tasks during development.
+*   **Important:** This MCP tool makes AI calls and can take up to a minute to complete. Please inform users to hang tight while the operation is in progress.
+
+### 7. Add Subtask (`add_subtask`)
+
+*   **MCP Tool:** `add_subtask`
+*   **CLI Command:** `task-master add-subtask [options]`
+*   **Description:** `Add a new subtask to a Taskmaster parent task, or convert an existing task into a subtask.`
+*   **Key Parameters/Options:**
+    *   `id` / `parent`: `Required. The ID of the Taskmaster task that will be the parent.` (MCP: `id`, CLI: `-p, --parent <id>`)
+    *   `taskId`: `Use this if you want to convert an existing top-level Taskmaster task into a subtask of the specified parent.` (CLI: `-i, --task-id <id>`)
+    *   `title`: `Required if not using taskId. The title for the new subtask Taskmaster should create.` (CLI: `-t, --title <title>`)
+    *   `description`: `A brief description for the new subtask.` (CLI: `-d, --description <text>`)
+    *   `details`: `Provide implementation notes or details for the new subtask.` (CLI: `--details <text>`)
+    *   `dependencies`: `Specify IDs of other tasks or subtasks, e.g., '15' or '16.1', that must be done before this new subtask.` (CLI: `--dependencies <ids>`)
+    *   `status`: `Set the initial status for the new subtask. Default is 'pending'.` (CLI: `-s, --status <status>`)
+    *   `skipGenerate`: `Prevent Taskmaster from automatically regenerating markdown task files after adding the subtask.` (CLI: `--skip-generate`)
+    *   `tag`: `Specify which tag context to operate on. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Break down tasks manually or reorganize existing tasks.
+
+### 8. Update Tasks (`update`)
+
+*   **MCP Tool:** `update`
+*   **CLI Command:** `task-master update [options]`
+*   **Description:** `Update multiple upcoming tasks in Taskmaster based on new context or changes, starting from a specific task ID.`
+*   **Key Parameters/Options:**
+    *   `from`: `Required. The ID of the first task Taskmaster should update. All tasks with this ID or higher that are not 'done' will be considered.` (CLI: `--from <id>`)
+    *   `prompt`: `Required. Explain the change or new context for Taskmaster to apply to the tasks, e.g., "We are now using React Query instead of Redux Toolkit for data fetching".` (CLI: `-p, --prompt <text>`)
+    *   `research`: `Enable Taskmaster to use the research role for more informed updates. Requires appropriate API key.` (CLI: `-r, --research`)
+    *   `tag`: `Specify which tag context to operate on. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Handle significant implementation changes or pivots that affect multiple future tasks. Example CLI: `task-master update --from='18' --prompt='Switching to React Query.\nNeed to refactor data fetching...'`
+*   **Important:** This MCP tool makes AI calls and can take up to a minute to complete. Please inform users to hang tight while the operation is in progress.
+
+### 9. Update Task (`update_task`)
+
+*   **MCP Tool:** `update_task`
+*   **CLI Command:** `task-master update-task [options]`
+*   **Description:** `Modify a specific Taskmaster task by ID, incorporating new information or changes. By default, this replaces the existing task details.`
+*   **Key Parameters/Options:**
+    *   `id`: `Required. The specific ID of the Taskmaster task, e.g., '15', you want to update.` (CLI: `-i, --id <id>`)
+    *   `prompt`: `Required. Explain the specific changes or provide the new information Taskmaster should incorporate into this task.` (CLI: `-p, --prompt <text>`)
+    *   `append`: `If true, appends the prompt content to the task's details with a timestamp, rather than replacing them. Behaves like update-subtask.` (CLI: `--append`)
+    *   `research`: `Enable Taskmaster to use the research role for more informed updates. Requires appropriate API key.` (CLI: `-r, --research`)
+    *   `tag`: `Specify which tag context the task belongs to. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Refine a specific task based on new understanding. Use `--append` to log progress without creating subtasks.
+*   **Important:** This MCP tool makes AI calls and can take up to a minute to complete. Please inform users to hang tight while the operation is in progress.
+
+### 10. Update Subtask (`update_subtask`)
+
+*   **MCP Tool:** `update_subtask`
+*   **CLI Command:** `task-master update-subtask [options]`
+*   **Description:** `Append timestamped notes or details to a specific Taskmaster subtask without overwriting existing content. Intended for iterative implementation logging.`
+*   **Key Parameters/Options:**
+    *   `id`: `Required. The ID of the Taskmaster subtask, e.g., '5.2', to update with new information.` (CLI: `-i, --id <id>`)
+    *   `prompt`: `Required. The information, findings, or progress notes to append to the subtask's details with a timestamp.` (CLI: `-p, --prompt <text>`)
+    *   `research`: `Enable Taskmaster to use the research role for more informed updates. Requires appropriate API key.` (CLI: `-r, --research`)
+    *   `tag`: `Specify which tag context the subtask belongs to. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Log implementation progress, findings, and discoveries during subtask development. Each update is timestamped and appended to preserve the implementation journey.
+*   **Important:** This MCP tool makes AI calls and can take up to a minute to complete. Please inform users to hang tight while the operation is in progress.
+
+### 11. Set Task Status (`set_task_status`)
+
+*   **MCP Tool:** `set_task_status`
+*   **CLI Command:** `task-master set-status [options]`
+*   **Description:** `Update the status of one or more Taskmaster tasks or subtasks, e.g., 'pending', 'in-progress', 'done'.`
+*   **Key Parameters/Options:**
+    *   `id`: `Required. The ID(s) of the Taskmaster task(s) or subtask(s), e.g., '15', '15.2', or '16,17.1', to update.` (CLI: `-i, --id <id>`)
+    *   `status`: `Required. The new status to set, e.g., 'done', 'pending', 'in-progress', 'review', 'cancelled'.` (CLI: `-s, --status <status>`)
+    *   `tag`: `Specify which tag context to operate on. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Mark progress as tasks move through the development cycle.
+
+### 12. Remove Task (`remove_task`)
+
+*   **MCP Tool:** `remove_task`
+*   **CLI Command:** `task-master remove-task [options]`
+*   **Description:** `Permanently remove a task or subtask from the Taskmaster tasks list.`
+*   **Key Parameters/Options:**
+    *   `id`: `Required. The ID of the Taskmaster task, e.g., '5', or subtask, e.g., '5.2', to permanently remove.` (CLI: `-i, --id <id>`)
+    *   `yes`: `Skip the confirmation prompt and immediately delete the task.` (CLI: `-y, --yes`)
+    *   `tag`: `Specify which tag context to operate on. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Permanently delete tasks or subtasks that are no longer needed in the project.
+*   **Notes:** Use with caution as this operation cannot be undone. Consider using 'blocked', 'cancelled', or 'deferred' status instead if you just want to exclude a task from active planning but keep it for reference. The command automatically cleans up dependency references in other tasks.
+
+---
+
+## Task Structure & Breakdown
+
+### 13. Expand Task (`expand_task`)
+
+*   **MCP Tool:** `expand_task`
+*   **CLI Command:** `task-master expand [options]`
+*   **Description:** `Use Taskmaster's AI to break down a complex task into smaller, manageable subtasks. Appends subtasks by default.`
+*   **Key Parameters/Options:**
+    *   `id`: `The ID of the specific Taskmaster task you want to break down into subtasks.` (CLI: `-i, --id <id>`)
+    *   `num`: `Optional: Suggests how many subtasks Taskmaster should aim to create. Uses complexity analysis/defaults otherwise.` (CLI: `-n, --num <number>`)
+    *   `research`: `Enable Taskmaster to use the research role for more informed subtask generation. Requires appropriate API key.` (CLI: `-r, --research`)
+    *   `prompt`: `Optional: Provide extra context or specific instructions to Taskmaster for generating the subtasks.` (CLI: `-p, --prompt <text>`)
+    *   `force`: `Optional: If true, clear existing subtasks before generating new ones. Default is false (append).` (CLI: `--force`)
+    *   `tag`: `Specify which tag context the task belongs to. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Generate a detailed implementation plan for a complex task before starting coding. Automatically uses complexity report recommendations if available and `num` is not specified.
+*   **Important:** This MCP tool makes AI calls and can take up to a minute to complete. Please inform users to hang tight while the operation is in progress.
+
+### 14. Expand All Tasks (`expand_all`)
+
+*   **MCP Tool:** `expand_all`
+*   **CLI Command:** `task-master expand --all [options]` (Note: CLI uses the `expand` command with the `--all` flag)
+*   **Description:** `Tell Taskmaster to automatically expand all eligible pending/in-progress tasks based on complexity analysis or defaults. Appends subtasks by default.`
+*   **Key Parameters/Options:**
+    *   `num`: `Optional: Suggests how many subtasks Taskmaster should aim to create per task.` (CLI: `-n, --num <number>`)
+    *   `research`: `Enable research role for more informed subtask generation. Requires appropriate API key.` (CLI: `-r, --research`)
+    *   `prompt`: `Optional: Provide extra context for Taskmaster to apply generally during expansion.` (CLI: `-p, --prompt <text>`)
+    *   `force`: `Optional: If true, clear existing subtasks before generating new ones for each eligible task. Default is false (append).` (CLI: `--force`)
+    *   `tag`: `Specify which tag context to expand. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Useful after initial task generation or complexity analysis to break down multiple tasks at once.
+*   **Important:** This MCP tool makes AI calls and can take up to a minute to complete. Please inform users to hang tight while the operation is in progress.
+
+### 15. Clear Subtasks (`clear_subtasks`)
+
+*   **MCP Tool:** `clear_subtasks`
+*   **CLI Command:** `task-master clear-subtasks [options]`
+*   **Description:** `Remove all subtasks from one or more specified Taskmaster parent tasks.`
+*   **Key Parameters/Options:**
+    *   `id`: `The ID(s) of the Taskmaster parent task(s) whose subtasks you want to remove, e.g., '15' or '16,18'. Required unless using `all`.) (CLI: `-i, --id <ids>`)
+    *   `all`: `Tell Taskmaster to remove subtasks from all parent tasks.` (CLI: `--all`)
+    *   `tag`: `Specify which tag context to operate on. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Used before regenerating subtasks with `expand_task` if the previous breakdown needs replacement.
+
+### 16. Remove Subtask (`remove_subtask`)
+
+*   **MCP Tool:** `remove_subtask`
+*   **CLI Command:** `task-master remove-subtask [options]`
+*   **Description:** `Remove a subtask from its Taskmaster parent, optionally converting it into a standalone task.`
+*   **Key Parameters/Options:**
+    *   `id`: `Required. The ID(s) of the Taskmaster subtask(s) to remove, e.g., '15.2' or '16.1,16.3'.` (CLI: `-i, --id <id>`)
+    *   `convert`: `If used, Taskmaster will turn the subtask into a regular top-level task instead of deleting it.` (CLI: `-c, --convert`)
+    *   `skipGenerate`: `Prevent Taskmaster from automatically regenerating markdown task files after removing the subtask.` (CLI: `--skip-generate`)
+    *   `tag`: `Specify which tag context to operate on. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Delete unnecessary subtasks or promote a subtask to a top-level task.
+
+### 17. Move Task (`move_task`)
+
+*   **MCP Tool:** `move_task`
+*   **CLI Command:** `task-master move [options]`
+*   **Description:** `Move a task or subtask to a new position within the task hierarchy.`
+*   **Key Parameters/Options:**
+    *   `from`: `Required. ID of the task/subtask to move (e.g., "5" or "5.2"). Can be comma-separated for multiple tasks.` (CLI: `--from <id>`)
+    *   `to`: `Required. ID of the destination (e.g., "7" or "7.3"). Must match the number of source IDs if comma-separated.` (CLI: `--to <id>`)
+    *   `tag`: `Specify which tag context to operate on. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Reorganize tasks by moving them within the hierarchy. Supports various scenarios like:
+    *   Moving a task to become a subtask
+    *   Moving a subtask to become a standalone task
+    *   Moving a subtask to a different parent
+    *   Reordering subtasks within the same parent
+    *   Moving a task to a new, non-existent ID (automatically creates placeholders)
+    *   Moving multiple tasks at once with comma-separated IDs
+*   **Validation Features:**
+    *   Allows moving tasks to non-existent destination IDs (creates placeholder tasks)
+    *   Prevents moving to existing task IDs that already have content (to avoid overwriting)
+    *   Validates that source tasks exist before attempting to move them
+    *   Maintains proper parent-child relationships
+*   **Example CLI:** `task-master move --from=5.2 --to=7.3` to move subtask 5.2 to become subtask 7.3.
+*   **Example Multi-Move:** `task-master move --from=10,11,12 --to=16,17,18` to move multiple tasks to new positions.
+*   **Common Use:** Resolving merge conflicts in tasks.json when multiple team members create tasks on different branches.
+
+---
+
+## Dependency Management
+
+### 18. Add Dependency (`add_dependency`)
+
+*   **MCP Tool:** `add_dependency`
+*   **CLI Command:** `task-master add-dependency [options]`
+*   **Description:** `Define a dependency in Taskmaster, making one task a prerequisite for another.`
+*   **Key Parameters/Options:**
+    *   `id`: `Required. The ID of the Taskmaster task that will depend on another.` (CLI: `-i, --id <id>`)
+    *   `dependsOn`: `Required. The ID of the Taskmaster task that must be completed first, the prerequisite.` (CLI: `-d, --depends-on <id>`)
+    *   `tag`: `Specify which tag context to operate on. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <path>`)
+*   **Usage:** Establish the correct order of execution between tasks.
+
+### 19. Remove Dependency (`remove_dependency`)
+
+*   **MCP Tool:** `remove_dependency`
+*   **CLI Command:** `task-master remove-dependency [options]`
+*   **Description:** `Remove a dependency relationship between two Taskmaster tasks.`
+*   **Key Parameters/Options:**
+    *   `id`: `Required. The ID of the Taskmaster task you want to remove a prerequisite from.` (CLI: `-i, --id <id>`)
+    *   `dependsOn`: `Required. The ID of the Taskmaster task that should no longer be a prerequisite.` (CLI: `-d, --depends-on <id>`)
+    *   `tag`: `Specify which tag context to operate on. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Update task relationships when the order of execution changes.
+
+### 20. Validate Dependencies (`validate_dependencies`)
+
+*   **MCP Tool:** `validate_dependencies`
+*   **CLI Command:** `task-master validate-dependencies [options]`
+*   **Description:** `Check your Taskmaster tasks for dependency issues (like circular references or links to non-existent tasks) without making changes.`
+*   **Key Parameters/Options:**
+    *   `tag`: `Specify which tag context to validate. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Audit the integrity of your task dependencies.
+
+### 21. Fix Dependencies (`fix_dependencies`)
+
+*   **MCP Tool:** `fix_dependencies`
+*   **CLI Command:** `task-master fix-dependencies [options]`
+*   **Description:** `Automatically fix dependency issues (like circular references or links to non-existent tasks) in your Taskmaster tasks.`
+*   **Key Parameters/Options:**
+    *   `tag`: `Specify which tag context to fix dependencies in. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Clean up dependency errors automatically.
+
+---
+
+## Analysis & Reporting
+
+### 22. Analyze Project Complexity (`analyze_project_complexity`)
+
+*   **MCP Tool:** `analyze_project_complexity`
+*   **CLI Command:** `task-master analyze-complexity [options]`
+*   **Description:** `Have Taskmaster analyze your tasks to determine their complexity and suggest which ones need to be broken down further.`
+*   **Key Parameters/Options:**
+    *   `output`: `Where to save the complexity analysis report. Default is '.taskmaster/reports/task-complexity-report.json' (or '..._tagname.json' if a tag is used).` (CLI: `-o, --output <file>`)
+    *   `threshold`: `The minimum complexity score (1-10) that should trigger a recommendation to expand a task.` (CLI: `-t, --threshold <number>`)
+    *   `research`: `Enable research role for more accurate complexity analysis. Requires appropriate API key.` (CLI: `-r, --research`)
+    *   `tag`: `Specify which tag context to analyze. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Used before breaking down tasks to identify which ones need the most attention.
+*   **Important:** This MCP tool makes AI calls and can take up to a minute to complete. Please inform users to hang tight while the operation is in progress.
+
+### 23. View Complexity Report (`complexity_report`)
+
+*   **MCP Tool:** `complexity_report`
+*   **CLI Command:** `task-master complexity-report [options]`
+*   **Description:** `Display the task complexity analysis report in a readable format.`
+*   **Key Parameters/Options:**
+    *   `tag`: `Specify which tag context to show the report for. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to the complexity report (default: '.taskmaster/reports/task-complexity-report.json').` (CLI: `-f, --file <file>`)
+*   **Usage:** Review and understand the complexity analysis results after running analyze-complexity.
+
+---
+
+## File Management
+
+### 24. Generate Task Files (`generate`)
+
+*   **MCP Tool:** `generate`
+*   **CLI Command:** `task-master generate [options]`
+*   **Description:** `Create or update individual Markdown files for each task based on your tasks.json.`
+*   **Key Parameters/Options:**
+    *   `output`: `The directory where Taskmaster should save the task files (default: in a 'tasks' directory).` (CLI: `-o, --output <directory>`)
+    *   `tag`: `Specify which tag context to generate files for. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+*   **Usage:** Run this after making changes to tasks.json to keep individual task files up to date. This command is now manual and no longer runs automatically.
+
+---
+
+## AI-Powered Research
+
+### 25. Research (`research`)
+
+*   **MCP Tool:** `research`
+*   **CLI Command:** `task-master research [options]`
+*   **Description:** `Perform AI-powered research queries with project context to get fresh, up-to-date information beyond the AI's knowledge cutoff.`
+*   **Key Parameters/Options:**
+    *   `query`: `Required. Research query/prompt (e.g., "What are the latest best practices for React Query v5?").` (CLI: `[query]` positional or `-q, --query <text>`)
+    *   `taskIds`: `Comma-separated list of task/subtask IDs from the current tag context (e.g., "15,16.2,17").` (CLI: `-i, --id <ids>`)
+    *   `filePaths`: `Comma-separated list of file paths for context (e.g., "src/api.js,docs/readme.md").` (CLI: `-f, --files <paths>`)
+    *   `customContext`: `Additional custom context text to include in the research.` (CLI: `-c, --context <text>`)
+    *   `includeProjectTree`: `Include project file tree structure in context (default: false).` (CLI: `--tree`)
+    *   `detailLevel`: `Detail level for the research response: 'low', 'medium', 'high' (default: medium).` (CLI: `--detail <level>`)
+    *   `saveTo`: `Task or subtask ID (e.g., "15", "15.2") to automatically save the research conversation to.` (CLI: `--save-to <id>`)
+    *   `saveFile`: `If true, saves the research conversation to a markdown file in '.taskmaster/docs/research/'.` (CLI: `--save-file`)
+    *   `noFollowup`: `Disables the interactive follow-up question menu in the CLI.` (CLI: `--no-followup`)
+    *   `tag`: `Specify which tag context to use for task-based context gathering. Defaults to the current active tag.` (CLI: `--tag <name>`)
+    *   `projectRoot`: `The directory of the project. Must be an absolute path.` (CLI: Determined automatically)
+*   **Usage:** **This is a POWERFUL tool that agents should use FREQUENTLY** to:
+    *   Get fresh information beyond knowledge cutoff dates
+    *   Research latest best practices, library updates, security patches
+    *   Find implementation examples for specific technologies
+    *   Validate approaches against current industry standards
+    *   Get contextual advice based on project files and tasks
+*   **When to Consider Using Research:**
+    *   **Before implementing any task** - Research current best practices
+    *   **When encountering new technologies** - Get up-to-date implementation guidance (libraries, apis, etc)
+    *   **For security-related tasks** - Find latest security recommendations
+    *   **When updating dependencies** - Research breaking changes and migration guides
+    *   **For performance optimization** - Get current performance best practices
+    *   **When debugging complex issues** - Research known solutions and workarounds
+*   **Research + Action Pattern:**
+    *   Use `research` to gather fresh information
+    *   Use `update_subtask` to commit findings with timestamps
+    *   Use `update_task` to incorporate research into task details
+    *   Use `add_task` with research flag for informed task creation
+*   **Important:** This MCP tool makes AI calls and can take up to a minute to complete. The research provides FRESH data beyond the AI's training cutoff, making it invaluable for current best practices and recent developments.
+
+---
+
+## Tag Management
+
+This new suite of commands allows you to manage different task contexts (tags).
+
+### 26. List Tags (`tags`)
+
+*   **MCP Tool:** `list_tags`
+*   **CLI Command:** `task-master tags [options]`
+*   **Description:** `List all available tags with task counts, completion status, and other metadata.`
+*   **Key Parameters/Options:**
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+    *   `--show-metadata`: `Include detailed metadata in the output (e.g., creation date, description).` (CLI: `--show-metadata`)
+
+### 27. Add Tag (`add_tag`)
+
+*   **MCP Tool:** `add_tag`
+*   **CLI Command:** `task-master add-tag <tagName> [options]`
+*   **Description:** `Create a new, empty tag context, or copy tasks from another tag.`
+*   **Key Parameters/Options:**
+    *   `tagName`: `Name of the new tag to create (alphanumeric, hyphens, underscores).` (CLI: `<tagName>` positional)
+    *   `--from-branch`: `Creates a tag with a name derived from the current git branch, ignoring the <tagName> argument.` (CLI: `--from-branch`)
+    *   `--copy-from-current`: `Copy tasks from the currently active tag to the new tag.` (CLI: `--copy-from-current`)
+    *   `--copy-from <tag>`: `Copy tasks from a specific source tag to the new tag.` (CLI: `--copy-from <tag>`)
+    *   `--description <text>`: `Provide an optional description for the new tag.` (CLI: `-d, --description <text>`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+
+### 28. Delete Tag (`delete_tag`)
+
+*   **MCP Tool:** `delete_tag`
+*   **CLI Command:** `task-master delete-tag <tagName> [options]`
+*   **Description:** `Permanently delete a tag and all of its associated tasks.`
+*   **Key Parameters/Options:**
+    *   `tagName`: `Name of the tag to delete.` (CLI: `<tagName>` positional)
+    *   `--yes`: `Skip the confirmation prompt.` (CLI: `-y, --yes`)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+
+### 29. Use Tag (`use_tag`)
+
+*   **MCP Tool:** `use_tag`
+*   **CLI Command:** `task-master use-tag <tagName>`
+*   **Description:** `Switch your active task context to a different tag.`
+*   **Key Parameters/Options:**
+    *   `tagName`: `Name of the tag to switch to.` (CLI: `<tagName>` positional)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+
+### 30. Rename Tag (`rename_tag`)
+
+*   **MCP Tool:** `rename_tag`
+*   **CLI Command:** `task-master rename-tag <oldName> <newName>`
+*   **Description:** `Rename an existing tag.`
+*   **Key Parameters/Options:**
+    *   `oldName`: `The current name of the tag.` (CLI: `<oldName>` positional)
+    *   `newName`: `The new name for the tag.` (CLI: `<newName>` positional)
+    *   `file`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.` (CLI: `-f, --file <file>`)
+
+### 31. Copy Tag (`copy_tag`)
+
+*   **MCP Tool:** `copy_tag`
+*   **CLI Command:** `task-master copy-tag <sourceName> <targetName> [options]`
+*   **Description:** `Copy an entire tag context, including all its tasks and metadata, to a new tag.`
+*   **Key Parameters/Options:**
+    *   `sourceName`: `Name of the tag to copy from.` (CLI: `<sourceName>` positional)
+    *   `targetName`: `Name of the new tag to create.` (CLI: `<targetName>` positional)
+    *   `--description <text>`: `Optional description for the new tag.` (CLI: `-d, --description <text>`)
+
+---
+
+## Miscellaneous
+
+### 32. Sync Readme (`sync-readme`) -- experimental
+
+*   **MCP Tool:** N/A
+*   **CLI Command:** `task-master sync-readme [options]`
+*   **Description:** `Exports your task list to your project's README.md file, useful for showcasing progress.`
+*   **Key Parameters/Options:**
+    *   `status`: `Filter tasks by status (e.g., 'pending', 'done').` (CLI: `-s, --status <status>`)
+    *   `withSubtasks`: `Include subtasks in the export.` (CLI: `--with-subtasks`)
+    *   `tag`: `Specify which tag context to export from. Defaults to the current active tag.` (CLI: `--tag <name>`)
+
+---
+
+## Environment Variables Configuration (Updated)
+
+Taskmaster primarily uses the **`.taskmaster/config.json`** file (in project root) for configuration (models, parameters, logging level, etc.), managed via `task-master models --setup`.
+
+Environment variables are used **only** for sensitive API keys related to AI providers and specific overrides like the Ollama base URL:
+
+*   **API Keys (Required for corresponding provider):**
+    *   `ANTHROPIC_API_KEY`
+    *   `PERPLEXITY_API_KEY`
+    *   `OPENAI_API_KEY`
+    *   `GOOGLE_API_KEY`
+    *   `MISTRAL_API_KEY`
+    *   `AZURE_OPENAI_API_KEY` (Requires `AZURE_OPENAI_ENDPOINT` too)
+    *   `OPENROUTER_API_KEY`
+    *   `XAI_API_KEY`
+    *   `OLLAMA_API_KEY` (Requires `OLLAMA_BASE_URL` too)
+*   **Endpoints (Optional/Provider Specific inside .taskmaster/config.json):**
+    *   `AZURE_OPENAI_ENDPOINT`
+    *   `OLLAMA_BASE_URL` (Default: `http://localhost:11434/api`)
+
+**Set API keys** in your **`.env`** file in the project root (for CLI use) or within the `env` section of your **`.cursor/mcp.json`** file (for MCP/Cursor integration). All other settings (model choice, max tokens, temperature, log level, custom endpoints) are managed in `.taskmaster/config.json` via `task-master models` command or `models` MCP tool.
+
+---
+
+For details on how these commands fit into the development process, see the [Development Workflow Guide](mdc:.cursor/rules/dev_workflow.mdc).
+
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/terminal-path-verification.mdc
+```mdc
+---
+description: Best practices for verifying paths and locations before executing terminal commands
+globs: **/*.{js,jsx,ts,tsx}, **/*.sh
+---
+
+# Terminal Path Verification
+
+// Description: Best practices for verifying paths and locations before executing terminal commands
+// Recommended Globs: **/*.{js,jsx,ts,tsx}, **/*.sh
+
+## Overview
+Always verify current directory and path structure before executing path-related commands to prevent errors and unintended operations.
+
+## Core Rules
+1. Before any `cd` command:
+   - Use `pwd` to verify current location
+   - Use `ls` to verify target directory exists
+2. Before file operations:
+   - Use `ls` to verify file existence
+   - Use `ls -la` for detailed file information when needed
+
+## Examples
+
+### ✅ Good Practice
+```bash
+# Before changing directory
+pwd  # Check current location
+ls   # Verify directory structure
+cd target_directory
+
+# Before file operations
+ls -la file_to_modify.txt  # Verify file exists and check permissions
+vim file_to_modify.txt
+```
+
+### ❌ Bad Practice
+```bash
+# Directly changing directory without verification
+cd some_directory  # Might not exist!
+
+# File operations without verification
+rm file.txt  # Dangerous without verification!
+```
+
+## Implementation in Cursor
+```typescript
+async function executeTerminalCommand(command: string) {
+  // Always verify location before path-related commands
+  if (command.startsWith('cd ')) {
+    await verifyPath(command.split(' ')[1]);
+  }
+
+  // Always verify file existence before file operations
+  if (isFileOperation(command)) {
+    await verifyFileExistence(command);
+  }
+}
+
+async function verifyPath(targetPath: string) {
+  // Check current location
+  console.log('Current location:');
+  await runCommand('pwd');
+
+  // List directory contents
+  console.log('\nDirectory contents:');
+  await runCommand('ls');
+
+  // Verify target exists
+  if (!(await pathExists(targetPath))) {
+    throw new Error(`Target path does not exist: ${targetPath}`);
+  }
+}
+```
+
+## Best Practices
+- Always use `pwd` before changing directories
+- Use `ls` to verify directory contents
+- Use `ls -la` when file permissions are important
+- Implement path verification in automated scripts
+- Add error handling for non-existent paths
+
+## Common Patterns
+1. Directory Navigation:
+   ```bash
+   pwd  # Verify current location
+   ls   # Check directory structure
+   cd ./project/src
+   ```
+
+2. File Operations:
+   ```bash
+   ls -la target_file.txt  # Verify file and permissions
+   chmod +x target_file.txt
+   ```
+
+3. Project Root Verification:
+   ```bash
+   pwd  # Ensure we're in project root
+   ls package.json  # Verify project file exists
+   npm install
+   ```
+
+## Error Prevention
+- Always verify paths before destructive operations
+- Use absolute paths when location is uncertain
+- Implement safeguards in automated scripts
+- Add validation for user-provided paths
+
+## Testing
+- Test path verification in different environments
+- Verify behavior with non-existent paths
+- Test with various file permissions
+- Validate error handling
+
+## Resources
+- [Bash Documentation](https://www.gnu.org/software/bash/manual/)
+- [Linux File System Hierarchy](https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html)
+- [File System Navigation Best Practices](https://tldp.org/LDP/abs/html/)
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/.cursor/rules/yoda-quotes.mdc
+```mdc
+---
+description: End each Cursor chat with a wise, Yoda-style inspirational quote
+globs: **/*.{md,txt}
+---
+
+# Yoda-Style Quote Endings
+
+// Description: End each Cursor chat with a wise, Yoda-style inspirational quote
+// Recommended Globs: **/*.{md,txt}
+
+## Rule Description
+At the end of every Cursor AI chat, include a wise and inspirational quote in Yoda's style.
+
+## Format
+- Add a line break after the last technical response
+- Start with '---'
+- Add '➡️ ' before the quote
+- Add the quote in Yoda's distinctive speech pattern
+- Keep it short and meaningful
+
+## Examples
+```
+---
+➡️ Code well you must, for in the details, greatness lies.
+```
+
+```
+---
+➡️ Debug or debug not. There is no try-catch.
+```
+
+## Guidelines
+- Keep quotes programming or learning related
+- Maintain Yoda's distinctive inverted speech pattern
+- Focus on wisdom and encouragement
+- Keep it light and fun
+- Always include the '➡️ ' emoji prefix
+
+## Purpose
+- Add personality to coding sessions
+- Provide encouragement during challenging tasks
+- Make debugging more enjoyable
+- Test rule installation functionality
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/docs/frontend-guidelines.md
+```md
+# MarketingQuill Frontend Guidelines
+
+**Date**: June 18, 2025  
+**Project**: MarketingQuill – AI Copy Copilot for SaaS Marketing Managers  
+**Purpose**: Defines the design system, UI/UX standards, and implementation details for the *MarketingQuill* frontend, ensuring a consistent, accessible, and visually appealing interface. This document provides clear guidance for developers and AI tools like Cursor and Lovable/Bolt, with a focus on the editor’s three-pane layout.
+
+## 1. Design System
+
+### 1.1 Color Palette
+- **Primary**: Indigo `#6366F1` (buttons, links, active states).  
+- **Secondary**: Neutral Gray `#F3F4F6` (backgrounds).  
+- **Success**: Green `#10B981` (accept buttons, positive feedback).  
+- **Warning**: Yellow `#FBBF24` (alerts).  
+- **Error**: Red `#EF4444` (reject buttons, errors).  
+
+### 1.2 Typography
+- **Font Families**:  
+  - Editor: JetBrains Mono (monospace).  
+  - UI: Inter (sans-serif).  
+- **Font Sizes**:  
+  - Base: 16px (body text).  
+  - Secondary: 14px (labels, tooltips).  
+  - Headings: 24px (titles).  
+
+### 1.3 Component Styles
+- **Buttons**: Rounded corners (4px), 8px padding, hover state lightens by 10%, focus state with 2px indigo outline.  
+- **Cards**: Glassmorphism effect (subtle blur, light shadow), 4px border radius.  
+- **Tabs**: Indigo underline for active tab, gray for inactive.  
+
+### 1.4 Accessibility
+- WCAG 2.1 AA compliance:  
+  - Keyboard navigation for all interactive elements.  
+  - Visible focus indicators (2px indigo outline).  
+  - High-contrast mode toggle for users with visual impairments.  
+- ARIA labels for buttons, modals, and interactive elements to support screen readers.
+
+## 2. Editor Interface Layout Overview
+
+The editor interface is the core of *MarketingQuill*, designed with three distinct panes to keep navigation, writing, and tools separate yet cohesive:
+- **Left Sidebar**: For navigation and draft management.  
+- **Content Area**: The main writing space with inline feedback.  
+- **Right Sidebar**: For contextual tools like grammar, tone, and SEO suggestions.
+
+### 2.1 Left Sidebar
+**What It Looks Like**:  
+- **Structure**: Vertical, collapsible sidebar fixed to the left edge of the screen.  
+- **Size**:  
+  - Collapsed: 60px wide (icons only).  
+  - Expanded: 240px wide (icons and text labels).  
+- **Appearance**:  
+  - **Background**: Light gray `#F3F4F6`.  
+  - **Content** (top to bottom):  
+    - **Logo**: Small *MarketingQuill* logo or icon.  
+    - **Drafts Icon**: Document stack icon to view saved drafts.  
+    - **New Draft Icon**: Plus sign to create a new draft.  
+    - **Settings Icon**: Gear icon for workspace/user settings.  
+    - **Profile Icon**: Avatar icon for user profile and logout.  
+    - **Toggle Button**: Arrow or hamburger icon to expand/collapse.  
+  - **Icons**: Indigo `#6366F1` when active, gray when inactive, with a 10% lighten hover effect.  
+  - **Tooltips**: In collapsed state, hovering over an icon shows a tooltip (e.g., “Drafts”).  
+
+**Purpose**: Provides quick navigation and access to drafts, settings, and user options without cluttering the writing space.
+
+### 2.2 Content Area (Editor Pane)
+**What It Looks Like**:  
+- **Structure**: Wide, central pane that dominates the screen, flexible in width to fill the space between the sidebars.  
+- **Size**: Dynamically expands (60%–80% of screen width) based on sidebar states.  
+- **Appearance**:  
+  - **Background**: Light gray `#F9FAFB`.  
+  - **Editor**: Monospace font (JetBrains Mono), dark gray text `#1F2937`.  
+  - **Inline Suggestions**:  
+    - Grammar issues: Red underlines `#EF4444`.  
+    - Tone suggestions: Blue underlines `#3B82F6`.  
+    - SEO recommendations: Purple underlines `#8B5CF6`.  
+    - Hovering over underlines displays a tooltip with suggestion details.  
+  - **Sticky Footer**: Fixed at the bottom of the pane, containing:  
+    - **Word Count**: e.g., “250 words”.  
+    - **SEO Score**: e.g., “SEO Score: 85/100”.  
+    - **Export Button**: Dropdown with options (“Copy Markdown”, “Download HTML”, “Share Link”).  
+  - **Footer Style**: Slightly darker gray `#E5E7EB` background, indigo buttons.  
+
+**Purpose**: The primary workspace for writing and editing, designed to be clean and focused with real-time feedback.
+
+### 2.3 Right Sidebar
+**What It Looks Like**:  
+- **Structure**: Vertical, toggleable sidebar fixed to the right edge of the screen.  
+- **Size**: 300px wide when open, hidden when closed.  
+- **Appearance**:  
+  - **Background**: White `#FFFFFF`.  
+  - **Tabs**: Three tabs at the top:  
+    - Grammar: For spelling and syntax suggestions.  
+    - Tone: For style and tone adjustments.  
+    - SEO: For search optimization tips.  
+    - Active tab highlighted in indigo `#6366F1`, inactive tabs in gray.  
+  - **Suggestion Cards**: Scrollable list below tabs, each card showing:  
+    - Issue description: e.g., “Passive voice detected”.  
+    - Suggested fix: e.g., “Use active voice: ‘The team launched the product’”.  
+    - Buttons: **Accept** (green `#10B981`), **Reject** (red `#EF4444`).  
+  - **Toggle Button**: Arrow or “X” icon to show/hide the sidebar.  
+  - **Card Style**: Light shadow, rounded corners (4px).  
+
+**Purpose**: Offers actionable tools to refine content, kept separate to avoid overwhelming the editor pane.
+
+### 2.4 Visual Layout Summary
+- **Layout Overview**: The editor interface consists of three vertical panes arranged side by side:
+  - **Left Sidebar**: 60px (collapsed) or 240px (expanded) wide, containing navigation icons and a toggle button.
+  - **Content Area**: Flexible width (60%–80% of screen), hosting the editor pane and sticky footer.
+  - **Right Sidebar**: 300px wide when open, featuring tabs and suggestion cards with a toggle button.
+- **Spatial Relationships**: The Left Sidebar is on the left, the Content Area occupies the center, and the Right Sidebar is on the right. The Content Area adjusts dynamically based on the Left Sidebar’s state (collapsed or expanded).
+- **Optional Visual Reference**: For a detailed diagram, refer to a Figma mockup (to be created) or the CSS Grid implementation in section 3.1.
+
+
+
+
+
+
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/docs/pivot-update-summary.md
+```md
+# LinkedIn Writing Assistant - Pivot Update Summary
+
+## Date: 2025-06-22
+
+## What Was Updated
+
+### 1. Documentation Updates
+✅ **Created new files:**
+- `/docs/pivot-summary.md` - Comprehensive overview of the pivot
+- `/docs/linkedin-migration-plan.md` - Step-by-step migration guide
+- `/.taskmaster/docs/prd-linkedin.txt` - New PRD focused on LinkedIn
+
+✅ **Updated existing files:**
+- `README.md` - Changed from MarketingQuill to LinkedIn Writing Assistant
+- `package.json` - Updated name and version (0.2.0)
+- `CLAUDE.md` - Added LinkedIn context and updated task priorities
+
+### 2. Key Changes Made
+
+#### README.md
+- Title: "AI Copy Copilot for SaaS Marketing Managers" → "AI-Powered Content Optimizer for LinkedIn Creators"
+- Description focused on LinkedIn content creation
+- Task 5 renamed to "LinkedIn Writing Optimization"
+
+#### package.json
+- Name: `marketing-quill` → `linkedin-writing-assistant`
+- Version: `0.1.0` → `0.2.0`
+
+#### CLAUDE.md
+- Added LinkedIn-specific context
+- Updated known issues for LinkedIn features
+- Highlighted character limits (3000 max, 1300 optimal)
+- Reordered task priorities for LinkedIn focus
+
+### 3. Task Updates Needed (Not Yet Done)
+
+The task system needs manual updates for:
+- Task 6: Subject-Line Optimizer → LinkedIn Hook Optimizer
+- Task 7: SEO Hint Panel → LinkedIn Optimization Panel
+- Task 8: Export Functionality → LinkedIn Post Formatter
+- Task 23: Auto-draft subject → Auto-draft hook generation
+
+### 4. Next Steps
+
+1. **Immediate Actions:**
+   - Update landing page content for LinkedIn focus
+   - Modify UI text throughout the app
+   - Update Supabase Edge Function prompts
+
+2. **Feature Updates:**
+   - Transform existing features for LinkedIn
+   - Add LinkedIn-specific functionality
+   - Implement character counter and preview
+
+3. **Testing:**
+   - Test with LinkedIn creators
+   - Validate LinkedIn best practices
+   - Ensure mobile preview accuracy
+
+## How to Track Progress
+
+### Commands to Monitor Changes:
+```bash
+# View current tasks
+npm run task:list
+
+# Check task health
+npm run task:health
+
+# See what to work on next
+npm run task:next
+
+# View pivot documentation
+cat docs/pivot-summary.md
+cat docs/linkedin-migration-plan.md
+```
+
+### Git History:
+All changes are committed with message: "docs: pivot to LinkedIn Writing Assistant"
+
+### Key Files to Review:
+1. `/docs/pivot-summary.md` - Why we pivoted
+2. `/docs/linkedin-migration-plan.md` - How to implement
+3. `/.taskmaster/docs/prd-linkedin.txt` - What we're building
+
+## Questions to Address
+
+1. Should we update the Supabase project name?
+2. Do we need new environment variables for LinkedIn features?
+3. Should we create a new color scheme for LinkedIn branding?
+4. How do we handle existing users during the transition?
+
+## Success Metrics
+
+Track these to measure pivot success:
+- User engagement with LinkedIn-specific features
+- Time to create a LinkedIn post
+- Post engagement improvement
+- User retention rate
+- Feature adoption rate
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/docs/tech-stack.md
+```md
+# MarketingQuill Tech Stack Documentation
+
+**Date**: June 18, 2025  
+**Project**: MarketingQuill – AI Copy Copilot for SaaS Marketing Managers  
+**Purpose**: Outlines technologies for development consistency.
+
+## 1. Tech Stack
+| Layer    | Choice                                                     |
+|----------|------------------------------------------------------------|
+| Frontend | Next.js 15 (React 18, TypeScript), Tailwind CSS, shadcn/ui, Zustand |
+| Backend  | Supabase (Postgres, Realtime, Edge Functions)              |
+| Auth     | Supabase Auth (magic-link, Google OAuth)                   |
+| AI       | OpenAI GPT-4o via Edge Functions; cached in Postgres       |
+| Hosting  | Vercel (frontend), Supabase (backend)                      |
+| Version  | Git (GitHub)                                               |
+
+## 2. Rationale
+- **Next.js 15**: Framework built on React 18, offering server-side rendering, static generation, and file-based routing for SEO and performance. TypeScript ensures type safety.  
+- **Tailwind CSS**: Utility-first styling for rapid, responsive design.  
+- **shadcn/ui**: Accessible, customizable React components.  
+- **Zustand**: Lightweight state management for React.  
+- **Supabase**: Integrated auth, database, and real-time features.  
+- **GPT-4o**: High-quality AI suggestions.  
+- **Vercel**: Seamless deployment, optimized for Next.js.  
+```
+
+File: /Users/yashchitneni/Development/Cursor Projects/current-projects/marketing-quill/docs/prd.md
+```md
+# MarketingQuill Product Requirements Document (PRD)
+
+**Date**: June 18, 2025  
+**Project**: MarketingQuill – AI Copy Copilot for SaaS Marketing Managers  
+**Purpose**: Defines the requirements for the MarketingQuill MVP, a web-based tool to streamline copywriting with AI-driven suggestions.
+
+## 1. Project Overview
+MarketingQuill is a web-based AI copy copilot for SaaS marketing managers creating email campaigns and blog content. It integrates a distraction-free editor with real-time grammar and tone suggestions, subject-line optimization, and basic SEO hints to boost content performance.
+
+**v1 Objectives (7-day sprint)**  
+- Deliver inline grammar and tone suggestions with <2s latency.  
+- Generate subject-line variants with predicted open-rate scores.  
+- Enable one-click exports in HTML email and Markdown formats.  
+- Achieve ≥70% suggestion acceptance rate in pilot tests.
+
+## 2. MVP Scope
+
+### In-Scope
+1. **Authentication & Roles**: Magic-link and Google OAuth; Owner/Editor roles.  
+2. **Landing Page & Sign-up**: Marketing page with pricing toggle and "Start Free Trial" CTA.  
+3. **Dashboard**: List of drafts (title, channel icon, optimization score, last edited).  
+4. **Editor (Core)**:  
+   - Monospace pane, auto-save every 30s.  
+   - Inline grammar/tone suggestions (GPT-4o).  
+   - Right sidebar: Grammar | Tone | SEO tabs with suggestion cards.  
+   - Subject-Line Optimizer modal with A/B variants and open-rate gauge.  
+   - Sticky footer: word count, live SEO score.  
+5. **SEO Basics**: Local analysis for keyword density, H-tags, meta-description quality.  
+6. **Exports**: Copy Markdown, download HTML email, public share link.  
+7. **Versioning Lite**: Undo stack (50 actions), daily snapshot rollback (7-day retention).  
+8. **Accessibility**: WCAG 2.1 AA (keyboard nav, visible focus, high-contrast toggle).
+
+### Out-of-Scope (v1)
+- Built-in scheduling or ESP sending.  
+- Automated A/B testing deployment.  
+- Collaboration comments, snippet libraries, template marketplaces.  
+- Team roles beyond Owner/Editor.  
+- Multilingual support, WordPress/LinkedIn APIs.
+
+## 3. User Flow (Happy Path)
+1. Visit `marketingquill.app`, click "Start Free Trial".  
+2. Sign up via email/Google, complete onboarding (optional brand voice), land on Dashboard.  
+3. Click "New Draft" to open Editor.  
+4. Write/paste copy; inline suggestions appear.  
+5. Open Subject-Line Optimizer, select variant (e.g., 38% open rate).  
+6. Check SEO tab, fix issues (e.g., "Add H2").  
+7. Export HTML email, paste into HubSpot.  
+8. Return to Dashboard; optimization score and streak update.
+
+## 4. Core Features & Acceptance Criteria
+| # | Feature                | Acceptance Criteria                                                                    |
+|---|------------------------|----------------------------------------------------------------------------------------|
+| 1 | Grammar & Tone Coach   | Suggestions load ≤2s; Accept updates text and logs action.                             |
+| 2 | Subject-Line Optimizer | ≥2 AI variants with open-rate gauge; Insert adds to header.                            |
+| 3 | SEO Hint Panel         | Shows keyword count, headings, meta tips; score updates live.                          |
+| 4 | Export                 | HTML/Markdown outputs retain styling; clipboard copy succeeds.                         |
+| 5 | Dashboard Metrics      | Draft cards show optimization score (0-100) and last-edited timestamp.                 |
+| 6 | Version Undo           | Undo up to 50 actions; snapshot restore reverts to prior day’s content.                |
+
+## 5. Design Snapshot
+- **Landing Page**: Split hero with product GIF and sign-up form; indigo `#6366F1`, glass cards.  
+- **App Shell**: Top bar (workspace switch, New Draft), collapsible icon sidebar, main canvas.  
+- **Editor**: Monospace (JetBrains Mono), neutral surface, colored underlines (grammar red, tone blue, SEO purple). Right sidebar with suggestion cards.  
+- **Modal**: Subject-Line Optimizer with two-column variant list and gauge meter.  
+
+## 6. Tech Stack
+| Layer    | Choice                                                     |
+|----------|------------------------------------------------------------|
+| Frontend | Next.js 15 (React 18, TypeScript), Tailwind CSS, shadcn/ui, Zustand |
+| Backend  | Supabase (Postgres, Realtime, Edge Functions)              |
+| Auth     | Supabase Auth (magic-link, Google OAuth)                   |
+| AI       | OpenAI GPT-4o via Edge Functions; cached in Postgres       |
+| Hosting  | Vercel (frontend), Supabase (backend)                      |
+
+## 7. Non-Functional Requirements
+- **Performance**: Suggestion latency <2s, 99.9% uptime.  
+- **Scalability**: Support 100 concurrent free-tier users.  
+- **Security**: TLS, RBAC, GDPR-compliant data export.
+
+## 8. Risks & Mitigations
+| Risk                   | Mitigation                                              |
+|------------------------|---------------------------------------------------------|
+| LLM cost overruns      | Cache suggestions; limit free-tier usage.               |
+| Prompt injection       | Sanitize inputs; strict function-call schemas.          |
+| Latency fluctuations   | Pre-warm Edge Functions; use streaming completions.     |
+
+## 9. Timeline (7-Day Sprint)
+| Day | Focus                                           |
+|-----|-------------------------------------------------|
+| 1   | Repo setup, auth, landing page                  |
+| 2   | Dashboard, New Draft flow                       |
+| 3   | Editor core, auto-save, undo stack              |
+| 4   | Grammar/tone suggestions                        |
+| 5   | Subject-Line Optimizer, SEO panel               |
+| 6   | Exports, accessibility, UI polish               |
+| 7   | Load test, demo, deploy, announce               |
+
+## 10. Validation & Iteration
+- **Pilot Testing**: Test with 5-10 marketing managers for ≥70% suggestion acceptance.  
+- **Feedback**: Bi-weekly reviews to prioritize updates.  
+- **Metrics**: Track suggestion acceptance, export frequency, SEO score improvements.
+```
 </file_contents>
 <meta prompt 1 = "[Architect]">
 You are a senior software architect specializing in code design and implementation planning. Your role is to:
@@ -11113,5 +13931,5 @@ Focus solely on the technical implementation plan - exclude testing, validation,
 Please proceed with your analysis based on the following <user instructions>
 </meta prompt 1>
 <user_instructions>
-help me refactor and simplify this next.js app 
+help me refactor and simplify this next.js app. the .md files are rules/structures off which this app is built.
 </user_instructions>
