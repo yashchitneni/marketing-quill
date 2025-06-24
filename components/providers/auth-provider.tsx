@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { createClient } from '@/lib/supabase/client'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -9,7 +9,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchUser = useAuthStore((state) => state.fetchUser)
   const setUser = useAuthStore((state) => state.setUser)
   const isInitialized = useAuthStore((state) => state.isInitialized)
-  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -23,20 +22,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [searchParams])
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout
+
     const initializeAuth = async () => {
-      setIsLoading(true)
-      
       try {
         const supabase = createClient()
+        
+        // Set a timeout to prevent infinite loading
+        timeoutId = setTimeout(() => {
+          console.warn('Auth initialization timeout - forcing initialization')
+          // Force initialization after 3 seconds
+          useAuthStore.setState({ isInitialized: true })
+        }, 3000)
         
         // Check active sessions and set the user
         await fetchUser()
         
+        // Clear timeout if fetchUser completes
+        clearTimeout(timeoutId)
+        
         // Set up auth state change listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
-            console.log('Auth state changed:', event)
-            
             if (session?.user) {
               setUser(session.user)
               await fetchUser()
@@ -61,23 +68,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         )
         
-        return () => subscription.unsubscribe()
+        return () => {
+          subscription.unsubscribe()
+          clearTimeout(timeoutId)
+        }
       } catch (error) {
         console.error('Error initializing auth:', error)
-      } finally {
-        setIsLoading(false)
+        // Force initialization on error
+        useAuthStore.setState({ isInitialized: true })
+        clearTimeout(timeoutId)
       }
     }
     
     initializeAuth()
   }, [fetchUser, setUser, router, pathname])
 
-  // Show nothing while initializing auth to prevent flash of unauthenticated content
-  if (!isInitialized && isLoading) {
-    console.log('Auth is initializing, blocking content render')
-    return null
+  // Show loading only for a brief moment on initial load
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    )
   }
 
-  console.log('Auth initialized, rendering children')
   return <>{children}</>
 }
