@@ -5,19 +5,36 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/dashboard'
+  const error = searchParams.get('error')
+  const errorDescription = searchParams.get('error_description')
+
+  // Handle OAuth errors
+  if (error) {
+    console.error('OAuth error:', error, errorDescription)
+    return NextResponse.redirect(`${origin}/auth/login?error=${encodeURIComponent(errorDescription || error)}`)
+  }
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code)
     
-    if (error) {
-      console.error('Error exchanging code for session:', error.message)
-      return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+    if (sessionError) {
+      console.error('Error exchanging code for session:', sessionError.message)
+      return NextResponse.redirect(`${origin}/auth/login?error=${encodeURIComponent(sessionError.message)}`)
     }
     
+    // Add a small delay to ensure session is properly established
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
     // Session should be established at this point
-    const { data: { user } } = await supabase.auth.getUser()
-    console.log('User authenticated:', user?.id)
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    
+    if (userError) {
+      console.error('Error getting user:', userError.message)
+      return NextResponse.redirect(`${origin}/auth/login?error=${encodeURIComponent(userError.message)}`)
+    }
+    
+    console.log('User authenticated:', user?.email)
     
     if (user) {
       // Check if user profile exists
@@ -44,6 +61,6 @@ export async function GET(request: Request) {
   }
 
   // If we get here, something went wrong
-  console.error('Auth callback failed: No code or user')
-  return NextResponse.redirect(`${origin}/auth/login?error=callback_failed`)
+  console.error('Auth callback failed: No code provided')
+  return NextResponse.redirect(`${origin}/auth/login?error=no_code`)
 }

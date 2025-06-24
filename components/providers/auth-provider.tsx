@@ -44,17 +44,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Set up auth state change listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
+            console.log('Auth event:', event, 'Session:', session?.user?.email)
+            
             if (session?.user) {
               setUser(session.user)
               await fetchUser()
+              
+              // Force state update
+              useAuthStore.setState({ 
+                user: session.user, 
+                isInitialized: true 
+              })
             } else {
               setUser(null)
+              useAuthStore.setState({ 
+                user: null, 
+                isInitialized: true 
+              })
             }
             
             // Handle sign in and sign out events
-            if (event === 'SIGNED_IN') {
+            if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
               // If on login page, redirect to dashboard
-              if (pathname === '/auth/login' || pathname === '/auth/signup') {
+              if (pathname === '/auth/login' || pathname === '/auth/signup' || pathname === '/') {
+                console.log('Redirecting to dashboard after sign in')
                 router.push('/dashboard')
               }
             } else if (event === 'SIGNED_OUT') {
