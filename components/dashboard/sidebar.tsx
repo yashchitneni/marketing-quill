@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { useRouter } from 'next/navigation'
+import { useSetupStatus } from '@/lib/hooks/use-setup-status'
 
 const sidebarItems = [
   {
@@ -83,6 +84,7 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
   const { user, signOut } = useAuthStore()
   const router = useRouter()
+  const { setupStatus } = useSetupStatus()
   
   const handleLogout = async () => {
     await signOut()
@@ -151,13 +153,27 @@ export function Sidebar() {
             key={item.id}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors",
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors relative",
               collapsed && "justify-center"
             )}
             title={collapsed ? item.title : undefined}
           >
             <item.icon className="h-5 w-5 flex-shrink-0" />
-            {!collapsed && <span>{item.title}</span>}
+            {!collapsed && (
+              <span className="flex-1 flex items-center justify-between">
+                <span>{item.title}</span>
+                {item.id === 'settings' && !setupStatus.isComplete && (
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                    {!collapsed && (
+                      <span className="text-xs text-amber-600 font-medium">
+                        {setupStatus.completedSteps}/{setupStatus.totalSteps}
+                      </span>
+                    )}
+                  </span>
+                )}
+              </span>
+            )}
           </Link>
         ))}
         

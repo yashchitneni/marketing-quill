@@ -1,27 +1,36 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { createClient } from '@/lib/supabase/client'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+function AuthProviderInner({ children }: { children: React.ReactNode }) {
   const fetchUser = useAuthStore((state) => state.fetchUser)
   const setUser = useAuthStore((state) => state.setUser)
   const isInitialized = useAuthStore((state) => state.isInitialized)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const [mounted, setMounted] = useState(false)
+  
+  // Handle client-side mounting
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   
   // Handle error parameter from login page
   useEffect(() => {
+    if (!mounted) return
     const error = searchParams.get('error')
     if (error) {
       console.error('Auth error:', error)
     }
-  }, [searchParams])
+  }, [searchParams, mounted])
 
   useEffect(() => {
+    if (!mounted) return
+    
     let timeoutId: NodeJS.Timeout
 
     const initializeAuth = async () => {
@@ -31,9 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Set a timeout to prevent infinite loading
         timeoutId = setTimeout(() => {
           console.warn('Auth initialization timeout - forcing initialization')
-          // Force initialization after 3 seconds
+          // Force initialization after 2 seconds
           useAuthStore.setState({ isInitialized: true })
-        }, 3000)
+        }, 2000)
         
         // Check active sessions and set the user
         await fetchUser()
@@ -64,9 +73,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
             
             // Handle sign in and sign out events
-            if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-              // If on login page, redirect to dashboard
-              if (pathname === '/auth/login' || pathname === '/auth/signup' || pathname === '/') {
+            if (event === 'SIGNED_IN') {
+              // Only redirect if explicitly on auth pages
+              if (pathname === '/auth/login' || pathname === '/auth/signup') {
                 console.log('Redirecting to dashboard after sign in')
                 router.push('/dashboard')
               }
@@ -74,10 +83,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               // If on protected page, redirect to login
               if (pathname.startsWith('/dashboard') || 
                   pathname.startsWith('/editor') || 
-                  pathname.startsWith('/admin')) {
+                  pathname.startsWith('/admin') ||
+                  pathname.startsWith('/settings')) {
                 router.push('/auth/login')
               }
             }
+            // Don't redirect on USER_UPDATED to prevent issues during settings changes
           }
         )
         
@@ -94,16 +105,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     
     initializeAuth()
-  }, [fetchUser, setUser, router, pathname])
+  }, [fetchUser, setUser, router, pathname, mounted])
 
+  // Don't render until mounted to avoid hydration issues
+  if (!mounted) {
+    return null
+  }
+  
   // Show loading only for a brief moment on initial load
   if (!isInitialized) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
       </div>
     )
   }
 
   return <>{children}</>
+}
+
+// Export wrapper component with Suspense
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    }>
+      <AuthProviderInner>{children}</AuthProviderInner>
+    </Suspense>
+  )
 }

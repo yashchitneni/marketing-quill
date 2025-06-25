@@ -10,8 +10,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { ArrowRight, Building2, FileText, Target, Sparkles } from 'lucide-react'
+import { ArrowRight, Building2, FileText, Target, Sparkles, User, Linkedin } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuthStore } from '@/lib/stores/auth-store'
 
 interface BrandVoice {
   companyName: string
@@ -19,6 +20,11 @@ interface BrandVoice {
   targetAudience: string
   tonePreferences: string[]
   sampleContent: string
+}
+
+interface UserProfile {
+  fullName: string
+  linkedInConnected: boolean
 }
 
 const toneOptions = [
@@ -30,8 +36,13 @@ const toneOptions = [
 export default function OnboardingPage() {
   const router = useRouter()
   const { user } = useRole()
+  const authUser = useAuthStore(state => state.user)
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
+  const [userProfile, setUserProfile] = useState<UserProfile>({
+    fullName: '',
+    linkedInConnected: false
+  })
   const [brandVoice, setBrandVoice] = useState<BrandVoice>({
     companyName: '',
     industry: '',
@@ -53,12 +64,14 @@ export default function OnboardingPage() {
     setIsLoading(true)
     const supabase = createClient()
     
-    // Save brand voice to user profile
+    // Save brand voice and user profile
     const { error } = await supabase
       .from('profiles')
       .update({
+        full_name: userProfile.fullName,
         brand_voice: brandVoice,
-        onboarding_completed: true
+        onboarding_completed: true,
+        brand_voice_completed: true
       })
       .eq('id', user?.id)
     
@@ -68,8 +81,29 @@ export default function OnboardingPage() {
     setIsLoading(false)
   }
 
-  const handleSkip = () => {
-    router.push('/dashboard')
+  const handleSkip = async () => {
+    // Only allow skipping brand voice setup, not name
+    if (!userProfile.fullName.trim()) {
+      return // Don't allow skipping without a name
+    }
+    
+    // Save just the name and mark onboarding as partially complete
+    setIsLoading(true)
+    const supabase = createClient()
+    
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        full_name: userProfile.fullName,
+        onboarding_completed: true,
+        brand_voice_completed: false // Track that brand voice was skipped
+      })
+      .eq('id', user?.id)
+    
+    if (!error) {
+      router.push('/dashboard')
+    }
+    setIsLoading(false)
   }
 
   return (
@@ -83,28 +117,69 @@ export default function OnboardingPage() {
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle>Brand Voice Setup</CardTitle>
-              <Badge variant="outline">Step {currentStep} of 3</Badge>
+              <CardTitle>Welcome Setup</CardTitle>
+              <Badge variant="outline">Step {currentStep} of 4</Badge>
             </div>
           </CardHeader>
           <CardContent>
             <Tabs value={currentStep.toString()} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="1" onClick={() => setCurrentStep(1)}>
-                  <Building2 className="h-4 w-4 mr-2" />
-                  Company Info
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
                 </TabsTrigger>
                 <TabsTrigger value="2" onClick={() => setCurrentStep(2)}>
-                  <Target className="h-4 w-4 mr-2" />
-                  Tone & Audience
+                  <Building2 className="h-4 w-4 mr-2" />
+                  Company
                 </TabsTrigger>
                 <TabsTrigger value="3" onClick={() => setCurrentStep(3)}>
+                  <Target className="h-4 w-4 mr-2" />
+                  Tone
+                </TabsTrigger>
+                <TabsTrigger value="4" onClick={() => setCurrentStep(4)}>
                   <FileText className="h-4 w-4 mr-2" />
-                  Sample Content
+                  Sample
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="1" className="space-y-4 mt-6">
+                <div>
+                  <Label htmlFor="fullName">Your Name *</Label>
+                  <Input
+                    id="fullName"
+                    placeholder="John Doe"
+                    value={userProfile.fullName}
+                    onChange={(e) => setUserProfile(prev => ({ ...prev, fullName: e.target.value }))}
+                    required
+                  />
+                  <p className="text-sm text-gray-500 mt-1">This is how we'll greet you in the app</p>
+                </div>
+                
+                <div className="mt-6">
+                  <Label>LinkedIn Connection</Label>
+                  <Card className="mt-2">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Linkedin className="h-5 w-5 text-blue-600" />
+                          <div>
+                            <p className="font-medium">Connect LinkedIn Account</p>
+                            <p className="text-sm text-gray-500">Required for posting directly to LinkedIn</p>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => router.push('/settings')}
+                          variant="outline"
+                        >
+                          Connect Later
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="2" className="space-y-4 mt-6">
                 <div>
                   <Label htmlFor="company">Company Name</Label>
                   <Input
@@ -135,7 +210,7 @@ export default function OnboardingPage() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="2" className="space-y-4 mt-6">
+              <TabsContent value="3" className="space-y-4 mt-6">
                 <div>
                   <Label>Preferred Tone (select up to 4)</Label>
                   <CardDescription className="mb-3">
@@ -157,7 +232,7 @@ export default function OnboardingPage() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="3" className="space-y-4 mt-6">
+              <TabsContent value="4" className="space-y-4 mt-6">
                 <div>
                   <Label htmlFor="sample">Sample Content (Optional)</Label>
                   <CardDescription className="mb-3">
@@ -175,12 +250,17 @@ export default function OnboardingPage() {
             </Tabs>
 
             <div className="flex justify-between mt-8">
-              <Button
-                variant="ghost"
-                onClick={handleSkip}
-              >
-                Skip for now
-              </Button>
+              {/* Only show skip after name is entered */}
+              {currentStep > 1 && (
+                <Button
+                  variant="ghost"
+                  onClick={handleSkip}
+                  disabled={isLoading}
+                >
+                  Skip brand voice setup
+                </Button>
+              )}
+              {currentStep === 1 && <div />}
               
               <div className="flex gap-3">
                 {currentStep > 1 && (
@@ -192,15 +272,18 @@ export default function OnboardingPage() {
                   </Button>
                 )}
                 
-                {currentStep < 3 ? (
-                  <Button onClick={() => setCurrentStep(currentStep + 1)}>
+                {currentStep < 4 ? (
+                  <Button 
+                    onClick={() => setCurrentStep(currentStep + 1)}
+                    disabled={currentStep === 1 && !userProfile.fullName.trim()}
+                  >
                     Next
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : (
                   <Button 
                     onClick={handleComplete}
-                    disabled={isLoading}
+                    disabled={isLoading || !userProfile.fullName.trim()}
                     className="bg-indigo-600 hover:bg-indigo-700"
                   >
                     <Sparkles className="mr-2 h-4 w-4" />

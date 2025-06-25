@@ -14,45 +14,45 @@ export function HeroSection() {
           <div className="space-y-6">
             <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100">
               <Sparkles className="mr-1 h-3 w-3" />
-              AI-Powered Marketing Copy
+              AI-Powered LinkedIn Content
             </Badge>
             
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
-              Write Marketing Copy{' '}
-              <span className="text-indigo-600">10x Faster</span>
+              LinkedIn Content That{' '}
+              <span className="text-indigo-600">Gets You Clients</span>
             </h1>
             
             <p className="text-xl text-gray-600">
-              AI-powered suggestions, tone adjustments, and SEO optimization 
-              designed specifically for SaaS marketing teams. Write better copy 
-              in less time.
+              Stop posting generic content that gets ignored. Create authentic, 
+              engaging LinkedIn posts that sound like you and attract your ideal 
+              clients — in minutes, not hours.
             </p>
             
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-green-600" />
-                <span>Real-time grammar and tone suggestions</span>
+                <span>AI that learns your unique voice and expertise</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-green-600" />
-                <span>Subject line optimization with predicted open rates</span>
+                <span>Hook optimization for maximum engagement</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-green-600" />
-                <span>Built-in SEO analysis and compliance checks</span>
+                <span>Strategic content planning tailored to your goals</span>
               </div>
             </div>
             
             <div className="flex gap-4 pt-4">
               <Link href="/auth/signup">
                 <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700">
-                  Start Free Trial
+                  Get Started Free
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="#demo">
+              <Link href="#features">
                 <Button size="lg" variant="outline">
-                  Watch Demo
+                  See How It Works
                 </Button>
               </Link>
             </div>
@@ -72,7 +72,7 @@ export function HeroSection() {
                   <div className="w-3 h-3 rounded-full bg-green-500" />
                 </div>
                 <div className="flex-1 text-center text-xs text-gray-600">
-                  MarketingQuill Editor
+                  LinkedIn Content Studio
                 </div>
               </div>
               <div className="relative aspect-video bg-gray-900">

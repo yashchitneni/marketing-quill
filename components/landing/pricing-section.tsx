@@ -10,52 +10,52 @@ import { Check, X } from 'lucide-react'
 
 const pricingPlans = [
   {
-    name: 'Free',
-    description: 'Perfect for trying out MarketingQuill',
+    name: 'Starter',
+    description: 'Test the waters',
     monthlyPrice: 0,
     yearlyPrice: 0,
     features: [
-      { name: '3 drafts per month', included: true },
-      { name: 'Basic grammar suggestions', included: true },
-      { name: 'SEO hints', included: true },
-      { name: 'Export to Markdown', included: true },
-      { name: 'Subject line optimizer', included: false },
-      { name: 'Advanced tone analysis', included: false },
-      { name: 'Team collaboration', included: false },
+      { name: '5 LinkedIn posts per month', included: true },
+      { name: 'Basic hook suggestions', included: true },
+      { name: 'Voice learning (limited)', included: true },
+      { name: 'LinkedIn best practices', included: true },
+      { name: 'AI-powered editing', included: false },
+      { name: 'Content calendar', included: false },
+      { name: 'Performance analytics', included: false },
       { name: 'Priority support', included: false }
     ]
   },
   {
-    name: 'Pro',
-    description: 'For marketing professionals',
-    monthlyPrice: 29,
-    yearlyPrice: 290,
+    name: 'Professional',
+    description: 'For serious professionals',
+    monthlyPrice: 47,
+    yearlyPrice: 470,
     popular: true,
     features: [
-      { name: 'Unlimited drafts', included: true },
-      { name: 'Advanced grammar & style', included: true },
-      { name: 'Full SEO analysis', included: true },
-      { name: 'All export formats', included: true },
-      { name: 'Subject line optimizer', included: true },
-      { name: 'Advanced tone analysis', included: true },
-      { name: 'Team collaboration', included: false },
-      { name: 'Priority support', included: false }
+      { name: 'Unlimited LinkedIn posts', included: true },
+      { name: 'Advanced hook optimization', included: true },
+      { name: 'Full voice matching AI', included: true },
+      { name: 'Content calendar & scheduling', included: true },
+      { name: 'Engagement analytics', included: true },
+      { name: 'Client-focused templates', included: true },
+      { name: 'Multiple voice profiles', included: false },
+      { name: '1-on-1 strategy calls', included: false }
     ]
   },
   {
-    name: 'Team',
-    description: 'For marketing teams',
-    monthlyPrice: 99,
-    yearlyPrice: 990,
+    name: 'Agency',
+    description: 'For agencies & teams',
+    monthlyPrice: 197,
+    yearlyPrice: 1970,
     features: [
-      { name: 'Everything in Pro', included: true },
+      { name: 'Everything in Professional', included: true },
       { name: 'Unlimited team members', included: true },
-      { name: 'Team templates', included: true },
-      { name: 'Brand voice profiles', included: true },
-      { name: 'Analytics dashboard', included: true },
+      { name: 'Client voice profiles', included: true },
+      { name: 'White-label options', included: true },
+      { name: 'Advanced analytics dashboard', included: true },
       { name: 'API access', included: true },
-      { name: 'SSO authentication', included: true },
-      { name: 'Dedicated support', included: true }
+      { name: 'Monthly strategy calls', included: true },
+      { name: 'Priority support', included: true }
     ]
   }
 ]
@@ -68,10 +68,10 @@ export function PricingSection() {
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-4xl font-bold mb-4">
-            Simple, Transparent Pricing
+            Investment That Pays for Itself
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Choose the plan that fits your needs. Upgrade or downgrade anytime.
+            One new client from LinkedIn covers an entire year. Most users see ROI within 30 days.
           </p>
           
           <div className="flex items-center justify-center gap-4">

@@ -39,7 +39,7 @@ export function Navbar() {
                 </Link>
                 <Link href="/auth/signup">
                   <Button className="bg-indigo-600 hover:bg-indigo-700">
-                    Start Free Trial
+                    Get Started Free
                   </Button>
                 </Link>
               </>

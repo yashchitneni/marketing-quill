@@ -4,11 +4,27 @@ import type { User } from '@supabase/supabase-js'
 
 type UserRole = 'owner' | 'editor' | null
 
+// Check if Supabase is enabled
+const isSupabaseEnabled = process.env.NEXT_PUBLIC_SUPABASE_ENABLED !== 'false'
+
+// Mock user for development when Supabase is disabled
+const mockUser: User = {
+  id: 'mock-user-id',
+  email: 'dev@localhost',
+  app_metadata: {},
+  user_metadata: { full_name: 'Dev User' },
+  aud: 'authenticated',
+  created_at: new Date().toISOString(),
+  role: 'authenticated',
+  updated_at: new Date().toISOString(),
+} as User
+
 interface AuthState {
   user: User | null
   role: UserRole
   isLoading: boolean
   isInitialized: boolean
+  isSupabaseEnabled: boolean
   signIn: (email: string) => Promise<{ error: Error | null }>
   signInWithGoogle: () => Promise<{ error: Error | null }>
   signOut: () => Promise<{ error: Error | null }>
@@ -22,8 +38,15 @@ export const useAuthStore = create<AuthState>((set) => ({
   role: null,
   isLoading: false,
   isInitialized: false,
+  isSupabaseEnabled,
 
   signIn: async (email: string) => {
+    if (!isSupabaseEnabled) {
+      console.log('🔧 Dev mode: Simulating sign in for', email)
+      set({ user: mockUser, role: 'owner', isLoading: false })
+      return { error: null }
+    }
+    
     set({ isLoading: true })
     const supabase = createClient()
     
@@ -39,6 +62,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signInWithGoogle: async () => {
+    if (!isSupabaseEnabled) {
+      console.log('🔧 Dev mode: Simulating Google sign in')
+      set({ user: mockUser, role: 'owner', isLoading: false })
+      return { error: null }
+    }
+    
     set({ isLoading: true })
     const supabase = createClient()
     
@@ -62,6 +91,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signOut: async () => {
+    if (!isSupabaseEnabled) {
+      console.log('🔧 Dev mode: Simulating sign out')
+      set({ user: null, role: null, isLoading: false })
+      return { error: null }
+    }
+    
     set({ isLoading: true })
     const supabase = createClient()
     
@@ -76,6 +111,17 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   fetchUser: async () => {
+    if (!isSupabaseEnabled) {
+      console.log('🔧 Dev mode: Using mock user')
+      // Optionally auto-login in dev mode for easier testing
+      if (process.env.NODE_ENV === 'development') {
+        set({ user: mockUser, role: 'owner', isInitialized: true })
+      } else {
+        set({ user: null, role: null, isInitialized: true })
+      }
+      return
+    }
+    
     const supabase = createClient()
     
     const { data: { user }, error } = await supabase.auth.getUser()

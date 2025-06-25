@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { ErrorBoundary } from "@/components/providers/error-boundary";
 import { Toaster } from "@/components/ui/toaster";
+import { DevWarningBanner } from "@/components/dev-warning-banner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,16 +27,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
-        <Suspense fallback={null}>
+        <ErrorBoundary>
           <AuthProvider>
             {children}
             <Toaster />
+            <DevWarningBanner />
           </AuthProvider>
-        </Suspense>
+        </ErrorBoundary>
       </body>
     </html>
   );

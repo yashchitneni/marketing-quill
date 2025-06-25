@@ -23,12 +23,19 @@ interface DashboardPageProps {
   }>
 }
 
-async function getInitialDrafts(userId: string, searchParams: Awaited<DashboardPageProps['searchParams']>) {
+async function getInitialData(userId: string, searchParams: Awaited<DashboardPageProps['searchParams']>) {
   const supabase = await createClient()
   const ITEMS_PER_PAGE = 20
   const page = parseInt(searchParams.page || '1')
   const from = (page - 1) * ITEMS_PER_PAGE
   const to = from + ITEMS_PER_PAGE - 1
+  
+  // Fetch user profile
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name, username')
+    .eq('id', userId)
+    .single()
   
   // Fetch all data including content in ONE query
   let query = supabase
@@ -86,7 +93,11 @@ async function getInitialDrafts(userId: string, searchParams: Awaited<DashboardP
     content: undefined // Remove full content from response to save memory
   })) || []
   
-  return { drafts: draftsWithPreview, totalCount: count || 0 }
+  return { 
+    drafts: draftsWithPreview, 
+    totalCount: count || 0,
+    profile
+  }
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
@@ -98,12 +109,20 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   }
   
   const resolvedSearchParams = await searchParams
-  const { drafts, totalCount } = await getInitialDrafts(user.id, resolvedSearchParams)
+  const { drafts, totalCount, profile } = await getInitialData(user.id, resolvedSearchParams)
+  
+  // Pass user name to dashboard content
+  const userName = profile?.full_name || profile?.username || user.email?.split('@')[0] || ''
   
   return (
     <DashboardLayout>
       <Suspense fallback={<DashboardLoading />}>
-        <DashboardContent initialDrafts={drafts} initialTotalCount={totalCount} />
+        <DashboardContent 
+          initialDrafts={drafts} 
+          initialTotalCount={totalCount}
+          userName={userName}
+          userEmail={user.email}
+        />
       </Suspense>
     </DashboardLayout>
   )

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { Navbar } from '@/components/landing/navbar'
 import { HeroSection } from '@/components/landing/hero-section'
+import { HowItWorksSection } from '@/components/landing/how-it-works-section'
 import { FeaturesSection } from '@/components/landing/features-section'
 import { PricingSection } from '@/components/landing/pricing-section'
 import { TestimonialsSection } from '@/components/landing/testimonials-section'
@@ -24,6 +25,7 @@ export default function Home() {
     <div className="min-h-screen">
       <Navbar />
       <HeroSection />
+      <HowItWorksSection />
       <FeaturesSection />
       <PricingSection />
       <TestimonialsSection />

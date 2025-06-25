@@ -4,25 +4,25 @@ import { Star } from 'lucide-react'
 const testimonials = [
   {
     name: 'Sarah Chen',
-    role: 'Marketing Director',
-    company: 'TechFlow SaaS',
-    content: 'MarketingQuill has transformed how our team writes copy. The AI suggestions are spot-on, and we&apos;ve seen a 35% increase in email open rates.',
+    role: 'Management Consultant',
+    company: 'Chen Advisory',
+    content: 'In 3 months, I went from 500 to 8,000 followers and booked 4 new enterprise clients. The AI captures my voice perfectly - my connections think I&apos;m writing everything myself!',
     rating: 5,
     image: '/testimonials/sarah.jpg'
   },
   {
     name: 'Michael Rodriguez',
-    role: 'Content Manager',
-    company: 'CloudSync Inc',
-    content: 'The subject line optimizer alone is worth the price. We&apos;re writing better copy in half the time, and our conversion rates have never been higher.',
+    role: 'Executive Coach',
+    company: 'Peak Performance Partners',
+    content: 'I was skeptical about AI content, but this tool actually makes me sound MORE authentic. My engagement rates are up 400% and I&apos;m getting 3-5 qualified leads per week.',
     rating: 5,
     image: '/testimonials/michael.jpg'
   },
   {
     name: 'Emily Thompson',
-    role: 'VP of Marketing',
-    company: 'DataPro Solutions',
-    content: 'Finally, an AI tool that understands SaaS marketing. The tone suggestions help us maintain consistency across all our content.',
+    role: 'Strategy Consultant',
+    company: 'Thompson Strategic',
+    content: 'Game changer. I used to spend hours on LinkedIn content. Now I create a week&apos;s worth in 30 minutes, and it performs better than anything I wrote myself.',
     rating: 5,
     image: '/testimonials/emily.jpg'
   }
@@ -34,10 +34,10 @@ export function TestimonialsSection() {
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-4xl font-bold mb-4">
-            Loved by Marketing Teams
+            Trusted by Top Consultants & Professionals
           </h2>
           <p className="text-xl text-gray-600">
-            See what marketing professionals are saying about MarketingQuill
+            Join thousands who are turning LinkedIn into their #1 client acquisition channel
           </p>
         </div>
         

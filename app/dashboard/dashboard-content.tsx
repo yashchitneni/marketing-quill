@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/lib/stores/auth-store'
 import { createClient } from '@/lib/supabase/client'
@@ -36,11 +36,15 @@ const ITEMS_PER_PAGE = 20
 interface DashboardContentProps {
   initialDrafts?: Draft[]
   initialTotalCount?: number
+  userName?: string
+  userEmail?: string | null
 }
 
-export default function DashboardContent({ 
+function DashboardContentInner({ 
   initialDrafts = [], 
-  initialTotalCount = 0 
+  initialTotalCount = 0,
+  userName = '',
+  userEmail
 }: DashboardContentProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -201,7 +205,19 @@ export default function DashboardContent({
 
   // Show home page if no filters are applied
   if (isHomePage) {
-    return <DashboardHome />
+    // For server-side rendering, we need to pass the initial data
+    // This is a temporary fix - ideally this would be handled at the page level
+    return <DashboardHome initialStats={{
+      totalDrafts: initialTotalCount,
+      publishedCount: 0,
+      averageScore: 0,
+      recentDrafts: initialDrafts.slice(0, 5).map(d => ({
+        id: d.id,
+        title: d.title,
+        updated_at: d.updated_at,
+        optimization_score: d.optimization_score
+      }))
+    }} initialUserName={userName || user?.email?.split('@')[0] || 'there'} userEmail={userEmail || user?.email} />
   }
 
   return (
@@ -390,5 +406,18 @@ export default function DashboardContent({
         </div>
       )}
     </div>
+  )
+}
+
+// Export wrapper component with Suspense
+export default function DashboardContent(props: DashboardContentProps) {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    }>
+      <DashboardContentInner {...props} />
+    </Suspense>
   )
 }

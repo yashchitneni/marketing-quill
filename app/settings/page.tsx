@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { DashboardLayout } from '@/components/dashboard/dashboard-layout'
 import { Button } from '@/components/ui/button'
@@ -11,13 +11,15 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/ui/badge'
 import { 
   Settings, 
   User, 
   Linkedin, 
   Bot,
   ExternalLink,
-  CheckCircle
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/lib/stores/auth-store'
@@ -27,14 +29,39 @@ export default function SettingsPage() {
   const [linkedinConnected, setLinkedinConnected] = useState(false)
   const [linkedinProfile, setLinkedinProfile] = useState<any>(null)
   const [voiceProfileSetup, setVoiceProfileSetup] = useState(false)
+  const [brandVoice, setBrandVoice] = useState<any>(null)
+  const [userProfile, setUserProfile] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState('linkedin')
+  const [saving, setSaving] = useState(false)
+  const [formData, setFormData] = useState({
+    email: '',
+    fullName: ''
+  })
+  const [hasChanges, setHasChanges] = useState(false)
+  const [preferences, setPreferences] = useState({
+    realTimeSuggestions: true,
+    hookGeneration: true,
+    engagementPredictions: true,
+    linkedinFormatting: true,
+    suggestionLevel: 'balanced'
+  })
+  const [writingStyles, setWritingStyles] = useState<string[]>([])
+  const [writingGoals, setWritingGoals] = useState<string[]>([])
   const user = useAuthStore(state => state.user)
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     // Check for error messages
     const errorParam = searchParams.get('error')
     const successParam = searchParams.get('success')
+    const tabParam = searchParams.get('tab')
+    
+    // Set active tab from URL param
+    if (tabParam) {
+      setActiveTab(tabParam)
+    }
     
     if (errorParam === 'linkedin_config') {
       setError('LinkedIn integration is not configured. Please contact support.')
@@ -53,25 +80,56 @@ export default function SettingsPage() {
     }
   }, [searchParams])
   
-  // Check LinkedIn connection status
+  // Check LinkedIn connection status and brand voice
   useEffect(() => {
-    const checkLinkedInStatus = async () => {
+    const checkUserStatus = async () => {
       if (!user) return
       
       const supabase = createClient()
-      const { data: profile } = await supabase
+      
+      // Check LinkedIn connection
+      const { data: linkedInData } = await supabase
         .from('user_profiles')
         .select('linkedin_profile_id, linkedin_connected_at, linkedin_first_name, linkedin_last_name, avatar_url')
         .eq('user_id', user.id)
         .single()
       
-      if (profile?.linkedin_profile_id) {
+      if (linkedInData?.linkedin_profile_id) {
         setLinkedinConnected(true)
-        setLinkedinProfile(profile)
+        setLinkedinProfile(linkedInData)
+      }
+      
+      // Check brand voice setup and full profile
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('full_name, brand_voice, brand_voice_completed, preferences, writing_styles, writing_goals')
+        .eq('id', user.id)
+        .single()
+      
+      if (profileData) {
+        setUserProfile(profileData)
+        setFormData({
+          email: user.email || '',
+          fullName: profileData.full_name || ''
+        })
+        if (profileData.brand_voice_completed) {
+          setVoiceProfileSetup(true)
+          setBrandVoice(profileData.brand_voice)
+        }
+        // Load preferences
+        if (profileData.preferences) {
+          setPreferences(profileData.preferences)
+        }
+        if (profileData.writing_styles) {
+          setWritingStyles(profileData.writing_styles)
+        }
+        if (profileData.writing_goals) {
+          setWritingGoals(profileData.writing_goals)
+        }
       }
     }
     
-    checkLinkedInStatus()
+    checkUserStatus()
   }, [user, searchParams]) // Re-check when searchParams change (after redirect)
 
   const handleLinkedInConnect = () => {
@@ -80,8 +138,8 @@ export default function SettingsPage() {
   }
 
   const handleVoiceProfileSetup = () => {
-    // TODO: Navigate to voice profile setup flow
-    console.log('Starting voice profile setup...')
+    // Navigate to brand voice setup
+    window.location.href = '/settings/brand-voice'
   }
   
   const handleLinkedInDisconnect = async () => {
@@ -109,6 +167,190 @@ export default function SettingsPage() {
       setTimeout(() => setSuccess(null), 5000)
     }
   }
+  
+  const handleAccountSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user) return
+    
+    setSaving(true)
+    setError(null)
+    
+    try {
+      const supabase = createClient()
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          full_name: formData.fullName,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+      
+      if (profileError) throw profileError
+      
+      // Update local state
+      setUserProfile((prev: any) => ({ ...prev, full_name: formData.fullName }))
+      
+      // Update auth store
+      useAuthStore.getState().fetchUser()
+      
+      setSuccess('Profile updated successfully!')
+      setTimeout(() => setSuccess(null), 5000)
+    } catch (err: any) {
+      setError(err.message || 'Failed to update profile')
+      setTimeout(() => setError(null), 5000)
+    } finally {
+      setSaving(false)
+    }
+  }
+  
+  // Auto-save functionality
+  useEffect(() => {
+    // Check if there are changes
+    const hasNameChange = userProfile && formData.fullName !== userProfile.full_name
+    const hasEmailChange = user && formData.email !== user.email
+    setHasChanges(hasNameChange || hasEmailChange)
+    
+    // Don't auto-save if no user or no changes
+    if (!user || (!hasNameChange && !hasEmailChange)) return
+    
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
+    
+    // Save immediately - no delay
+    const saveChanges = async () => {
+      setSaving(true)
+      try {
+        const supabase = createClient()
+        
+        // Update profile name if changed
+        if (hasNameChange && formData.fullName.trim()) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({
+              full_name: formData.fullName.trim(),
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', user.id)
+          
+          if (profileError) throw profileError
+        }
+        
+        // Update email if changed (temporarily disabled to prevent auth issues)
+        // TODO: Implement proper email change flow with confirmation
+        // if (hasEmailChange && formData.email.trim()) {
+        //   const { error: authError } = await supabase.auth.updateUser({
+        //     email: formData.email.trim()
+        //   })
+        //   
+        //   if (authError) throw authError
+        // }
+        
+        // Update local state
+        setUserProfile((prev: any) => ({ ...prev, full_name: formData.fullName }))
+        useAuthStore.getState().fetchUser()
+        setSuccess('Changes saved')
+        setTimeout(() => setSuccess(null), 3000)
+      } catch (err: any) {
+        console.error('Auto-save failed:', err)
+        setError(err.message || 'Failed to save changes')
+        setTimeout(() => setError(null), 5000)
+      } finally {
+        setSaving(false)
+      }
+    }
+    
+    saveChanges()
+    
+    // Cleanup timeout on unmount
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+    }
+  }, [formData.fullName, formData.email, user, userProfile])
+  
+  // Save preferences immediately when changed
+  const savePreference = async (key: string, value: any) => {
+    if (!user) return
+    
+    const updatedPreferences = { ...preferences, [key]: value }
+    setPreferences(updatedPreferences)
+    
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          preferences: updatedPreferences,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+      
+      if (error) throw error
+    } catch (err) {
+      console.error('Failed to save preference:', err)
+    }
+  }
+  
+  // Toggle writing style
+  const toggleWritingStyle = async (style: string) => {
+    if (!user) return
+    
+    const updatedStyles = writingStyles.includes(style)
+      ? writingStyles.filter(s => s !== style)
+      : [...writingStyles, style]
+    
+    setWritingStyles(updatedStyles)
+    
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          writing_styles: updatedStyles,
+          brand_voice_completed: updatedStyles.length > 0 || writingGoals.length > 0,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+      
+      if (!error) {
+        setVoiceProfileSetup(updatedStyles.length > 0 || writingGoals.length > 0)
+      }
+    } catch (err) {
+      console.error('Failed to save writing style:', err)
+    }
+  }
+  
+  // Toggle writing goal
+  const toggleWritingGoal = async (goal: string) => {
+    if (!user) return
+    
+    const updatedGoals = writingGoals.includes(goal)
+      ? writingGoals.filter(g => g !== goal)
+      : [...writingGoals, goal]
+    
+    setWritingGoals(updatedGoals)
+    
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          writing_goals: updatedGoals,
+          brand_voice_completed: writingStyles.length > 0 || updatedGoals.length > 0,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+      
+      if (!error) {
+        setVoiceProfileSetup(writingStyles.length > 0 || updatedGoals.length > 0)
+      }
+    } catch (err) {
+      console.error('Failed to save writing goal:', err)
+    }
+  }
 
   return (
     <DashboardLayout>
@@ -123,12 +365,33 @@ export default function SettingsPage() {
           </p>
         </div>
 
-        <Tabs defaultValue="linkedin" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="linkedin">LinkedIn</TabsTrigger>
-            <TabsTrigger value="voice">Voice Profile</TabsTrigger>
+            <TabsTrigger value="linkedin" className="relative">
+              LinkedIn
+              {!linkedinConnected && (
+                <Badge variant="destructive" className="absolute -top-2 -right-2 h-2 w-2 p-0 rounded-full">
+                  <span className="sr-only">Setup required</span>
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="voice" className="relative">
+              Voice Profile
+              {!voiceProfileSetup && (
+                <Badge variant="destructive" className="absolute -top-2 -right-2 h-2 w-2 p-0 rounded-full">
+                  <span className="sr-only">Setup required</span>
+                </Badge>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="preferences">Preferences</TabsTrigger>
-            <TabsTrigger value="account">Account</TabsTrigger>
+            <TabsTrigger value="account" className="relative">
+              Account
+              {!userProfile?.full_name && (
+                <Badge variant="destructive" className="absolute -top-2 -right-2 h-2 w-2 p-0 rounded-full">
+                  <span className="sr-only">Setup required</span>
+                </Badge>
+              )}
+            </TabsTrigger>
           </TabsList>
 
           {/* LinkedIn Integration */}
@@ -148,6 +411,11 @@ export default function SettingsPage() {
                 <CardTitle className="flex items-center gap-2">
                   <Linkedin className="h-5 w-5 text-blue-600" />
                   LinkedIn Integration
+                  {!linkedinConnected && (
+                    <Badge variant="destructive" className="ml-2">
+                      Required
+                    </Badge>
+                  )}
                 </CardTitle>
                 <CardDescription>
                   Connect your LinkedIn account to enable direct posting and voice analysis
@@ -252,6 +520,11 @@ export default function SettingsPage() {
                 <CardTitle className="flex items-center gap-2">
                   <Bot className="h-5 w-5" />
                   Voice Profile
+                  {!voiceProfileSetup && (
+                    <Badge variant="outline" className="ml-2">
+                      Optional
+                    </Badge>
+                  )}
                 </CardTitle>
                 <CardDescription>
                   Configure your unique writing style for personalized suggestions
@@ -285,7 +558,13 @@ export default function SettingsPage() {
                     <Label htmlFor="writing-style">Writing Style Preferences</Label>
                     <div className="grid grid-cols-2 gap-2 mt-2">
                       {['Professional', 'Conversational', 'Thought Leader', 'Storyteller', 'Data-Driven', 'Motivational'].map((style) => (
-                        <Button key={style} variant="outline" size="sm" className="justify-start">
+                        <Button 
+                          key={style} 
+                          variant={writingStyles.includes(style) ? "default" : "outline"} 
+                          size="sm" 
+                          className="justify-start"
+                          onClick={() => toggleWritingStyle(style)}
+                        >
                           {style}
                         </Button>
                       ))}
@@ -296,7 +575,13 @@ export default function SettingsPage() {
                     <Label htmlFor="writing-goals">Writing Goals</Label>
                     <div className="grid grid-cols-2 gap-2 mt-2">
                       {['Build Authority', 'Generate Leads', 'Share Knowledge', 'Network Building', 'Personal Branding', 'Thought Leadership'].map((goal) => (
-                        <Button key={goal} variant="outline" size="sm" className="justify-start">
+                        <Button 
+                          key={goal} 
+                          variant={writingGoals.includes(goal) ? "default" : "outline"} 
+                          size="sm" 
+                          className="justify-start"
+                          onClick={() => toggleWritingGoal(goal)}
+                        >
                           {goal}
                         </Button>
                       ))}
@@ -337,7 +622,10 @@ export default function SettingsPage() {
                       Get suggestions as you type
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={preferences.realTimeSuggestions}
+                    onCheckedChange={(checked) => savePreference('realTimeSuggestions', checked)}
+                  />
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -347,7 +635,10 @@ export default function SettingsPage() {
                       Auto-generate compelling opening lines
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={preferences.hookGeneration}
+                    onCheckedChange={(checked) => savePreference('hookGeneration', checked)}
+                  />
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -357,7 +648,10 @@ export default function SettingsPage() {
                       Show predicted engagement scores
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={preferences.engagementPredictions}
+                    onCheckedChange={(checked) => savePreference('engagementPredictions', checked)}
+                  />
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -367,7 +661,10 @@ export default function SettingsPage() {
                       Auto-format for LinkedIn best practices
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={preferences.linkedinFormatting}
+                    onCheckedChange={(checked) => savePreference('linkedinFormatting', checked)}
+                  />
                 </div>
 
                 <Separator />
@@ -375,9 +672,27 @@ export default function SettingsPage() {
                 <div>
                   <Label>Suggestion aggressiveness</Label>
                   <div className="flex gap-2 mt-2">
-                    <Button variant="outline" size="sm">Conservative</Button>
-                    <Button variant="default" size="sm">Balanced</Button>
-                    <Button variant="outline" size="sm">Aggressive</Button>
+                    <Button 
+                      variant={preferences.suggestionLevel === 'conservative' ? "default" : "outline"} 
+                      size="sm"
+                      onClick={() => savePreference('suggestionLevel', 'conservative')}
+                    >
+                      Conservative
+                    </Button>
+                    <Button 
+                      variant={preferences.suggestionLevel === 'balanced' ? "default" : "outline"} 
+                      size="sm"
+                      onClick={() => savePreference('suggestionLevel', 'balanced')}
+                    >
+                      Balanced
+                    </Button>
+                    <Button 
+                      variant={preferences.suggestionLevel === 'aggressive' ? "default" : "outline"} 
+                      size="sm"
+                      onClick={() => savePreference('suggestionLevel', 'aggressive')}
+                    >
+                      Aggressive
+                    </Button>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
                     How many suggestions to show
@@ -391,20 +706,59 @@ export default function SettingsPage() {
           <TabsContent value="account" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Account Information</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  Account Information
+                  {!userProfile?.full_name && (
+                    <Badge variant="destructive" className="ml-2">
+                      Name Required
+                    </Badge>
+                  )}
+                </CardTitle>
                 <CardDescription>
                   Manage your account details and subscription
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="your@email.com" />
-                  </div>
-                  <div>
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" placeholder="Your Name" />
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="email">Email</Label>
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        placeholder="your@email.com" 
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="name" className="flex items-center gap-2">
+                        Full Name
+                        {!userProfile?.full_name && (
+                          <span className="text-red-500 text-sm">*</span>
+                        )}
+                        {saving && (
+                          <span className="text-sm text-gray-500 ml-auto">Saving...</span>
+                        )}
+                      </Label>
+                      <Input 
+                        id="name" 
+                        placeholder="Your Name" 
+                        value={formData.fullName}
+                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                        className={!userProfile?.full_name ? 'border-red-300' : ''}
+                      />
+                      {!formData.fullName.trim() && (
+                        <p className="text-xs text-red-500 mt-1">
+                          Name is required for personalized experience
+                        </p>
+                      )}
+                      {hasChanges && !saving && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Changes will be saved automatically
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
                 

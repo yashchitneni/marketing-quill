@@ -20,6 +20,7 @@ import {
   Linkedin
 } from 'lucide-react'
 import Link from 'next/link'
+import { SetupProgress } from './setup-progress'
 
 interface DashboardStats {
   totalDrafts: number
@@ -42,81 +43,18 @@ interface QuickAction {
   loading?: boolean
 }
 
-export function DashboardHome() {
+interface DashboardHomeProps {
+  initialStats: DashboardStats
+  initialUserName: string
+  userEmail?: string | null
+}
+
+export function DashboardHome({ initialStats, initialUserName, userEmail }: DashboardHomeProps) {
   const router = useRouter()
-  const { user } = useAuthStore()
-  const [stats, setStats] = useState<DashboardStats>({
-    totalDrafts: 0,
-    publishedCount: 0,
-    averageScore: 0,
-    recentDrafts: []
-  })
-  const [userName, setUserName] = useState<string>('')
-  const [loading, setLoading] = useState(true)
+  const [stats] = useState<DashboardStats>(initialStats)
+  const [userName] = useState<string>(initialUserName)
+  const [loading] = useState(false)
 
-  useEffect(() => {
-    if (user) {
-      fetchDashboardData()
-      fetchUserProfile()
-    }
-  }, [user])
-
-  const fetchUserProfile = async () => {
-    const supabase = createClient()
-    const { data } = await supabase
-      .from('profiles')
-      .select('full_name, username')
-      .eq('id', user?.id)
-      .single()
-    
-    if (data) {
-      setUserName(data.full_name || data.username || user?.email?.split('@')[0] || 'there')
-    }
-  }
-
-  const fetchDashboardData = async () => {
-    if (!user) return
-    
-    setLoading(true)
-    const supabase = createClient()
-    
-    // Fetch stats in parallel
-    const [draftsResult, publishedResult, recentResult] = await Promise.all([
-      supabase
-        .from('drafts')
-        .select('optimization_score', { count: 'exact' })
-        .eq('user_id', user.id),
-      supabase
-        .from('drafts')
-        .select('id', { count: 'exact' })
-        .eq('user_id', user.id)
-        .eq('status', 'published'),
-      supabase
-        .from('drafts')
-        .select('id, title, updated_at, optimization_score')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
-        .limit(5)
-    ])
-
-    const totalDrafts = draftsResult.count || 0
-    const publishedCount = publishedResult.count || 0
-    
-    // Calculate average score
-    const scores = draftsResult.data?.map(d => d.optimization_score).filter(s => s > 0) || []
-    const averageScore = scores.length > 0 
-      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
-      : 0
-
-    setStats({
-      totalDrafts,
-      publishedCount,
-      averageScore,
-      recentDrafts: recentResult.data || []
-    })
-    
-    setLoading(false)
-  }
 
 
   const quickActions: QuickAction[] = [
@@ -168,6 +106,9 @@ export function DashboardHome() {
           Ready to create content that gets noticed on LinkedIn?
         </p>
       </div>
+
+      {/* Setup Progress - Shows only if setup is incomplete */}
+      <SetupProgress />
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

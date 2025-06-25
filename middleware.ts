@@ -4,7 +4,10 @@ import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
   try {
-    // Update session
+    // Check if Supabase is enabled
+    const isSupabaseEnabled = process.env.NEXT_PUBLIC_SUPABASE_ENABLED !== 'false'
+    
+    // Update session (it will handle the disabled state internally)
     let response = await updateSession(request)
     
     // Add security headers
@@ -54,8 +57,8 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith(path)
   )
   
-  // Check authentication for protected paths
-  if (isProtectedPath) {
+  // Check authentication for protected paths only if Supabase is enabled
+  if (isProtectedPath && isSupabaseEnabled) {
     // Create a Supabase client for this request
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -83,6 +86,9 @@ export async function middleware(request: NextRequest) {
     }
     
     // For admin paths, we'll check the role in the role-guard component
+  } else if (isProtectedPath && !isSupabaseEnabled && process.env.NODE_ENV === 'development') {
+    // In development with Supabase disabled, allow access to protected routes
+    console.log('⚠️ Allowing access to protected route with Supabase disabled (dev only)')
   }
   
   return response
@@ -100,8 +106,10 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - apple-touch-icon files
      * - public folder
+     * - image files
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|apple-touch-icon.*|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

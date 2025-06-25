@@ -1,10 +1,15 @@
 'use client'
 
 import { SuggestionCards } from '../suggestion-cards'
+import { SuggestionsSetupPrompt } from '../suggestions-setup-prompt'
+import { useSetupStatus } from '@/lib/hooks/use-setup-status'
 
 export function EngagementPanel() {
+  const { setupStatus } = useSetupStatus()
+  
   return (
     <div className="space-y-4">
+      {!setupStatus.brandVoiceCompleted && <SuggestionsSetupPrompt />}
       <ToneSuggestions />
       
       <div className="border-t pt-4">

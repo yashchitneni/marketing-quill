@@ -4,45 +4,47 @@ import {
   BarChart3, 
   Brain, 
   Clock, 
-  Shield,
-  Globe
+  Target,
+  TrendingUp,
+  Users,
+  MessageSquare
 } from 'lucide-react'
 
 const features = [
   {
     icon: Brain,
-    title: 'AI-Powered Suggestions',
-    description: 'Get intelligent grammar, style, and tone suggestions powered by GPT-4o with less than 2-second response time.',
+    title: 'Voice-Matched Content',
+    description: 'AI that learns your unique voice, expertise, and professional story to create authentic content that sounds exactly like you.',
     color: 'text-purple-600'
   },
   {
-    icon: BarChart3,
-    title: 'Subject Line Optimizer',
-    description: 'Test multiple subject line variants and see predicted open rates before you send.',
+    icon: TrendingUp,
+    title: 'Hook Optimization',
+    description: 'Create scroll-stopping opening lines that grab attention and drive 3x more engagement on your LinkedIn posts.',
     color: 'text-indigo-600'
   },
   {
-    icon: Zap,
-    title: 'Real-time Analysis',
-    description: 'Instant feedback on readability, tone, and engagement potential as you write.',
+    icon: Target,
+    title: 'Client-Focused Strategy',
+    description: 'Generate content that speaks directly to your ideal clients&apos; pain points and positions you as the solution.',
     color: 'text-yellow-600'
   },
   {
-    icon: Globe,
-    title: 'SEO Optimization',
-    description: 'Built-in SEO analysis for keyword density, meta descriptions, and content structure.',
+    icon: MessageSquare,
+    title: 'Engagement Templates',
+    description: 'Proven post formats that encourage comments, shares, and meaningful conversations with potential clients.',
     color: 'text-green-600'
   },
   {
     icon: Clock,
-    title: 'Auto-save & Version History',
-    description: 'Never lose your work with auto-save every 30 seconds and daily snapshots.',
+    title: 'Content Calendar',
+    description: 'Plan weeks of strategic LinkedIn content in minutes with AI-powered topic suggestions and scheduling.',
     color: 'text-blue-600'
   },
   {
-    icon: Shield,
-    title: 'Compliance Checks',
-    description: 'Ensure your copy meets industry standards and avoids problematic language.',
+    icon: BarChart3,
+    title: 'Performance Analytics',
+    description: 'Track which content drives the most profile views, connection requests, and client conversations.',
     color: 'text-red-600'
   }
 ]
@@ -53,11 +55,11 @@ export function FeaturesSection() {
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-4xl font-bold mb-4">
-            Everything You Need to Write Better Copy
+            Turn Your LinkedIn Into a Client Magnet
           </h2>
           <p className="text-xl text-gray-600">
-            Powerful features designed specifically for SaaS marketing teams 
-            to create compelling content that converts.
+            Everything consultants and professionals need to create LinkedIn content 
+            that builds trust, demonstrates expertise, and attracts ideal clients.
           </p>
         </div>
         

@@ -12,7 +12,7 @@ export function Footer() {
               <span className="text-xl font-bold text-white">MarketingQuill</span>
             </div>
             <p className="text-sm">
-              AI-powered marketing copy assistant for SaaS teams.
+              AI-powered LinkedIn content for consultants and professionals.
             </p>
           </div>
           

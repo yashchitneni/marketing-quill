@@ -3,8 +3,11 @@
 import { useSuggestionsStore } from '@/lib/stores/suggestions-store'
 import { LinkedInOptimizationPanel } from '../linkedin-optimization-panel'
 import { LinkedInSuggestionCard } from './LinkedInSuggestionCard'
+import { SuggestionsSetupPrompt } from '../suggestions-setup-prompt'
+import { useSetupStatus } from '@/lib/hooks/use-setup-status'
 
 export function LinkedInSuggestionsPanel() {
+  const { setupStatus } = useSetupStatus()
   const { suggestions } = useSuggestionsStore()
   const linkedinSuggestions = suggestions.filter(s => 
     s.type === 'linkedin' || s.type === 'hook' || s.type === 'structure'
@@ -18,6 +21,11 @@ export function LinkedInSuggestionsPanel() {
   return (
     <div className="space-y-4">
       <LinkedInOptimizationPanel />
+      
+      {/* Show setup prompt if no suggestions and brand voice not complete */}
+      {linkedinSuggestions.length === 0 && !setupStatus.brandVoiceCompleted && (
+        <SuggestionsSetupPrompt />
+      )}
       
       {highUrgency.length > 0 && (
         <>
