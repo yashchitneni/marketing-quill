@@ -51,6 +51,7 @@ export default function SettingsPage() {
   const [writingGoals, setWritingGoals] = useState<string[]>([])
   const user = useAuthStore(state => state.user)
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const initialProfileRef = useRef<any>(null)
 
   useEffect(() => {
     // Check for error messages
@@ -108,6 +109,10 @@ export default function SettingsPage() {
       
       if (profileData) {
         setUserProfile(profileData)
+        // Store initial profile data for comparison
+        if (!initialProfileRef.current) {
+          initialProfileRef.current = profileData
+        }
         setFormData({
           email: user.email || '',
           fullName: profileData.full_name || ''
@@ -210,72 +215,75 @@ export default function SettingsPage() {
     setHasChanges(hasNameChange || hasEmailChange)
   }, [formData.fullName, formData.email, userProfile?.full_name, user?.email])
   
-  // Auto-save functionality
+  // Auto-save functionality with debouncing
   useEffect(() => {
-    // Check if there are changes
-    const hasNameChange = userProfile && formData.fullName !== userProfile.full_name
-    const hasEmailChange = user && formData.email !== user.email
+    // Don't auto-save if no user or no initial profile data loaded
+    if (!user || !initialProfileRef.current) {
+      console.log('Auto-save skipped: no user or initial profile', { user: !!user, initialProfile: !!initialProfileRef.current })
+      return
+    }
     
-    // Don't auto-save if no user or no changes
-    if (!user || (!hasNameChange && !hasEmailChange)) return
+    // Check if there are changes (compare with initial profile data to prevent loops)
+    const originalName = initialProfileRef.current.full_name || ''
+    const hasNameChange = formData.fullName !== originalName && formData.fullName.trim()
+    
+    console.log('Auto-save check:', { 
+      originalName, 
+      currentName: formData.fullName, 
+      hasNameChange,
+      trimmed: formData.fullName.trim()
+    })
+    
+    // Don't auto-save if no changes
+    if (!hasNameChange) return
     
     // Clear existing timeout
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current)
     }
     
-    // Save immediately - no delay
-    const saveChanges = async () => {
+    // Debounce the save - wait 1 second after user stops typing
+    saveTimeoutRef.current = setTimeout(async () => {
+      console.log('Auto-saving name:', formData.fullName)
       setSaving(true)
       try {
         const supabase = createClient()
         
-        // Update profile name if changed
-        if (hasNameChange && formData.fullName.trim()) {
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .update({
-              full_name: formData.fullName.trim(),
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', user.id)
-          
-          if (profileError) throw profileError
-        }
+        // Update profile name
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            full_name: formData.fullName.trim(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', user.id)
         
-        // Update email if changed (temporarily disabled to prevent auth issues)
-        // TODO: Implement proper email change flow with confirmation
-        // if (hasEmailChange && formData.email.trim()) {
-        //   const { error: authError } = await supabase.auth.updateUser({
-        //     email: formData.email.trim()
-        //   })
-        //   
-        //   if (authError) throw authError
-        // }
+        if (profileError) throw profileError
         
-        // Update local state
-        setUserProfile((prev: any) => ({ ...prev, full_name: formData.fullName }))
+        // Update local state to reflect the saved value
+        const trimmedName = formData.fullName.trim()
+        setUserProfile((prev: any) => ({ ...prev, full_name: trimmedName }))
+        // Update initial profile reference so future changes are detected correctly
+        initialProfileRef.current = { ...initialProfileRef.current, full_name: trimmedName }
         useAuthStore.getState().fetchUser()
-        setSuccess('Changes saved')
-        setTimeout(() => setSuccess(null), 3000)
+        setSuccess('Name saved')
+        setTimeout(() => setSuccess(null), 2000)
       } catch (err: any) {
         console.error('Auto-save failed:', err)
-        setError(err.message || 'Failed to save changes')
+        setError(err.message || 'Failed to save name')
         setTimeout(() => setError(null), 5000)
       } finally {
         setSaving(false)
       }
-    }
+    }, 1000) // 1 second debounce
     
-    saveChanges()
-    
-    // Cleanup timeout on unmount
+    // Cleanup timeout on unmount or dependency change
     return () => {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current)
       }
     }
-  }, [formData.fullName, formData.email, user, userProfile])
+  }, [formData.fullName, user?.id]) // Remove userProfile from dependencies to prevent infinite loop
   
   // Save preferences immediately when changed
   const savePreference = async (key: string, value: any) => {
@@ -743,9 +751,15 @@ export default function SettingsPage() {
                         {!userProfile?.full_name && (
                           <span className="text-red-500 text-sm">*</span>
                         )}
-                        {saving && (
-                          <span className="text-sm text-gray-500 ml-auto">Saving...</span>
-                        )}
+                        <span className="text-sm ml-auto">
+                          {saving ? (
+                            <span className="text-blue-600">Saving...</span>
+                          ) : hasChanges ? (
+                            <span className="text-gray-500">Will save automatically</span>
+                          ) : (
+                            <span className="text-green-600">Saved</span>
+                          )}
+                        </span>
                       </Label>
                       <Input 
                         id="name" 

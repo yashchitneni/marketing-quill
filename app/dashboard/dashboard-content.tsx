@@ -51,7 +51,7 @@ function DashboardContentInner({
   const { user, isInitialized } = useAuthStore()
   const [drafts, setDrafts] = useState<Draft[]>(initialDrafts)
   const [isLoading, setIsLoading] = useState(false)
-  const [isInitialLoad, setIsInitialLoad] = useState(initialDrafts.length === 0)
+  const [isInitialLoad, setIsInitialLoad] = useState(false) // Don't show loading if we have initial data
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'updated_at')
   const [filterChannel, setFilterChannel] = useState(searchParams.get('channel') || 'all')
@@ -125,18 +125,15 @@ function DashboardContentInner({
     }
   }, [isInitialized, user, router])
 
+  // Combine effects to prevent multiple fetches
   useEffect(() => {
-    if (user) {
-      setCurrentPage(1)
-      fetchDrafts(1)
-    }
-  }, [user, status, sortBy, filterChannel, fetchDrafts])
-
-  useEffect(() => {
-    if (user && currentPage > 1) {
+    if (!user) return
+    
+    // Only fetch if we have initial data or filters have changed
+    if (initialDrafts.length === 0 || status || sortBy !== 'updated_at' || filterChannel !== 'all' || currentPage > 1) {
       fetchDrafts(currentPage)
     }
-  }, [user, currentPage, fetchDrafts])
+  }, [user, status, sortBy, filterChannel, currentPage, fetchDrafts, initialDrafts.length])
 
 
   const handleDelete = async (id: string) => {

@@ -27,15 +27,24 @@ export default function EditorPage({ params }: { params: Params }) {
 
   useEffect(() => {
     if (user && resolvedParams.id) {
-      loadDraft(resolvedParams.id)
-      // Try to create a daily snapshot when loading
-      createSnapshot()
+      // Only load draft if it's different from current one
+      const currentDraftId = useEditorStore.getState().draftId
+      if (resolvedParams.id !== currentDraftId) {
+        loadDraft(resolvedParams.id)
+        // Try to create a daily snapshot when loading
+        createSnapshot()
+      }
     }
 
     return () => {
-      reset()
+      // Don't reset when unmounting - preserve the state
+      // Only save if dirty
+      const { isDirty, save } = useEditorStore.getState()
+      if (isDirty) {
+        save()
+      }
     }
-  }, [resolvedParams.id, user, loadDraft, reset, createSnapshot])
+  }, [resolvedParams.id, user, loadDraft, createSnapshot])
 
   // Real-time auto-save is now handled in the editor store
   // No need for interval-based saving

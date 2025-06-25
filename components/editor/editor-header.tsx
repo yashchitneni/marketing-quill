@@ -13,8 +13,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTemplatesStore } from '@/lib/stores/templates-store'
-import { LinkedInPostButton } from './linkedin-post-button'
 import { ExportButton } from './export-button'
+import { DraftModeToggle } from './draft-mode-toggle'
 
 
 export function EditorHeader() {
@@ -128,7 +128,7 @@ export function EditorHeader() {
           
           <ExportButton />
           
-          <LinkedInPostButton />
+          <DraftModeToggle />
         </div>
       </div>
     </div>
