@@ -231,7 +231,7 @@
         "description": "Create the LinkedIn Hook Optimizer to generate compelling opening lines for LinkedIn posts. Implement A/B testing for different hooks with engagement prediction scores.",
         "details": "1. Design Hook Optimizer interface with variant comparison\n2. Implement engagement score visualization for LinkedIn\n3. Create GPT-4o prompts for LinkedIn hook generation\n4. Build prediction model for LinkedIn engagement scoring\n5. Add one-click insertion of selected hooks\n6. Track hook performance analytics\n7. Include templates from viral LinkedIn posts",
         "testStrategy": "1. Test subject line generation with various content types\n2. Verify open-rate prediction model accuracy\n3. Test modal UI responsiveness and accessibility\n4. Verify insertion of selected subject line into editor\n5. Test caching of generated subject lines\n6. Measure generation time to ensure acceptable performance",
-        "priority": "high",
+        "priority": "medium",
         "dependencies": [
           4,
           5
@@ -258,11 +258,11 @@
         "description": "Implement LinkedIn-optimized export options including formatted copy for LinkedIn, scheduling preparation, and cross-posting formats. Ensure proper LinkedIn formatting is maintained.",
         "details": "1. Create LinkedIn-formatted copy functionality\n2. Implement line break optimization for mobile\n3. Add hashtag and mention formatting\n4. Create multi-platform export (LinkedIn, Twitter)\n5. Add scheduling metadata export\n6. Implement copy with emoji preservation",
         "testStrategy": "1. Test Markdown conversion accuracy with various HTML structures\n2. Verify HTML email export maintains proper styling\n3. Test public share link generation and expiration\n4. Verify clipboard copy functionality across browsers\n5. Test download functionality for HTML files\n6. Verify exported content matches editor content exactly",
-        "priority": "high",
+        "priority": "medium",
         "dependencies": [
           4
         ],
-        "status": "done",
+        "status": "pending",
         "subtasks": []
       },
       {
@@ -525,7 +525,7 @@
         "description": "Opening hooks should be auto-generated based on content. Need to analyze post content and generate compelling LinkedIn hooks automatically.",
         "details": "Feature requirements:\n1. Automatic hook generation when content reaches 100+ words\n2. LinkedIn-specific hook patterns (question, statistic, story)\n3. Multiple variants with engagement predictions\n4. Non-intrusive suggestion interface\n5. Learning from high-performing LinkedIn posts\n\nImplementation:\n- Trigger after 100+ words of content\n- Generate 5-7 hook variants using LinkedIn best practices\n- Display as suggestion panel with preview\n- One-click to apply and test different hooks\n- Track hook performance metrics",
         "testStrategy": "1. Test auto-generation trigger\n2. Verify subject relevance to content\n3. Test UI appearance and dismissal\n4. Verify one-click application\n5. Test with various content types",
-        "priority": "high",
+        "priority": "medium",
         "dependencies": [
           4,
           5
@@ -627,272 +627,11 @@
         ],
         "status": "pending",
         "subtasks": []
-      },
-      {
-        "id": 31,
-        "title": "LinkedIn Draft Mode & Preview Implementation",
-        "description": "Create LinkedIn draft mode functionality that allows users to preview their posts exactly as they will appear on LinkedIn before publishing. Implement both 'Save as Draft' and 'Post Directly' options.",
-        "details": "Implement a comprehensive draft mode system for LinkedIn posts including:\n1. LinkedIn-accurate preview component showing post formatting\n2. Character count with visual indicators (optimal: 1300, max: 3000)\n3. Toggle between 'Save as Draft' and 'Post Directly' modes\n4. Visual validation of LinkedIn formatting rules\n5. Mock profile picture and name in preview\n6. Link preview simulation\n7. Hashtag and mention highlighting\n8. Line break preservation\n\nTechnical implementation:\n- Create LinkedInPreview component\n- Implement character counting logic\n- Add draft mode URL generation for LinkedIn\n- Create toggle UI for post modes\n- Implement formatting validation",
-        "testStrategy": "1. Test preview component with various content types\n2. Verify character counting accuracy\n3. Test draft mode URL generation\n4. Ensure preview matches actual LinkedIn rendering\n5. Test with links, mentions, and hashtags\n6. Verify line break handling",
-        "priority": "high",
-        "dependencies": [
-          8
-        ],
-        "status": "pending",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Create LinkedIn Preview Component",
-            "description": "Build a component that accurately mimics LinkedIn's post appearance",
-            "dependencies": [],
-            "details": "Create a preview component that shows how the post will look on LinkedIn, including profile picture placeholder, name, timestamp, and properly formatted content",
-            "status": "pending"
-          },
-          {
-            "id": 2,
-            "title": "Implement Draft/Publish Mode Toggle",
-            "description": "Add UI toggle between 'Save as Draft' and 'Post Directly' modes",
-            "dependencies": [
-              1
-            ],
-            "details": "Create a toggle component that switches between draft mode (opens LinkedIn with pre-filled content) and direct posting mode",
-            "status": "pending"
-          },
-          {
-            "id": 3,
-            "title": "Add Character Counting and Validation",
-            "description": "Implement character counter with visual indicators for optimal length",
-            "dependencies": [
-              1
-            ],
-            "details": "Add character counting that shows current count, optimal range (1300), and maximum (3000) with color-coded indicators",
-            "status": "pending"
-          },
-          {
-            "id": 4,
-            "title": "Implement LinkedIn URL Generation",
-            "description": "Create functionality to generate LinkedIn draft URLs with pre-filled content",
-            "dependencies": [
-              2
-            ],
-            "details": "Implement URL encoding for LinkedIn's sharing endpoint that preserves formatting and handles special characters",
-            "status": "pending"
-          }
-        ]
-      },
-      {
-        "id": 32,
-        "title": "Content Calendar Implementation",
-        "description": "Build a comprehensive content calendar feature that allows users to schedule posts, visualize their content pipeline, and manage their LinkedIn posting strategy.",
-        "details": "Implement a full-featured content calendar including:\n1. Monthly/weekly/daily calendar views\n2. Drag-and-drop post scheduling\n3. Post status indicators (draft, scheduled, published)\n4. Calendar navigation controls\n5. Quick post creation from calendar\n6. Bulk scheduling actions\n7. Integration with editor and dashboard\n\nDatabase schema:\n- scheduled_posts table\n- Calendar preferences\n- Recurring post templates\n\nUI Components:\n- Calendar grid component\n- Post card component\n- Date picker\n- Status badges",
-        "testStrategy": "1. Test calendar navigation and views\n2. Verify drag-and-drop functionality\n3. Test post scheduling logic\n4. Verify status updates\n5. Test with different timezones\n6. Performance test with many posts",
-        "priority": "high",
-        "dependencies": [
-          3,
-          4
-        ],
-        "status": "pending",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Design Calendar UI Components",
-            "description": "Create the visual components for the calendar interface",
-            "dependencies": [],
-            "details": "Design and implement calendar grid, post cards, navigation controls, and view switchers",
-            "status": "pending"
-          },
-          {
-            "id": 2,
-            "title": "Create Scheduled Posts Database Schema",
-            "description": "Set up database tables for scheduled posts and calendar data",
-            "dependencies": [],
-            "details": "Create scheduled_posts table with fields for post content, scheduled time, status, and metadata",
-            "status": "pending"
-          },
-          {
-            "id": 3,
-            "title": "Implement Drag-and-Drop Scheduling",
-            "description": "Add drag-and-drop functionality to move posts between dates",
-            "dependencies": [
-              1,
-              2
-            ],
-            "details": "Implement drag-and-drop library integration for moving posts on the calendar",
-            "status": "pending"
-          },
-          {
-            "id": 4,
-            "title": "Add Calendar Navigation",
-            "description": "Implement month/week/day views and navigation",
-            "dependencies": [
-              1
-            ],
-            "details": "Create view switchers and navigation controls for moving between time periods",
-            "status": "pending"
-          },
-          {
-            "id": 5,
-            "title": "Create Post Status Management",
-            "description": "Implement status tracking for draft, scheduled, and published posts",
-            "dependencies": [
-              2
-            ],
-            "details": "Add status field to posts and create UI indicators for different states",
-            "status": "pending"
-          },
-          {
-            "id": 6,
-            "title": "Build Reminder System",
-            "description": "Add notifications for scheduled posts",
-            "dependencies": [
-              2,
-              5
-            ],
-            "details": "Implement email or in-app reminders for upcoming scheduled posts",
-            "status": "pending"
-          }
-        ]
-      },
-      {
-        "id": 33,
-        "title": "Smart Onboarding & Content Strategy Generator",
-        "description": "Create an intelligent onboarding flow that generates a personalized content strategy based on user's industry, goals, and target audience.",
-        "details": "Implement smart onboarding system:\n1. Multi-step onboarding wizard\n2. Industry and goal analysis\n3. Target audience profiling\n4. Content pillar generation\n5. Template recommendations\n6. Posting schedule suggestions\n7. Strategy document export\n\nOnboarding steps:\n- Industry selection\n- Business goals\n- Target audience\n- Content preferences\n- Posting frequency\n\nStrategy output:\n- Recommended content pillars\n- Suggested templates\n- Optimal posting schedule\n- Content calendar pre-population",
-        "testStrategy": "1. Test onboarding flow completion\n2. Verify strategy generation logic\n3. Test template recommendations\n4. Verify content pillar relevance\n5. Test export functionality\n6. Validate with different industries",
-        "priority": "high",
-        "dependencies": [
-          2,
-          26
-        ],
-        "status": "pending",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Design Multi-Step Onboarding Wizard",
-            "description": "Create the UI flow for collecting user information",
-            "dependencies": [],
-            "details": "Design and implement a multi-step wizard that collects industry, goals, audience, and preferences",
-            "status": "pending"
-          },
-          {
-            "id": 2,
-            "title": "Create User Preferences Schema",
-            "description": "Set up database structure for storing user preferences and strategy data",
-            "dependencies": [],
-            "details": "Create tables for user preferences, content strategies, and template recommendations",
-            "status": "pending"
-          },
-          {
-            "id": 3,
-            "title": "Build Content Strategy Generator",
-            "description": "Implement AI-powered strategy generation based on user inputs",
-            "dependencies": [
-              1,
-              2
-            ],
-            "details": "Create logic to generate content pillars, posting schedules, and template recommendations",
-            "status": "pending"
-          },
-          {
-            "id": 4,
-            "title": "Implement Template Recommendations",
-            "description": "Create system to recommend templates based on user profile",
-            "dependencies": [
-              3
-            ],
-            "details": "Match user goals and industry with appropriate content templates",
-            "status": "pending"
-          },
-          {
-            "id": 5,
-            "title": "Generate Content Pillars",
-            "description": "Create AI-powered content pillar suggestions",
-            "dependencies": [
-              3
-            ],
-            "details": "Generate 4-6 content pillars based on industry and goals",
-            "status": "pending"
-          },
-          {
-            "id": 6,
-            "title": "Create Strategy Export",
-            "description": "Build functionality to export strategy as a document",
-            "dependencies": [
-              3,
-              4,
-              5
-            ],
-            "details": "Generate PDF or markdown document with complete content strategy",
-            "status": "pending"
-          }
-        ]
-      },
-      {
-        "id": 34,
-        "title": "Intelligent Scheduling System",
-        "description": "Build an AI-powered scheduling system that analyzes engagement patterns and automatically suggests optimal posting times and content distribution.",
-        "details": "Implement intelligent scheduling features:\n1. Engagement pattern analysis\n2. Optimal posting time detection\n3. Content type distribution\n4. Auto-scheduling algorithm\n5. Bulk schedule generation\n6. Performance-based adjustments\n\nFeatures:\n- Analyze best posting times\n- Balance content types\n- Avoid content fatigue\n- Weekend/holiday handling\n- Time zone optimization\n- Engagement prediction",
-        "testStrategy": "1. Test pattern analysis algorithms\n2. Verify scheduling recommendations\n3. Test content distribution logic\n4. Validate with real engagement data\n5. Test bulk operations\n6. Verify time zone handling",
-        "priority": "medium",
-        "dependencies": [
-          32,
-          27
-        ],
-        "status": "pending",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Build Posting Pattern Analyzer",
-            "description": "Create system to analyze historical posting patterns and engagement",
-            "dependencies": [],
-            "details": "Analyze user's posting history and engagement metrics to identify patterns",
-            "status": "pending"
-          },
-          {
-            "id": 2,
-            "title": "Create Content Distribution Algorithm",
-            "description": "Implement algorithm to balance different content types",
-            "dependencies": [],
-            "details": "Create logic to distribute different content types throughout the week/month",
-            "status": "pending"
-          },
-          {
-            "id": 3,
-            "title": "Implement Auto-Schedule Generation",
-            "description": "Build 'Generate Schedule' functionality",
-            "dependencies": [
-              1,
-              2
-            ],
-            "details": "Create one-click schedule generation based on content and optimal times",
-            "status": "pending"
-          },
-          {
-            "id": 4,
-            "title": "Add Optimal Time Recommendations",
-            "description": "Suggest best posting times based on audience engagement",
-            "dependencies": [
-              1
-            ],
-            "details": "Analyze engagement data to recommend optimal posting times",
-            "status": "pending"
-          },
-          {
-            "id": 5,
-            "title": "Build Content Type Balancing",
-            "description": "Ensure variety in scheduled content",
-            "dependencies": [
-              2
-            ],
-            "details": "Implement logic to avoid repetitive content types and maintain variety",
-            "status": "pending"
-          }
-        ]
       }
     ],
     "metadata": {
       "created": "2025-06-18T20:07:13.913Z",
-      "updated": "2025-06-25T22:47:26.917Z",
+      "updated": "2025-06-23T20:46:11.741Z",
       "description": "LinkedIn Writing Assistant - Tasks for LinkedIn-focused pivot"
     }
   }

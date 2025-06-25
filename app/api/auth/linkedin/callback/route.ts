@@ -112,7 +112,19 @@ export async function GET(request: NextRequest) {
         onConflict: 'user_id'
       })
 
-    // Redirect to settings with success message
+    // Check if user is in onboarding flow
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('onboarding_completed')
+      .eq('id', user.id)
+      .single()
+    
+    // If onboarding is not completed, redirect back to onboarding
+    if (profileData && !profileData.onboarding_completed) {
+      return NextResponse.redirect(new URL('/onboarding', request.url))
+    }
+    
+    // Otherwise redirect to settings with success message
     return NextResponse.redirect(new URL('/settings?success=linkedin_connected', request.url))
 
   } catch (error) {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useRole } from '@/lib/hooks/use-role'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowRight, Building2, FileText, Target, Sparkles, User, Linkedin } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/lib/stores/auth-store'
+import { useToast } from '@/lib/hooks/use-toast'
 
 interface BrandVoice {
   companyName: string
@@ -37,6 +38,7 @@ export default function OnboardingPage() {
   const router = useRouter()
   const { user } = useRole()
   const authUser = useAuthStore(state => state.user)
+  const { toast } = useToast()
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
   const [userProfile, setUserProfile] = useState<UserProfile>({
@@ -50,6 +52,43 @@ export default function OnboardingPage() {
     tonePreferences: [],
     sampleContent: ''
   })
+  const [checkingLinkedIn, setCheckingLinkedIn] = useState(true)
+  
+  // Check LinkedIn connection status and load existing profile data on mount
+  useEffect(() => {
+    const checkUserStatus = async () => {
+      const userId = user?.id || authUser?.id
+      if (!userId) return
+      
+      const supabase = createClient()
+      
+      // Check LinkedIn connection
+      const { data: linkedInData } = await supabase
+        .from('user_profiles')
+        .select('linkedin_profile_id')
+        .eq('user_id', userId)
+        .single()
+      
+      if (linkedInData?.linkedin_profile_id) {
+        setUserProfile(prev => ({ ...prev, linkedInConnected: true }))
+      }
+      
+      // Also check if user already has a name in profiles table
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', userId)
+        .single()
+      
+      if (profileData?.full_name) {
+        setUserProfile(prev => ({ ...prev, fullName: profileData.full_name }))
+      }
+      
+      setCheckingLinkedIn(false)
+    }
+    
+    checkUserStatus()
+  }, [user, authUser])
 
   const handleToneToggle = (tone: string) => {
     setBrandVoice(prev => ({
@@ -82,28 +121,77 @@ export default function OnboardingPage() {
   }
 
   const handleSkip = async () => {
-    // Only allow skipping brand voice setup, not name
-    if (!userProfile.fullName.trim()) {
-      return // Don't allow skipping without a name
+    // Only allow skipping brand voice setup after name and LinkedIn are complete
+    if (!userProfile.fullName.trim() || !userProfile.linkedInConnected) {
+      return // Don't allow skipping without required fields
     }
     
-    // Save just the name and mark onboarding as partially complete
+    // Check if we have a user ID
+    const userId = user?.id || authUser?.id
+    if (!userId) {
+      console.error('No user ID found for onboarding skip')
+      return
+    }
+    
+    // Save the name and mark onboarding as partially complete
     setIsLoading(true)
     const supabase = createClient()
     
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        full_name: userProfile.fullName,
-        onboarding_completed: true,
-        brand_voice_completed: false // Track that brand voice was skipped
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          full_name: userProfile.fullName,
+          onboarding_completed: true,
+          brand_voice_completed: false // Track that brand voice was skipped
+        })
+        .eq('id', userId)
+      
+      if (error) {
+        console.error('Error updating profile:', error)
+        // Try to navigate anyway if it's a minor error
+        if (error.code === 'PGRST116') {
+          // No rows returned - profile might not exist yet, create it
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              id: userId,
+              full_name: userProfile.fullName,
+              onboarding_completed: true,
+              brand_voice_completed: false
+            })
+          
+          if (!insertError) {
+            router.push('/dashboard')
+          } else {
+            console.error('Error creating profile:', insertError)
+            toast({
+              title: "Error",
+              description: "Failed to save profile. Please try again.",
+              variant: "destructive"
+            })
+          }
+        } else {
+          // Show error to user
+          toast({
+            title: "Error",
+            description: "Failed to update profile. Please try again.",
+            variant: "destructive"
+          })
+        }
+      } else {
+        router.push('/dashboard')
+      }
+    } catch (err) {
+      console.error('Unexpected error during skip:', err)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
       })
-      .eq('id', user?.id)
-    
-    if (!error) {
-      router.push('/dashboard')
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }
 
   return (
@@ -156,26 +244,52 @@ export default function OnboardingPage() {
                 </div>
                 
                 <div className="mt-6">
-                  <Label>LinkedIn Connection</Label>
+                  <Label className="flex items-center gap-2">
+                    LinkedIn Connection
+                    <span className="text-red-500 text-sm">*</span>
+                  </Label>
                   <Card className="mt-2">
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
+                          <div className={`w-3 h-3 rounded-full ${userProfile.linkedInConnected ? 'bg-green-500' : 'bg-gray-300'}`} />
                           <Linkedin className="h-5 w-5 text-blue-600" />
                           <div>
-                            <p className="font-medium">Connect LinkedIn Account</p>
-                            <p className="text-sm text-gray-500">Required for posting directly to LinkedIn</p>
+                            <p className="font-medium">
+                              {userProfile.linkedInConnected ? 'LinkedIn Connected' : 'Connect LinkedIn Account'}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {userProfile.linkedInConnected 
+                                ? 'Your LinkedIn account is connected' 
+                                : 'Required for posting and content optimization'}
+                            </p>
                           </div>
                         </div>
-                        <Button
-                          onClick={() => router.push('/settings')}
-                          variant="outline"
-                        >
-                          Connect Later
-                        </Button>
+                        {!userProfile.linkedInConnected && (
+                          <Button
+                            onClick={() => {
+                              // Store that we're in onboarding flow
+                              sessionStorage.setItem('onboarding_redirect', 'true')
+                              window.location.href = '/api/auth/linkedin'
+                            }}
+                            disabled={checkingLinkedIn}
+                          >
+                            {checkingLinkedIn ? 'Checking...' : 'Connect LinkedIn'}
+                          </Button>
+                        )}
+                        {userProfile.linkedInConnected && (
+                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                            Connected
+                          </Badge>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
+                  {!userProfile.linkedInConnected && (
+                    <p className="text-xs text-red-500 mt-1">
+                      LinkedIn connection is required to continue
+                    </p>
+                  )}
                 </div>
               </TabsContent>
 
@@ -250,8 +364,8 @@ export default function OnboardingPage() {
             </Tabs>
 
             <div className="flex justify-between mt-8">
-              {/* Only show skip after name is entered */}
-              {currentStep > 1 && (
+              {/* Show skip button after name and LinkedIn are complete */}
+              {userProfile.fullName.trim() && userProfile.linkedInConnected && currentStep > 1 && (
                 <Button
                   variant="ghost"
                   onClick={handleSkip}
@@ -260,7 +374,7 @@ export default function OnboardingPage() {
                   Skip brand voice setup
                 </Button>
               )}
-              {currentStep === 1 && <div />}
+              {(currentStep === 1 || !userProfile.fullName.trim() || !userProfile.linkedInConnected) && <div />}
               
               <div className="flex gap-3">
                 {currentStep > 1 && (
@@ -275,7 +389,7 @@ export default function OnboardingPage() {
                 {currentStep < 4 ? (
                   <Button 
                     onClick={() => setCurrentStep(currentStep + 1)}
-                    disabled={currentStep === 1 && !userProfile.fullName.trim()}
+                    disabled={currentStep === 1 && (!userProfile.fullName.trim() || !userProfile.linkedInConnected)}
                   >
                     Next
                     <ArrowRight className="ml-2 h-4 w-4" />

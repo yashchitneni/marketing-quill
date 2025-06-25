@@ -14,6 +14,7 @@ import {
 import { cn } from '@/lib/utils'
 import { useTemplatesStore } from '@/lib/stores/templates-store'
 import { LinkedInPostButton } from './linkedin-post-button'
+import { ExportButton } from './export-button'
 
 
 export function EditorHeader() {
@@ -124,6 +125,8 @@ export function EditorHeader() {
             <Save className="h-4 w-4 mr-2" />
             {isDirty ? 'Save' : 'Saved'}
           </Button>
+          
+          <ExportButton />
           
           <LinkedInPostButton />
         </div>

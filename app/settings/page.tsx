@@ -203,12 +203,18 @@ export default function SettingsPage() {
     }
   }
   
+  // Check for changes separately from auto-save
+  useEffect(() => {
+    const hasNameChange = userProfile && formData.fullName !== userProfile.full_name
+    const hasEmailChange = user && formData.email !== user.email
+    setHasChanges(hasNameChange || hasEmailChange)
+  }, [formData.fullName, formData.email, userProfile?.full_name, user?.email])
+  
   // Auto-save functionality
   useEffect(() => {
     // Check if there are changes
     const hasNameChange = userProfile && formData.fullName !== userProfile.full_name
     const hasEmailChange = user && formData.email !== user.email
-    setHasChanges(hasNameChange || hasEmailChange)
     
     // Don't auto-save if no user or no changes
     if (!user || (!hasNameChange && !hasEmailChange)) return
