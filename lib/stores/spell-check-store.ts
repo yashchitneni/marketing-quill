@@ -29,8 +29,9 @@ export const useSpellCheckStore = create<SpellCheckState>((set, get) => ({
       return
     }
     
-    // Skip very short text
-    if (text.length < 3) {
+    // Skip very short text or empty text
+    const trimmedText = text.trim()
+    if (trimmedText.length < 3) {
       set({ errors: [], lastCheckedText: text })
       return
     }

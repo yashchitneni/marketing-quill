@@ -27,7 +27,7 @@ export function useTextAnalysis({
 
   // Analyze and spell check content on mount if it exists
   useEffect(() => {
-    if (initialContent && initialContent.length >= 10) {
+    if (initialContent && initialContent.trim().length >= 10) {
       // Spell check immediately
       checkSpelling(initialContent)
       

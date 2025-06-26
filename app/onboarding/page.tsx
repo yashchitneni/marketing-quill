@@ -162,7 +162,9 @@ export default function OnboardingPage() {
             })
           
           if (!insertError) {
-            router.push('/dashboard')
+            // Clear onboarding flow cookie
+        document.cookie = 'onboarding_flow=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+        router.push('/dashboard')
           } else {
             console.error('Error creating profile:', insertError)
             toast({
@@ -180,6 +182,8 @@ export default function OnboardingPage() {
           })
         }
       } else {
+        // Clear onboarding flow cookie
+        document.cookie = 'onboarding_flow=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
         router.push('/dashboard')
       }
     } catch (err) {

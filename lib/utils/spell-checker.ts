@@ -77,6 +77,12 @@ export interface SpellError {
 
 // Check spelling of a text and return errors
 export async function checkSpelling(text: string, personalDictionary: string[] = []): Promise<SpellError[]> {
+  // Skip empty or very short text
+  const trimmedText = text.trim()
+  if (trimmedText.length < 3) {
+    return []
+  }
+  
   // Initialize if not already done
   if (!spellChecker) {
     await initializeSpellChecker()

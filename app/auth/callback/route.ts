@@ -51,7 +51,15 @@ export async function GET(request: Request) {
       // If profile doesn't exist or onboarding not completed, redirect to onboarding
       if (!profile || !profile.onboarding_completed) {
         console.log('Redirecting to onboarding')
-        return NextResponse.redirect(`${origin}/onboarding`)
+        const response = NextResponse.redirect(`${origin}/onboarding`)
+        // Set a cookie to indicate we're in onboarding flow
+        response.cookies.set('onboarding_flow', 'true', {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 // 1 hour
+        })
+        return response
       }
       
       // Otherwise, proceed with the original redirect

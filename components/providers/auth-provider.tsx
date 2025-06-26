@@ -74,17 +74,24 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
             
             // Handle sign in and sign out events
             if (event === 'SIGNED_IN') {
-              // Only redirect if explicitly on auth pages
-              if (pathname === '/auth/login' || pathname === '/auth/signup') {
+              // Check if we're in onboarding flow
+              const onboardingFlow = document.cookie.includes('onboarding_flow=true')
+              
+              // Only redirect if explicitly on auth pages and not in onboarding flow
+              if ((pathname === '/auth/login' || pathname === '/auth/signup') && !onboardingFlow) {
                 console.log('Redirecting to dashboard after sign in')
                 router.push('/dashboard')
               }
             } else if (event === 'SIGNED_OUT') {
+              // Clear onboarding flow cookie
+              document.cookie = 'onboarding_flow=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+              
               // If on protected page, redirect to login
               if (pathname.startsWith('/dashboard') || 
                   pathname.startsWith('/editor') || 
                   pathname.startsWith('/admin') ||
-                  pathname.startsWith('/settings')) {
+                  pathname.startsWith('/settings') ||
+                  pathname.startsWith('/onboarding')) {
                 router.push('/auth/login')
               }
             }
