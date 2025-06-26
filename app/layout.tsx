@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MarketingQuill - AI Copy Copilot",
-  description: "AI-powered marketing copy assistant for SaaS marketing managers",
+  title: "LinkedIn Writer AI - Content That Gets You Clients",
+  description: "AI-powered LinkedIn content assistant that learns your voice and helps you attract ideal clients with engaging posts",
 };
 
 export default function RootLayout({
