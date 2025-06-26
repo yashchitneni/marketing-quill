@@ -51,7 +51,6 @@ export default function SettingsPage() {
   const [writingGoals, setWritingGoals] = useState<string[]>([])
   const user = useAuthStore(state => state.user)
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const initialProfileRef = useRef<any>(null)
 
   useEffect(() => {
     // Check for error messages
@@ -109,10 +108,6 @@ export default function SettingsPage() {
       
       if (profileData) {
         setUserProfile(profileData)
-        // Store initial profile data for comparison
-        if (!initialProfileRef.current) {
-          initialProfileRef.current = profileData
-        }
         setFormData({
           email: user.email || '',
           fullName: profileData.full_name || ''
@@ -217,22 +212,15 @@ export default function SettingsPage() {
   
   // Auto-save functionality with debouncing
   useEffect(() => {
-    // Don't auto-save if no user or no initial profile data loaded
-    if (!user || !initialProfileRef.current) {
-      console.log('Auto-save skipped: no user or initial profile', { user: !!user, initialProfile: !!initialProfileRef.current })
+    // Don't auto-save if no user
+    if (!user) {
       return
     }
     
-    // Check if there are changes (compare with initial profile data to prevent loops)
-    const originalName = initialProfileRef.current.full_name || ''
-    const hasNameChange = formData.fullName !== originalName && formData.fullName.trim()
-    
-    console.log('Auto-save check:', { 
-      originalName, 
-      currentName: formData.fullName, 
-      hasNameChange,
-      trimmed: formData.fullName.trim()
-    })
+    // Use userProfile directly instead of initialProfileRef to avoid race conditions
+    const originalName = userProfile?.full_name || ''
+    const currentName = formData.fullName.trim()
+    const hasNameChange = currentName && currentName !== originalName
     
     // Don't auto-save if no changes
     if (!hasNameChange) return
@@ -244,7 +232,6 @@ export default function SettingsPage() {
     
     // Debounce the save - wait 1 second after user stops typing
     saveTimeoutRef.current = setTimeout(async () => {
-      console.log('Auto-saving name:', formData.fullName)
       setSaving(true)
       try {
         const supabase = createClient()
@@ -253,7 +240,7 @@ export default function SettingsPage() {
         const { error: profileError } = await supabase
           .from('profiles')
           .update({
-            full_name: formData.fullName.trim(),
+            full_name: currentName,
             updated_at: new Date().toISOString()
           })
           .eq('id', user.id)
@@ -261,10 +248,7 @@ export default function SettingsPage() {
         if (profileError) throw profileError
         
         // Update local state to reflect the saved value
-        const trimmedName = formData.fullName.trim()
-        setUserProfile((prev: any) => ({ ...prev, full_name: trimmedName }))
-        // Update initial profile reference so future changes are detected correctly
-        initialProfileRef.current = { ...initialProfileRef.current, full_name: trimmedName }
+        setUserProfile((prev: any) => ({ ...prev, full_name: currentName }))
         useAuthStore.getState().fetchUser()
         setSuccess('Name saved')
         setTimeout(() => setSuccess(null), 2000)
@@ -283,7 +267,7 @@ export default function SettingsPage() {
         clearTimeout(saveTimeoutRef.current)
       }
     }
-  }, [formData.fullName, user?.id]) // Remove userProfile from dependencies to prevent infinite loop
+  }, [formData.fullName, user?.id, userProfile?.full_name]) // Include userProfile to trigger when loaded
   
   // Save preferences immediately when changed
   const savePreference = async (key: string, value: any) => {

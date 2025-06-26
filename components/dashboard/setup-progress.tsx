@@ -38,6 +38,23 @@ export function SetupProgress() {
   useEffect(() => {
     fetchSetupStatus()
   }, [user])
+  
+  // Refresh setup status when component becomes visible again
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchSetupStatus()
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('focus', fetchSetupStatus)
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', fetchSetupStatus)
+    }
+  }, [user])
 
   const fetchSetupStatus = async () => {
     if (!user) return
@@ -47,7 +64,7 @@ export function SetupProgress() {
     // Check main profile
     const { data: profile } = await supabase
       .from('profiles')
-      .select('full_name, linkedin_connected, brand_voice_completed')
+      .select('full_name, brand_voice_completed')
       .eq('id', user.id)
       .single()
     
@@ -58,13 +75,11 @@ export function SetupProgress() {
       .eq('user_id', user.id)
       .single()
     
-    if (profile || linkedinProfile) {
-      setSetupStatus({
-        nameCompleted: !!profile?.full_name,
-        linkedinConnected: !!profile?.linkedin_connected || !!linkedinProfile?.linkedin_profile_id,
-        brandVoiceCompleted: !!profile?.brand_voice_completed
-      })
-    }
+    setSetupStatus({
+      nameCompleted: !!profile?.full_name,
+      linkedinConnected: !!linkedinProfile?.linkedin_profile_id,
+      brandVoiceCompleted: !!profile?.brand_voice_completed
+    })
     setLoading(false)
   }
 

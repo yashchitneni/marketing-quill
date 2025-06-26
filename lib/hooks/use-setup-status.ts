@@ -40,7 +40,7 @@ export function useSetupStatus() {
     // Check main profile
     const { data: profile } = await supabase
       .from('profiles')
-      .select('full_name, linkedin_connected, brand_voice_completed')
+      .select('full_name, brand_voice_completed')
       .eq('id', user.id)
       .single()
     
@@ -51,24 +51,22 @@ export function useSetupStatus() {
       .eq('user_id', user.id)
       .single()
     
-    if (profile || linkedinProfile) {
-      const nameCompleted = !!profile?.full_name
-      const linkedinConnected = !!profile?.linkedin_connected || !!linkedinProfile?.linkedin_profile_id
-      const brandVoiceCompleted = !!profile?.brand_voice_completed
+    const nameCompleted = !!profile?.full_name
+    const linkedinConnected = !!linkedinProfile?.linkedin_profile_id
+    const brandVoiceCompleted = !!profile?.brand_voice_completed
       
-      const completedSteps = [nameCompleted, linkedinConnected, brandVoiceCompleted].filter(Boolean).length
-      const isComplete = completedSteps === 3
-      
-      setSetupStatus({
-        isComplete,
-        nameCompleted,
-        linkedinConnected,
-        brandVoiceCompleted,
-        completedSteps,
-        totalSteps: 3,
-        percentComplete: (completedSteps / 3) * 100
-      })
-    }
+    const completedSteps = [nameCompleted, linkedinConnected, brandVoiceCompleted].filter(Boolean).length
+    const isComplete = completedSteps === 3
+    
+    setSetupStatus({
+      isComplete,
+      nameCompleted,
+      linkedinConnected,
+      brandVoiceCompleted,
+      completedSteps,
+      totalSteps: 3,
+      percentComplete: (completedSteps / 3) * 100
+    })
     
     setLoading(false)
   }

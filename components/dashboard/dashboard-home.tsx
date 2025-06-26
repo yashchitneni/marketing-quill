@@ -54,6 +54,18 @@ export function DashboardHome({ initialStats, initialUserName, userEmail }: Dash
   const [stats] = useState<DashboardStats>(initialStats)
   const [userName] = useState<string>(initialUserName)
   const [loading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Error boundary effect
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      console.error('Dashboard error:', event.error)
+      setError('Something went wrong loading the dashboard')
+    }
+    
+    window.addEventListener('error', handleError)
+    return () => window.removeEventListener('error', handleError)
+  }, [])
 
 
 
@@ -93,6 +105,18 @@ export function DashboardHome({ initialStats, initialUserName, userEmail }: Dash
     if (minutes < 60) return `${minutes}m ago`
     if (hours < 24) return `${hours}h ago`
     return `${days}d ago`
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 max-w-7xl mx-auto">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Dashboard</h1>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>Refresh Page</Button>
+        </div>
+      </div>
+    )
   }
 
   return (

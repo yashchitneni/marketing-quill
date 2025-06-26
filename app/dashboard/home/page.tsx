@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardHome } from '@/components/dashboard/dashboard-home'
+import { DashboardLayout } from '@/components/dashboard/dashboard-layout'
 
 async function getDashboardData(userId: string) {
   const supabase = await createClient()
@@ -60,5 +61,9 @@ export default async function DashboardHomePage() {
   const { stats, profile } = await getDashboardData(user.id)
   const userName = profile?.full_name || profile?.username || user.email?.split('@')[0] || 'there'
   
-  return <DashboardHome initialStats={stats} initialUserName={userName} userEmail={user.email} />
+  return (
+    <DashboardLayout>
+      <DashboardHome initialStats={stats} initialUserName={userName} userEmail={user.email} />
+    </DashboardLayout>
+  )
 }
